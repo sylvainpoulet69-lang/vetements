@@ -34,6 +34,8 @@ body{padding-bottom:32px}
   display:flex;
   justify-content:space-between;
   align-items:center;
+  flex-wrap:nowrap;
+  gap:12px;
   padding:18px;
   background:linear-gradient(180deg, rgba(226,236,255,.96), rgba(209,224,255,.90));
   backdrop-filter:blur(12px);
@@ -47,6 +49,9 @@ body{padding-bottom:32px}
   font-weight:800;
   font-size:1.05rem;
   letter-spacing:.02em;
+  white-space:nowrap;
+  min-width:0;
+  flex:1;
 }
 .brand-logo{
   width:36px;
@@ -222,6 +227,7 @@ body{padding-bottom:32px}
 .btn-cart{
   min-height:48px;
   padding:10px 14px;
+  flex-shrink:0;
 }
 
 /* Choisir */
@@ -419,13 +425,12 @@ label{
 
 /* CTA STICKY */
 .actions{
-  position:sticky;
-  bottom:0;
-  padding:12px 0;
+  position:static;
+  padding:12px 0 0;
   margin-top:18px;
   border-top:1px solid var(--border);
-  background:linear-gradient(180deg, rgba(239,244,255,.3), rgba(222,232,255,.9));
-  backdrop-filter:blur(6px);
+  background:transparent;
+  backdrop-filter:none;
 }
 .actions .btn{width:100%}
 
@@ -467,7 +472,14 @@ label{
 
 @media (max-width:640px){
   .container{padding:12px}
-  .app-header{padding:14px 16px;border-radius:0 0 18px 18px}
+  .app-header{padding:14px 16px;border-radius:0 0 18px 18px;gap:10px}
+  .brand{font-size:1rem}
+  .chip{min-height:64px;padding:16px 16px;font-size:1rem}
+  .pills{gap:10px}
+  .pill{min-height:62px;padding:14px 16px;font-size:1rem}
+  .sizes-grid .pill{min-height:62px}
+  .btn{min-height:48px;padding:12px 14px;font-size:.98rem}
+  .btn-small{min-height:46px;padding:10px 12px;font-size:.95rem}
   .card-body{align-items:flex-start}
   .cart-line{
     grid-template-columns:90px 1fr;
@@ -484,6 +496,5 @@ label{
     padding-top:10px;
     border-top:1px solid #d7e2ff;
   }
-  .btn{min-height:52px}
   .btn-primary{width:100%}
 }

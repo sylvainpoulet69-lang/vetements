@@ -6,10 +6,9 @@ const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
 const params = new URLSearchParams(window.location.search);
-const preferLocal = params.get("src") !== "sheets";
-const forceSheets = params.get("src") === "sheets";
+const preferLocal = params.get("src") === "local";
 const isAppsScript = typeof google !== "undefined" && google.script && google.script.run;
-const shouldUseSheets = !preferLocal && forceSheets && isAppsScript;
+const shouldUseSheets = isAppsScript && !preferLocal;
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
