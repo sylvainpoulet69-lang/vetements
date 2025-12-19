@@ -34,7 +34,7 @@ body{padding-bottom:32px}
   display:flex;
   justify-content:space-between;
   align-items:center;
-  flex-wrap:nowrap;
+  flex-wrap:wrap;
   gap:12px;
   padding:18px;
   background:linear-gradient(180deg, rgba(226,236,255,.96), rgba(209,224,255,.90));
@@ -49,10 +49,16 @@ body{padding-bottom:32px}
   font-weight:800;
   font-size:1.05rem;
   letter-spacing:.02em;
-  white-space:nowrap;
   min-width:0;
   flex:1;
 }
+.brand-text{
+  display:flex;
+  flex-direction:column;
+  line-height:1.15;
+  white-space:normal;
+}
+.brand-line-secondary{font-weight:900}
 .brand-logo{
   width:36px;
   height:36px;
@@ -184,11 +190,11 @@ body{padding-bottom:32px}
   appearance:none;
   border:none;
   border-radius:999px;
-  padding:14px 18px;
+  padding:12px 16px;
   font-weight:800;
   cursor:pointer;
-  min-height:56px;
-  font-size:1rem;
+  min-height:52px;
+  font-size:.98rem;
   line-height:1.2;
   letter-spacing:.02em;
   transition:transform .08s ease, filter .16s ease, box-shadow .16s ease;
@@ -306,14 +312,14 @@ label{
   gap:12px;
 }
 .pill{
-  padding:16px 18px;
+  padding:14px 16px;
   border:1px solid var(--border);
   border-radius:18px;
   background:linear-gradient(180deg,#FFFFFF,#EAF1FF);
   cursor:pointer;
-  min-height:72px;
+  min-height:64px;
   font-weight:800;
-  font-size:1.05rem;
+  font-size:1rem;
   text-align:center;
   color:var(--text);
 }
@@ -356,7 +362,7 @@ label{
 }
 .sizes-grid .pill{
   border-radius:18px;
-  min-height:72px;
+  min-height:64px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -452,8 +458,8 @@ label{
   .card-body{padding:22px}
   .card.product img{height:420px}
   .card.product h3{font-size:1.3rem}
-  .btn{min-height:86px;padding:22px 26px;font-size:1.1rem}
-  .btn-small{min-height:74px;font-size:1.05rem}
+  .btn{min-height:72px;padding:18px 22px;font-size:1.05rem}
+  .btn-small{min-height:64px;font-size:1.02rem}
   .back{padding:18px 22px;font-size:1.1rem}
   .detail{padding:22px;border-radius:28px}
   .detail-img{height:580px}
@@ -461,7 +467,7 @@ label{
   label{font-size:1.1rem;margin:22px 0 12px}
   .inp{padding:18px 20px;border-radius:18px;font-size:1.05rem}
   .pills{gap:16px}
-  .pill{min-height:94px;font-size:1.1rem;padding:22px;border-radius:22px}
+  .pill{min-height:78px;font-size:1.05rem;padding:18px;border-radius:20px}
   .swatches{gap:22px}
   .swatch .dot{width:68px;height:68px}
   .sizes-grid{gap:16px}
@@ -476,10 +482,10 @@ label{
   .brand{font-size:1rem}
   .chip{min-height:64px;padding:16px 16px;font-size:1rem}
   .pills{gap:10px}
-  .pill{min-height:62px;padding:14px 16px;font-size:1rem}
-  .sizes-grid .pill{min-height:62px}
-  .btn{min-height:48px;padding:12px 14px;font-size:.98rem}
-  .btn-small{min-height:46px;padding:10px 12px;font-size:.95rem}
+  .pill{min-height:52px;padding:12px 14px;font-size:.98rem}
+  .sizes-grid .pill{min-height:52px}
+  .btn{min-height:46px;padding:12px 14px;font-size:.96rem}
+  .btn-small{min-height:44px;padding:10px 12px;font-size:.94rem}
   .card-body{align-items:flex-start}
   .cart-line{
     grid-template-columns:90px 1fr;

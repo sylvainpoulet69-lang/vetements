@@ -5,10 +5,7 @@ let CART = [];
 const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
-const params = new URLSearchParams(window.location.search);
-const preferLocal = params.get("src") === "local";
 const isAppsScript = typeof google !== "undefined" && google.script && google.script.run;
-const shouldUseSheets = isAppsScript && !preferLocal;
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
@@ -51,25 +48,17 @@ function colorToHex(n) {
 }
 
 async function loadCatalog() {
-  if (shouldUseSheets) {
-    google.script.run.withSuccessHandler((data) => {
-      CATALOG = data;
-      renderHome();
-    }).getCatalog();
+  if (!isAppsScript) {
+    const list = $("#homeList");
+    list.innerHTML =
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">Connexion Google Sheets requise. Ouvrez la boutique via le déploiement Apps Script pour charger le catalogue.</div></div></div>';
     return;
   }
 
-  try {
-    const res = await fetch("catalog.json", { cache: "no-store" });
-    if (!res.ok) throw new Error("Impossible de charger le catalogue");
-    CATALOG = await res.json();
+  google.script.run.withSuccessHandler((data) => {
+    CATALOG = data;
     renderHome();
-  } catch (err) {
-    const list = $("#homeList");
-    list.innerHTML = `<div class="card"><div class="card-body"><div class="card-title-wrap">Erreur : ${
-      err?.message || err
-    }</div></div></div>`;
-  }
+  }).getCatalog();
 }
 
 /* -------- ACCUEIL -------- */
@@ -547,23 +536,6 @@ function buildOrderHtml(orderId, payload) {
   </body></html>`;
 }
 
-function handleStaticOrder(payload) {
-  const order_id = "CMD-" + Date.now().toString(36).toUpperCase();
-  const html = buildOrderHtml(order_id, payload);
-  const blob = new Blob([html], { type: "text/html" });
-  const url = URL.createObjectURL(blob);
-  $("#doneMsg").textContent = `Commande n° ${order_id}. Sauvegardez ce récapitulatif.`;
-  $("#donePdf").href = url;
-  $("#donePdf").textContent = "📄 Ouvrir le récapitulatif";
-  $("#btnValidate").disabled = false;
-  $("#result").textContent = "";
-  CART = [];
-  saveCart();
-  refreshCartBadge();
-  show("#sectionDone");
-  window.scrollTo({ top: 0, behavior: "smooth" });
-}
-
 /* -------- Bootstrap -------- */
 window.addEventListener("DOMContentLoaded", () => {
   loadCart();
@@ -603,27 +575,29 @@ window.addEventListener("DOMContentLoaded", () => {
     $("#btnValidate").disabled = true;
     $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Création du récapitulatif…";
 
-    if (isAppsScript) {
-      google.script.run
-        .withSuccessHandler((res) => {
-          $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
-          $("#donePdf").href = res.pdfUrl;
-          $("#btnValidate").disabled = false;
-          $("#result").textContent = "";
-          CART = [];
-          saveCart();
-          refreshCartBadge();
-          show("#sectionDone");
-          window.scrollTo({ top: 0, behavior: "smooth" });
-        })
-        .withFailureHandler((err) => {
-          $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
-          $("#btnValidate").disabled = false;
-        })
-        .createOrder(payload);
-    } else {
-      handleStaticOrder(payload);
+    if (!isAppsScript) {
+      $("#result").textContent = "Connexion Google Sheets requise pour envoyer la commande.";
+      $("#btnValidate").disabled = false;
+      return;
     }
+
+    google.script.run
+      .withSuccessHandler((res) => {
+        $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
+        $("#donePdf").href = res.pdfUrl;
+        $("#btnValidate").disabled = false;
+        $("#result").textContent = "";
+        CART = [];
+        saveCart();
+        refreshCartBadge();
+        show("#sectionDone");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      })
+      .withFailureHandler((err) => {
+        $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
+        $("#btnValidate").disabled = false;
+      })
+      .createOrder(payload);
   });
 
   $("#doneBack").addEventListener("click", () => {
