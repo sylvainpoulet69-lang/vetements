@@ -6,6 +6,7 @@ const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
 const isAppsScript = typeof google !== "undefined" && google.script && google.script.run;
+const APPS_SCRIPT_DEPLOY = (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
@@ -48,17 +49,32 @@ function colorToHex(n) {
 }
 
 async function loadCatalog() {
-  if (!isAppsScript) {
-    const list = $("#homeList");
-    list.innerHTML =
-      '<div class="card"><div class="card-body"><div class="card-title-wrap">Connexion Google Sheets requise. Ouvrez la boutique via le déploiement Apps Script pour charger le catalogue.</div></div></div>';
+  if (isAppsScript) {
+    google.script.run.withSuccessHandler((data) => {
+      CATALOG = data;
+      renderHome();
+    }).getCatalog();
     return;
   }
 
-  google.script.run.withSuccessHandler((data) => {
-    CATALOG = data;
+  const list = $("#homeList");
+  if (!APPS_SCRIPT_DEPLOY) {
+    list.innerHTML =
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">URL Apps Script manquante. Renseignez APPS_SCRIPT_DEPLOY dans app.js.</div></div></div>';
+    return;
+  }
+
+  try {
+    const res = await fetch(`${APPS_SCRIPT_DEPLOY}?api=catalog`, { method: "GET" });
+    if (!res.ok) throw new Error(res.statusText);
+    const data = await res.json();
+    CATALOG = data && data.ok !== false ? data : data.data || data;
     renderHome();
-  }).getCatalog();
+  } catch (err) {
+    console.error(err);
+    list.innerHTML =
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">Impossible de charger le catalogue via Apps Script.</div></div></div>';
+  }
 }
 
 /* -------- ACCUEIL -------- */
@@ -575,16 +591,46 @@ window.addEventListener("DOMContentLoaded", () => {
     $("#btnValidate").disabled = true;
     $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Création du récapitulatif…";
 
-    if (!isAppsScript) {
-      $("#result").textContent = "Connexion Google Sheets requise pour envoyer la commande.";
+    if (isAppsScript) {
+      google.script.run
+        .withSuccessHandler((res) => {
+          $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
+          $("#donePdf").href = res.pdfUrl;
+          $("#btnValidate").disabled = false;
+          $("#result").textContent = "";
+          CART = [];
+          saveCart();
+          refreshCartBadge();
+          show("#sectionDone");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        })
+        .withFailureHandler((err) => {
+          $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
+          $("#btnValidate").disabled = false;
+        })
+        .createOrder(payload);
+      return;
+    }
+
+    if (!APPS_SCRIPT_DEPLOY) {
+      $("#result").textContent = "URL Apps Script manquante côté front (APPS_SCRIPT_DEPLOY).";
       $("#btnValidate").disabled = false;
       return;
     }
 
-    google.script.run
-      .withSuccessHandler((res) => {
+    fetch(APPS_SCRIPT_DEPLOY, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ api: "createOrder", payload }),
+    })
+      .then((r) => {
+        if (!r.ok) throw new Error(r.statusText);
+        return r.json();
+      })
+      .then((res) => {
+        if (res.ok === false) throw new Error(res.error || "Erreur inconnue");
         $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
-        $("#donePdf").href = res.pdfUrl;
+        $("#donePdf").href = res.pdfUrl || "#";
         $("#btnValidate").disabled = false;
         $("#result").textContent = "";
         CART = [];
@@ -593,11 +639,10 @@ window.addEventListener("DOMContentLoaded", () => {
         show("#sectionDone");
         window.scrollTo({ top: 0, behavior: "smooth" });
       })
-      .withFailureHandler((err) => {
+      .catch((err) => {
         $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
         $("#btnValidate").disabled = false;
-      })
-      .createOrder(payload);
+      });
   });
 
   $("#doneBack").addEventListener("click", () => {
