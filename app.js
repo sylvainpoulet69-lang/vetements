@@ -5,7 +5,11 @@ let CART = [];
 const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
+const params = new URLSearchParams(window.location.search);
+const preferLocal = params.get("src") !== "sheets";
+const forceSheets = params.get("src") === "sheets";
 const isAppsScript = typeof google !== "undefined" && google.script && google.script.run;
+const shouldUseSheets = !preferLocal && forceSheets && isAppsScript;
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
@@ -48,7 +52,7 @@ function colorToHex(n) {
 }
 
 async function loadCatalog() {
-  if (isAppsScript) {
+  if (shouldUseSheets) {
     google.script.run.withSuccessHandler((data) => {
       CATALOG = data;
       renderHome();
@@ -472,28 +476,27 @@ function renderCart() {
     row.className = "cart-line";
     row.innerHTML = `
       <img src="${imgOrFallback(l.image_url)}" alt="${l.title}">
-      <div style="flex:1">
-        <div style="font-weight:900">${l.title}</div>
-        <div class="muted">${l.size || "-"} · ${l.color || "-"} · ${l.gender || "-"} · Logo: ${
+      <div class="cart-info">
+        <div class="cart-title">${l.title}</div>
+        <div class="cart-meta muted">${l.size || "-"} · ${l.color || "-"} · ${l.gender || "-"} · Logo: ${
       l.logo || "-"
     }${l.flocage_text ? " · Flocage: " + l.flocage_text : ""}</div>
-        <div style="font-weight:900">${l.qty} × ${euros(l.price)}</div>
+        <div class="cart-qty">${l.qty} × ${euros(l.price)}</div>
       </div>
-      <button class="btn btn-outline" data-i="${i}">Supprimer</button>`;
+      <div class="cart-actions">
+        <div class="cart-total">${euros((Number(l.price) || 0) * (Number(l.qty) || 1))}</div>
+        <button class="btn btn-outline btn-remove" data-i="${i}">Supprimer</button>
+      </div>`;
     box.appendChild(row);
   });
-  box.addEventListener(
-    "click",
-    (e) => {
-      const b = e.target.closest("button[data-i]");
-      if (!b) return;
-      CART.splice(Number(b.dataset.i), 1);
-      saveCart();
-      renderCart();
-      refreshCartBadge();
-    },
-    { once: true },
-  );
+  box.onclick = (e) => {
+    const b = e.target.closest("button[data-i]");
+    if (!b) return;
+    CART.splice(Number(b.dataset.i), 1);
+    saveCart();
+    renderCart();
+    refreshCartBadge();
+  };
   $("#cartTotal").textContent = euros(cartTotal());
 }
 
