@@ -6,28 +6,25 @@ const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
 /* === CONFIG BACKEND APPS SCRIPT === */
-window.APPS_SCRIPT_DEPLOY = "https://script.google.com/macros/s/AKfycbyT0xk6dAiPoBIGf96VT52HC6FcWqG7M40Wv_Om3hLRy3ITQXZPs32l8Kb2rZp-MZl0Dw/exec";
-
+window.APPS_SCRIPT_DEPLOY =
+  "https://script.google.com/macros/s/AKfycbyT0xk6dAiPoBIGf96VT52HC6FcWqG7M40Wv_Om3hLRy3ITQXZPs32l8Kb2rZp-MZl0Dw/exec";
 
 /* === CONFIG MODE GITHUB PAGES === */
 // URL du catalogue statique généré par GitHub Actions (Sheets → data/catalog.json)
-window.CATALOG_URL = (window.CATALOG_URL || "./data/catalog.json");
+window.CATALOG_URL = window.CATALOG_URL || "./data/catalog.json";
 
-// Endpoint de commande (Cloudflare Worker recommandé) – ex: https://xxx.workers.dev/api/order
-window.ORDER_API_URL = (window.ORDER_API_URL || "");
+// ✅ Endpoint de commande (Cloudflare Worker) – BASE URL (sans /api/order)
+window.ORDER_API_URL =
+  window.ORDER_API_URL || "https://training-addict-orders.sylvainpoulet69.workers.dev";
+
 /* === DÉTECTION ENVIRONNEMENT === */
 const isAppsScript =
-  typeof google !== "undefined" &&
-  google.script &&
-  google.script.run;
+  typeof google !== "undefined" && google.script && google.script.run;
 
-const APPS_SCRIPT_DEPLOY =
-  (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
+const APPS_SCRIPT_DEPLOY = (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
 
 // (Optionnel) Proxy CORS (ex: Cloudflare Worker) pour que POST fonctionne sur GitHub Pages
-const APPS_SCRIPT_PROXY =
-  (window.APPS_SCRIPT_PROXY || "").replace(/\/$/, "");
-
+const APPS_SCRIPT_PROXY = (window.APPS_SCRIPT_PROXY || "").replace(/\/$/, "");
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
@@ -54,7 +51,9 @@ function saveCart() {
   localStorage.setItem("cart", JSON.stringify(CART));
 }
 function imgOrFallback(u) {
-  return u && String(u).trim() ? u : "https://picsum.photos/seed/acacias/1600/1200";
+  return u && String(u).trim()
+    ? u
+    : "https://picsum.photos/seed/acacias/1600/1200";
 }
 function colorToHex(n) {
   const m = {
@@ -75,7 +74,11 @@ function getJsonp(url) {
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
 
     window[cb] = (data) => {
-      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      try {
+        delete window[cb];
+      } catch (e) {
+        window[cb] = undefined;
+      }
       script.remove();
       resolve(data);
     };
@@ -84,7 +87,11 @@ function getJsonp(url) {
     script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb;
 
     script.onerror = () => {
-      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      try {
+        delete window[cb];
+      } catch (e) {
+        window[cb] = undefined;
+      }
       script.remove();
       reject(new Error("JSONP load failed"));
     };
@@ -96,10 +103,12 @@ function getJsonp(url) {
 async function loadCatalog() {
   // 1) Si l'app tourne DANS Apps Script, on garde la voie directe (stable)
   if (isAppsScript) {
-    google.script.run.withSuccessHandler((data) => {
-      CATALOG = data;
-      renderHome();
-    }).getCatalog();
+    google.script.run
+      .withSuccessHandler((data) => {
+        CATALOG = data;
+        renderHome();
+      })
+      .getCatalog();
     return;
   }
 
@@ -141,7 +150,9 @@ function loadCatalog_AppsScriptFallback(list) {
   try {
     // Si tu définis window.APPS_SCRIPT_PROXY (proxy CORS), on peut utiliser fetch en JSON (GET/POST).
     if (APPS_SCRIPT_PROXY) {
-      const res = fetch(APPS_SCRIPT_PROXY + "/?api=getCatalog", { cache: "no-store" });
+      const res = fetch(APPS_SCRIPT_PROXY + "/?api=getCatalog", {
+        cache: "no-store",
+      });
       res
         .then((r) => {
           if (!r.ok) throw new Error(r.statusText);
@@ -169,7 +180,12 @@ function renderHome() {
 
   const list = $("#homeList");
   list.innerHTML = "";
-  const items = CATALOG.products.filter((p) => p.active === true || String(p.active).toLowerCase() === "true").slice(0, 4);
+  const items = CATALOG.products
+    .filter(
+      (p) =>
+        p.active === true || String(p.active).toLowerCase() === "true"
+    )
+    .slice(0, 4);
 
   if (!items.length) {
     list.innerHTML =
@@ -184,10 +200,16 @@ function renderHome() {
       <img src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <div class="card-body">
         <div class="card-title-wrap">
-          <h3>${p.title}${String(p.type).toLowerCase() === "pack" ? " <span class='muted'>(Pack)</span>" : ""}</h3>
+          <h3>${p.title}${
+      String(p.type).toLowerCase() === "pack"
+        ? " <span class='muted'>(Pack)</span>"
+        : ""
+    }</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
-        <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
+        <button class="btn btn-ghost btn-small" data-id="${
+          p.product_id
+        }">Choisir</button>
       </div>`;
     list.appendChild(card);
   });
@@ -205,7 +227,9 @@ function renderProducts() {
   const list = $("#productList");
   list.innerHTML = "";
   const items = CATALOG.products.filter(
-    (p) => String(p.category) === String(CURRENT_CAT) && (p.active === true || String(p.active).toLowerCase() === "true"),
+    (p) =>
+      String(p.category) === String(CURRENT_CAT) &&
+      (p.active === true || String(p.active).toLowerCase() === "true")
   );
 
   items.forEach((p) => {
@@ -216,10 +240,16 @@ function renderProducts() {
       <img src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <div class="card-body">
         <div class="card-title-wrap">
-          <h3>${p.title}${String(p.type).toLowerCase() === "pack" ? " <span class='muted'>(Pack)</span>" : ""}</h3>
+          <h3>${p.title}${
+      String(p.type).toLowerCase() === "pack"
+        ? " <span class='muted'>(Pack)</span>"
+        : ""
+    }</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
-        <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
+        <button class="btn btn-ghost btn-small" data-id="${
+          p.product_id
+        }">Choisir</button>
       </div>`;
     list.appendChild(card);
   });
@@ -302,12 +332,20 @@ function openDetail(pid) {
 
   function renderSizes() {
     const base = sel.gender === "Enfant" ? KID_SIZES : ADULT_SIZES;
-    const cands = vars.filter((v) => (!sel.color || v.color === sel.color) && (!sel.gender || v.gender_scope === sel.gender));
+    const cands = vars.filter(
+      (v) =>
+        (!sel.color || v.color === sel.color) &&
+        (!sel.gender || v.gender_scope === sel.gender)
+    );
     const set = new Set(
       cands.flatMap((v) => {
-        const list = (v.size_list || "").toString().split(",").map((s) => s.trim()).filter(Boolean);
+        const list = (v.size_list || "")
+          .toString()
+          .split(",")
+          .map((s) => s.trim())
+          .filter(Boolean);
         return list.length ? list : base;
-      }),
+      })
     );
     const final = set.size ? Array.from(set) : base;
 
@@ -315,7 +353,9 @@ function openDetail(pid) {
     box.innerHTML = final.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
 
     if (sel.size) {
-      const match = Array.from(box.querySelectorAll(".pill")).find((b) => b.dataset.val === sel.size);
+      const match = Array.from(box.querySelectorAll(".pill")).find(
+        (b) => b.dataset.val === sel.size
+      );
       if (match) match.classList.add("active");
       else sel.size = null;
     }
@@ -402,7 +442,10 @@ function openDetail(pid) {
 
 /* -------- Pack -------- */
 function openPackDetail(p) {
-  const items = CATALOG.packItems.filter((x) => String(x.pack_id) === String(p.product_id));
+  const items = CATALOG.packItems.filter(
+    (x) => String(x.pack_id) === String(p.product_id)
+  );
+
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
       <button id="goHome" class="back">Accueil</button>
@@ -414,7 +457,9 @@ function openPackDetail(p) {
       <div class="price" style="margin-bottom:12px">${euros(p.price)}</div>
 
       <label>Genre</label>
-      <div class="pills" id="packGender">${["H", "F", "Unisexe", "Enfant"].map((g) => `<button class="pill" data-val="${g}">${g}</button>`).join("")}</div>
+      <div class="pills" id="packGender">${["H", "F", "Unisexe", "Enfant"]
+        .map((g) => `<button class="pill" data-val="${g}">${g}</button>`)
+        .join("")}</div>
 
       <label>Taille</label>
       <div class="pills sizes-grid" id="packSize"></div>
@@ -422,18 +467,18 @@ function openPackDetail(p) {
       <label>Couleur</label>
       <div class="swatches" id="packColor">
         ${(CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"])
-          .map(
-            (c) => `
+          .map((c) => `
           <div class="swatch" data-val="${c}">
             <div class="dot" style="background:${colorToHex(c)}"></div>
             <div class="name">${c}</div>
-          </div>`,
-          )
+          </div>`)
           .join("")}
       </div>
 
       <label>Logo (inclus)</label>
-      <div class="pills" id="packLogo">${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"]).map((l) => `<button class="pill" data-val="${l}">${l}</button>`).join("")}</div>
+      <div class="pills" id="packLogo">${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
+        .map((l) => `<button class="pill" data-val="${l}">${l}</button>`)
+        .join("")}</div>
 
       <label>Flocage (inclus)</label>
       <input id="packFloc" class="inp" placeholder="Texte (ex: NOM)">
@@ -451,7 +496,9 @@ function openPackDetail(p) {
     const box = $("#packSize");
     box.innerHTML = base.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
     if (sel.size) {
-      const match = Array.from(box.querySelectorAll(".pill")).find((b) => b.dataset.val === sel.size);
+      const match = Array.from(box.querySelectorAll(".pill")).find(
+        (b) => b.dataset.val === sel.size
+      );
       if (match) match.classList.add("active");
       else sel.size = null;
     }
@@ -524,7 +571,9 @@ function openPackDetail(p) {
       is_pack: true,
     });
     items.forEach((it) => {
-      const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(it.product_id));
+      const prod = CATALOG.products.find(
+        (pr) => String(pr.product_id) === String(it.product_id)
+      );
       CART.push({
         product_id: it.product_id,
         title: it.title,
@@ -622,11 +671,16 @@ window.addEventListener("DOMContentLoaded", () => {
       alert("Nom et e-mail sont obligatoires.");
       return;
     }
-    const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
-    $("#btnValidate").disabled = true;
-    $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Envoi de la commande…";
 
+    $("#btnValidate").disabled = true;
+    $("#result").textContent = isAppsScript
+      ? "Génération du PDF…"
+      : "Envoi de la commande…";
+
+    // ---- APPS SCRIPT (inchangé) ----
     if (isAppsScript) {
+      const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
+
       google.script.run
         .withSuccessHandler((res) => {
           $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
@@ -640,42 +694,79 @@ window.addEventListener("DOMContentLoaded", () => {
           window.scrollTo({ top: 0, behavior: "smooth" });
         })
         .withFailureHandler((err) => {
-          $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
+          $("#result").textContent =
+            "Erreur : " + (err && err.message ? err.message : err);
           $("#btnValidate").disabled = false;
         })
         .createOrder(payload);
+
       return;
     }
 
-    // Priorité : endpoint Worker (recommandé) pour écrire dans Google Sheets sans souci CORS
-    const orderEndpoint =
+    // ---- GITHUB PAGES -> CLOUDFARE WORKER ----
+    const base =
       (window.ORDER_API_URL || "").replace(/\/$/, "") ||
       (APPS_SCRIPT_PROXY || APPS_SCRIPT_DEPLOY);
 
-    if (!orderEndpoint) {
+    if (!base) {
       $("#result").textContent =
         "Aucun endpoint de commande configuré. Renseigne window.ORDER_API_URL (Cloudflare Worker) ou APPS_SCRIPT_DEPLOY.";
       $("#btnValidate").disabled = false;
       return;
     }
 
-    fetch(orderEndpoint, {
+    // Worker expects /api/order
+    const orderUrl = base.includes("workers.dev") ? base + "/api/order" : base;
+
+    // ✅ Build payload for your Worker: { order, items }
+    const order = {
+      customer_name: name,
+      phone: phone || "",
+      total: cartTotal(),
+      status: "new",
+      // optionnel:
+      // date: new Date().toISOString(),
+      // pdf_url: ""
+    };
+
+    const items = CART.map((it, idx) => ({
+      line: idx + 1,
+      product_id: it.product_id || "",
+      title: it.title || "",
+      color: it.color || "",
+      gender: it.gender || "",
+      size: it.size || "",
+      qty: it.qty || 1,
+      unit_price: it.price || 0,
+      logo: it.logo || "",
+      flocage_text: it.flocage_text || "",
+      image_url: it.image_url || "",
+    }));
+
+    fetch(orderUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ payload }),
+      body: JSON.stringify({ order, items }),
     })
       .then((r) => {
-        if (!r.ok) return r.text().then((t) => { throw new Error(t || r.statusText); });
+        if (!r.ok)
+          return r.text().then((t) => {
+            throw new Error(t || r.statusText);
+          });
         return r.json();
       })
       .then((res) => {
         if (res.ok === false) throw new Error(res.error || "Erreur inconnue");
+
         $("#doneMsg").textContent = `Commande n° ${res.order_id || "?"}. L'organisation a bien reçu votre commande.`;
-        $("#donePdf").href = res.pdfUrl || res.pdf_url || "#";
+        $("#donePdf").href = "#"; // pas de PDF pour l'instant
+
         $("#btnValidate").disabled = false;
         $("#result").textContent = "";
+
         // reset
         CART = [];
+        saveCart();
         refreshCartBadge();
         renderCart();
         show("#sectionDone");
@@ -683,8 +774,7 @@ window.addEventListener("DOMContentLoaded", () => {
       })
       .catch((err) => {
         $("#result").textContent =
-          "Erreur : " + (err && err.message ? err.message : err) +
-          (window.ORDER_API_URL ? "" : " (astuce: configure window.ORDER_API_URL via Cloudflare Worker)");
+          "Erreur : " + (err && err.message ? err.message : err);
         $("#btnValidate").disabled = false;
       });
   });
