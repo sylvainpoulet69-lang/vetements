@@ -17,6 +17,10 @@ const isAppsScript =
 const APPS_SCRIPT_DEPLOY =
   (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
 
+// (Optionnel) Proxy CORS (ex: Cloudflare Worker) pour que POST fonctionne sur GitHub Pages
+const APPS_SCRIPT_PROXY =
+  (window.APPS_SCRIPT_PROXY || "").replace(/\/$/, "");
+
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
@@ -58,6 +62,7 @@ function colorToHex(n) {
   return m[n] || "#CBD5E1";
 }
 
+/* ✅ JSONP pour contourner CORS sur GitHub Pages (catalogue) */
 function getJsonp(url) {
   return new Promise((resolve, reject) => {
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
@@ -82,41 +87,35 @@ function getJsonp(url) {
 }
 
 async function loadCatalog() {
-
-  /* === MODE APPS SCRIPT (HtmlService) === */
   if (isAppsScript) {
-    google.script.run
-      .withSuccessHandler((data) => {
-        CATALOG = data;
-        renderHome();
-      })
-      .withFailureHandler((err) => {
-        console.error(err);
-        $("#homeList").innerHTML =
-          '<div class="card"><div class="card-body"><div class="card-title-wrap">Erreur Apps Script (catalogue).</div></div></div>';
-      })
-      .getCatalog();
+    google.script.run.withSuccessHandler((data) => {
+      CATALOG = data;
+      renderHome();
+    }).getCatalog();
     return;
   }
 
-  /* === MODE GITHUB / WEB === */
   const list = $("#homeList");
-
   if (!APPS_SCRIPT_DEPLOY) {
     list.innerHTML =
-      '<div class="card"><div class="card-body"><div class="card-title-wrap">URL Apps Script manquante. Renseignez APPS_SCRIPT_DEPLOY.</div></div></div>';
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">URL Apps Script manquante. Renseignez APPS_SCRIPT_DEPLOY dans app.js.</div></div></div>';
     return;
   }
 
   try {
-    const data = await getJsonp(`${APPS_SCRIPT_DEPLOY}?api=catalog`);
-
-    CATALOG = data && data.ok !== false
-      ? data
-      : (data && data.data ? data.data : data);
-
-    renderHome();
-
+    // Si tu définis window.APPS_SCRIPT_PROXY (proxy CORS), on peut utiliser fetch en JSON (GET/POST).
+    if (APPS_SCRIPT_PROXY) {
+      const res = await fetch(`${APPS_SCRIPT_PROXY}?api=catalog`, { method: "GET" });
+      if (!res.ok) throw new Error(res.statusText);
+      const data = await res.json();
+      CATALOG = data && data.ok !== false ? data : data.data || data;
+      renderHome();
+    } else {
+      // Sinon: JSONP (contourne CORS) pour charger le catalogue depuis GitHub Pages / iPhone.
+      const data = await getJsonp(`${APPS_SCRIPT_DEPLOY}?api=catalog`);
+      CATALOG = data && data.ok !== false ? data : data.data || data;
+      renderHome();
+    }
   } catch (err) {
     console.error(err);
     list.innerHTML =
@@ -551,54 +550,6 @@ function renderCart() {
   $("#cartTotal").textContent = euros(cartTotal());
 }
 
-function buildOrderHtml(orderId, payload) {
-  const o = {
-    customer: payload.customer,
-    items: payload.items,
-    total: payload.total,
-  };
-  const rows = (o.items || [])
-    .map((it) => {
-      const pu = Number(it.price) || 0;
-      const q = Number(it.qty) || 1;
-      const lt = pu * q;
-      return `<tr>
-        <td><img style="width:52px;height:52px;object-fit:cover;border-radius:6px" src="${imgOrFallback(it.image_url)}"></td>
-        <td>${it.title || ""}</td>
-        <td>${it.color || ""}</td>
-        <td>${it.size || ""}</td>
-        <td>${it.gender || ""}</td>
-        <td>${it.logo || ""}</td>
-        <td>${it.flocage_text || ""}</td>
-        <td style="text-align:right">${q}</td>
-        <td style="text-align:right">${pu.toFixed(2).replace(".", ",")}€</td>
-        <td style="text-align:right">${lt.toFixed(2).replace(".", ",")}€</td>
-      </tr>`;
-    })
-    .join("");
-  const total = Number(o.total) || o.items.reduce((s, it) => s + (Number(it.price) || 0) * (Number(it.qty) || 1), 0);
-  return `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${orderId}</title>
-  <style>
-    body{font-family:Arial,sans-serif;font-size:12px;color:#111;margin:24px}
-    table{width:100%;border-collapse:collapse;margin-top:10px}
-    th,td{border:1px solid #ccc;padding:6px;vertical-align:middle}
-    th{background:#f5f5f5;text-align:left;font-weight:700}
-    h1{margin:0 0 8px 0;font-size:18px}
-    .hdr{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:8px}
-  </style></head><body>
-  <div class="hdr"><div><h1>Les Acacias — Bon de commande</h1><div>${orderId}</div></div>
-  <div>${new Date().toLocaleString("fr-FR")}</div></div>
-  <div style="margin-top:8px"><b>Client :</b> ${o.customer.name}${o.customer.phone ? " · Tél. : " + o.customer.phone : ""}</div>
-  <table><thead><tr>
-    <th>Photo</th><th>Article</th><th>Couleur</th><th>Taille</th><th>Genre</th><th>Logo</th><th>Flocage</th>
-    <th style="text-align:right">Qté</th><th style="text-align:right">PU</th><th style="text-align:right">Total</th>
-  </tr></thead><tbody>${rows}</tbody></table>
-  <div style="margin-top:10px;text-align:right;font-weight:800;font-size:14px">Total : ${total
-    .toFixed(2)
-    .replace(".", ",")}€</div>
-  </body></html>`;
-}
-
 /* -------- Bootstrap -------- */
 window.addEventListener("DOMContentLoaded", () => {
   loadCart();
@@ -636,7 +587,7 @@ window.addEventListener("DOMContentLoaded", () => {
     }
     const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
     $("#btnValidate").disabled = true;
-    $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Création du récapitulatif…";
+    $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Envoi de la commande…";
 
     if (isAppsScript) {
       google.script.run
@@ -665,7 +616,7 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    fetch(APPS_SCRIPT_DEPLOY, {
+    fetch((APPS_SCRIPT_PROXY || APPS_SCRIPT_DEPLOY), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ api: "createOrder", payload }),
@@ -687,7 +638,10 @@ window.addEventListener("DOMContentLoaded", () => {
         window.scrollTo({ top: 0, behavior: "smooth" });
       })
       .catch((err) => {
-        $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
+        // Si tu es sur GitHub Pages sans proxy, c'est ici que CORS peut bloquer le POST.
+        $("#result").textContent =
+          "Erreur : " + (err && err.message ? err.message : err) +
+          (APPS_SCRIPT_PROXY ? "" : " (si tu es sur GitHub Pages, mets un proxy CORS dans window.APPS_SCRIPT_PROXY)");
         $("#btnValidate").disabled = false;
       });
   });
