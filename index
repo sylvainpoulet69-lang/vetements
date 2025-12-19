@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Boutique — Les Acacias</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <?!= include('styles'); ?>
+</head>
+
+<body>
+  <header class="app-header">
+  <div class="brand">
+    <img
+      src="https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/logo.png"
+      alt="Logo Les Acacias"
+      class="brand-logo">
+    <span>Boutique — Les Acacias</span>
+  </div>
+
+  <button id="btnCart" class="btn btn-outline">
+    Panier <span id="cartCount" class="badge">0</span>
+  </button>
+</header>
+
+  <div class="container">
+
+    <!-- ACCUEIL -->
+    <section id="sectionCategories" class="section active">
+      <div class="hero hero-tall">
+        <div class="hero-content">
+          <h1 id="heroTitle">Choisis tes vêtements club</h1>
+          <p id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</p>
+          <div class="cats-row">
+            <button class="chip cat" data-cat="Vêtements">👕 Vêtements</button>
+            <button class="chip cat" data-cat="Accessoires">🧢 Accessoires</button>
+          </div>
+        </div>
+      </div>
+      <h2 style="margin:18px 0 8px">Produits</h2>
+      <div id="homeList" class="grid"></div>
+    </section>
+
+    <!-- PRODUITS (liste) -->
+    <section id="sectionProducts" class="section">
+      <button id="backHome" class="back">Accueil</button>
+      <h2 id="prodTitle">Produits</h2>
+      <div id="productList" class="grid"></div>
+    </section>
+
+    <!-- DÉTAIL PRODUIT -->
+    <section id="sectionDetail" class="section">
+      <div id="detail"></div>
+    </section>
+
+    <!-- PANIER -->
+    <section id="sectionCart" class="section">
+      <button id="backHome2" class="back">Accueil</button>
+      <h2>🛒 Votre panier</h2>
+      <div id="cartLines"></div>
+      <div class="checkout">
+        <div class="total">Total : <span id="cartTotal">0€</span></div>
+
+        <label>Nom du client *</label>
+        <input id="custName" class="inp" placeholder="Nom prénom" required>
+
+        <label>Email *</label>
+        <input id="custEmail" type="email" class="inp" placeholder="exemple@mail.com" required>
+
+        <label>Téléphone (optionnel)</label>
+        <input id="custPhone" class="inp" placeholder="06...">
+
+        <button id="btnValidate" class="btn btn-primary">Valider la commande</button>
+        <div id="result" class="result"></div>
+      </div>
+    </section>
+
+    <!-- CONFIRMATION -->
+    <section id="sectionDone" class="section">
+      <div class="card" style="padding:20px;text-align:center;">
+        <h2>✅ Commande envoyée</h2>
+        <p id="doneMsg">Merci pour votre commande !</p>
+        <p><a id="donePdf" href="#" target="_blank" class="btn btn-outline">📄 Ouvrir le PDF</a></p>
+        <button id="doneBack" class="btn btn-primary">Retour à l'accueil</button>
+      </div>
+    </section>
+
+  </div>
+
+  <?!= include('ui'); ?>
+</body>
+</html>
