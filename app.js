@@ -5,8 +5,18 @@ let CART = [];
 const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
-const isAppsScript = typeof google !== "undefined" && google.script && google.script.run;
-const APPS_SCRIPT_DEPLOY = (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
+/* === CONFIG BACKEND APPS SCRIPT === */
+window.APPS_SCRIPT_DEPLOY = "https://script.google.com/macros/s/AKfycbyT0xk6dAiPoBIGf96VT52HC6FcWqG7M40Wv_Om3hLRy3ITQXZPs32l8Kb2rZp-MZl0Dw/exec";
+
+/* === DÉTECTION ENVIRONNEMENT === */
+const isAppsScript =
+  typeof google !== "undefined" &&
+  google.script &&
+  google.script.run;
+
+const APPS_SCRIPT_DEPLOY =
+  (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
+
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
