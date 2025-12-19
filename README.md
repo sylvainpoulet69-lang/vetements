@@ -27,6 +27,14 @@ L'onglet `Orders` / `OrderItems` est créé automatiquement lors d'une commande.
 2. Ajoutez les lignes correspondantes dans `packItems` (un item par article inclus).
 3. Ajoutez au besoin des `variants` si les tailles/couleurs diffèrent des valeurs par défaut.
 
+## Déployer côté Google Apps Script
+
+1. Dans `code.gs`, renseignez `SHEET_ID` avec votre fichier Google Sheets.
+2. Déployez le projet en application web (`Publier` > `Déployer en tant qu'application web`). Conservez l'URL `https://script.google.com/macros/s/.../exec`.
+3. Sur l'hébergement statique (ex : GitHub Pages), définissez la constante `APPS_SCRIPT_DEPLOY` dans `app.js` avec cette URL. Le front fera alors un `fetch` CORS vers Apps Script pour charger le catalogue et créer les commandes.
+
+> Si `APPS_SCRIPT_DEPLOY` n'est pas renseigné, le front affichera un message expliquant que l'URL manque.
+
 ## Tester rapidement l'interface
 
 1. Dans le dossier du projet, lancez `python3 -m http.server 8000`.

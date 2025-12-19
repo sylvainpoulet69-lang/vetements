@@ -9,11 +9,41 @@ const SHEET_ID ="11c43GO9RCULZ22CiajYXVPzvjwynsftCm5p3foTmd0s";
 const EMAIL_FOURNISSEUR = "sylvainpoulet@free.fr"; // ← à personnaliser
 const TZ = "Europe/Paris";
 
-/*** Rendu UI ***/
-function doGet() {
+/*** Utilitaires ***/
+function asJson(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}
+function withCors(output) {
+  return output
+    .setHeader("Access-Control-Allow-Origin", "*")
+    .setHeader("Access-Control-Allow-Headers", "Content-Type")
+    .setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+}
+
+/*** Rendu UI / API ***/
+function doGet(e) {
+  if (e && e.parameter && e.parameter.api === "catalog") {
+    return withCors(asJson(getCatalog()));
+  }
+
   return HtmlService.createTemplateFromFile("index").evaluate()
     .setTitle("Boutique Les Acacias")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
+}
+function doPost(e) {
+  try {
+    const body = e && e.postData && e.postData.contents ? JSON.parse(e.postData.contents) : {};
+    if (body && body.api === "createOrder") {
+      const res = createOrder(body.payload);
+      return withCors(asJson(res));
+    }
+    return withCors(asJson({ ok: false, error: "Action inconnue" }));
+  } catch (err) {
+    return withCors(asJson({ ok: false, error: err && err.message ? err.message : String(err) }));
+  }
+}
+function doOptions() {
+  return withCors(ContentService.createTextOutput(""));
 }
 function include(filename) { return HtmlService.createHtmlOutputFromFile(filename).getContent(); }
 
