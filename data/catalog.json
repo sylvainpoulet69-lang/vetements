@@ -1,6 +1,386 @@
 {
-  "products": [],
-  "variants": [],
-  "packItems": [],
+  "products": [
+    {
+      "product_id": "T001",
+      "title": "T-shirt Club Classique",
+      "category": "Vêtements",
+      "price": 20,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "P001",
+      "title": "Polo Club",
+      "category": "Vêtements",
+      "price": 28,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "C001",
+      "title": "Casquette",
+      "category": "Accessoires",
+      "price": 15,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-noir-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "PKS",
+      "title": "Pack Small (T-shirt + Short)",
+      "category": "Vêtements",
+      "price": 32,
+      "image_url": "https://via.placeholder.com/600x400?text=Pack+Small",
+      "type": "pack",
+      "active": true
+    },
+    {
+      "product_id": "T001",
+      "title": "T-shirt Club Classique",
+      "category": "Vêtements",
+      "price": 20,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "P001",
+      "title": "Polo Club",
+      "category": "Vêtements",
+      "price": 28,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "SWEAT01",
+      "title": "Sweat Capuche Club",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-blanc-vespin-2048x1609.png",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "SH01",
+      "title": "Short Club",
+      "category": "Vêtements",
+      "price": 22,
+      "image_url": "https://via.placeholder.com/600x400?text=Short",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "C001",
+      "title": "Casquette",
+      "category": "Accessoires",
+      "price": 15,
+      "image_url": "https://via.placeholder.com/600x400?text=Casquette",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "SAC01",
+      "title": "Sac à cordons",
+      "category": "Accessoires",
+      "price": 12,
+      "image_url": "https://via.placeholder.com/600x400?text=Sac",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "PKS",
+      "title": "Pack Small (T-shirt + Short)",
+      "category": "Vêtements",
+      "price": 32,
+      "image_url": "https://via.placeholder.com/600x400?text=Pack+Small",
+      "type": "pack",
+      "active": true
+    },
+    {
+      "product_id": "PKM",
+      "title": "Pack Medium (Sweat + T-shirt)",
+      "category": "Vêtements",
+      "price": 52,
+      "image_url": "https://via.placeholder.com/600x400?text=Pack+Medium",
+      "type": "pack",
+      "active": true
+    },
+    {
+      "product_id": "PKF",
+      "title": "Pack Full (Sweat + T-shirt + Short + Casquette)",
+      "category": "Vêtements",
+      "price": 65,
+      "image_url": "https://via.placeholder.com/600x400?text=Pack+Full",
+      "type": "pack",
+      "active": true
+    }
+  ],
+  "variants": [
+    {
+      "variant_id": "V1",
+      "product_id": "T001",
+      "color": "Bleu",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V2",
+      "product_id": "T001",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V3",
+      "product_id": "T001",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V4",
+      "product_id": "P001",
+      "color": "Bleu",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V5",
+      "product_id": "P001",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V6",
+      "product_id": "C001",
+      "color": "Bleu",
+      "gender_scope": "Unisexe",
+      "size_list": "",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V7",
+      "product_id": "C001",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_T001_H_BLEU",
+      "product_id": "T001",
+      "color": "Bleu",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_T001_F_BLANC",
+      "product_id": "T001",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_T001_U_NOIR",
+      "product_id": "T001",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_T001_E_BLEU",
+      "product_id": "T001",
+      "color": "Bleu",
+      "gender_scope": "Enfant",
+      "size_list": "4,6,8,10,12,14",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_P001_H_BLEU",
+      "product_id": "P001",
+      "color": "Bleu",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_P001_F_BLANC",
+      "product_id": "P001",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SW01_U_BLEU",
+      "product_id": "SWEAT01",
+      "color": "Bleu",
+      "gender_scope": "Unisexe",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SW01_U_NOIR",
+      "product_id": "SWEAT01",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SH01_H_BLEU",
+      "product_id": "SH01",
+      "color": "Bleu",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SH01_F_NOIR",
+      "product_id": "SH01",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_C001_U_BLEU",
+      "product_id": "C001",
+      "color": "Bleu",
+      "gender_scope": "Unisexe",
+      "size_list": "",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_C001_U_NOIR",
+      "product_id": "C001",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SAC01_U_NOIR",
+      "product_id": "SAC01",
+      "color": "Noir",
+      "gender_scope": "Unisexe",
+      "size_list": "",
+      "image_url": ""
+    }
+  ],
+  "packItems": [
+    {
+      "pack_id": "PKS",
+      "product_id": "T001",
+      "title": "T-shirt",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKS",
+      "product_id": "SH01",
+      "title": "Short",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKS",
+      "product_id": "T001",
+      "title": "T-shirt",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKS",
+      "product_id": "SH01",
+      "title": "Short",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKM",
+      "product_id": "SWEAT01",
+      "title": "Sweat",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKM",
+      "product_id": "T001",
+      "title": "T-shirt",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKF",
+      "product_id": "SWEAT01",
+      "title": "Sweat",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKF",
+      "product_id": "T001",
+      "title": "T-shirt",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKF",
+      "product_id": "SH01",
+      "title": "Short",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    },
+    {
+      "pack_id": "PKF",
+      "product_id": "C001",
+      "title": "Casquette",
+      "qty": 1,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
+      "extra_price": 0
+    }
+  ],
   "options": {}
 }
