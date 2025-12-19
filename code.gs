@@ -1,174 +1,148 @@
 /****************************************************
- * Boutique Les Acacias — Apps Script côté serveur
- * - Lecture du catalogue (Produits / Variantes / Packs)
- * - Création PDF commande + e-mail au fournisseur
+ * Boutique Les Acacias — Apps Script (BACKEND)
+ * - UI si accès direct
+ * - API catalogue (GET ?api=catalog)
+ * - API commande (POST api=createOrder)
  ****************************************************/
 
 /*** CONFIG ***/
-const SHEET_ID ="11c43GO9RCULZ22CiajYXVPzvjwynsftCm5p3foTmd0s";
-const EMAIL_FOURNISSEUR = "sylvainpoulet@free.fr"; // ← à personnaliser
+const SHEET_ID = "11c43GO9RCULZ22CiajYXVPzvjwynsftCm5p3foTmd0s";
+const EMAIL_FOURNISSEUR = "sylvainpoulet@free.fr";
 const TZ = "Europe/Paris";
 
-/*** Utilitaires ***/
-function asJson(obj) {
-  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
-}
-function withCors(output) {
-  return output
-    .setHeader("Access-Control-Allow-Origin", "*")
-    .setHeader("Access-Control-Allow-Headers", "Content-Type")
-    .setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+/*** UTILS ***/
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
 }
 
-/*** Rendu UI / API ***/
+function json_(obj) {
+  return ContentService
+    .createTextOutput(JSON.stringify(obj))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
+function parseBody_(e) {
+  const raw = e && e.postData && e.postData.contents;
+  if (!raw) return null;
+  return JSON.parse(raw);
+}
+
+/*** ROUTER GET ***/
 function doGet(e) {
-  if (e && e.parameter && e.parameter.api === "catalog") {
-    return withCors(asJson(getCatalog()));
+  const api = e && e.parameter && e.parameter.api ? e.parameter.api : "";
+
+  // ===== API =====
+  if (api === "catalog") {
+    try {
+      return json_(getCatalog_());
+    } catch (err) {
+      return json_({ ok:false, error:String(err) });
+    }
   }
 
-  return HtmlService.createTemplateFromFile("index").evaluate()
+  if (api === "ping") {
+    return json_({ ok:true, message:"pong" });
+  }
+
+  // ===== UI =====
+  return HtmlService.createTemplateFromFile("index")
+    .evaluate()
     .setTitle("Boutique Les Acacias")
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }
+
+/*** ROUTER POST ***/
 function doPost(e) {
   try {
-    const body = e && e.postData && e.postData.contents ? JSON.parse(e.postData.contents) : {};
-    if (body && body.api === "createOrder") {
-      const res = createOrder(body.payload);
-      return withCors(asJson(res));
+    const data = parseBody_(e);
+    if (!data || !data.api) {
+      return json_({ ok:false, error:"POST invalide" });
     }
-    return withCors(asJson({ ok: false, error: "Action inconnue" }));
+
+    if (data.api === "createOrder") {
+      return json_(createOrder_(data.payload));
+    }
+
+    return json_({ ok:false, error:"API inconnue" });
+
   } catch (err) {
-    return withCors(asJson({ ok: false, error: err && err.message ? err.message : String(err) }));
+    return json_({ ok:false, error:String(err) });
   }
 }
-function doOptions() {
-  return withCors(ContentService.createTextOutput(""));
-}
-function include(filename) { return HtmlService.createHtmlOutputFromFile(filename).getContent(); }
 
-/*** Lecture du catalogue ***/
-function getCatalog() {
+/*** CATALOGUE ***/
+function getCatalog_() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
-  const products = sheetToObjects(ss.getSheetByName("Products"));
-  const variants = sheetToObjects(ss.getSheetByName("Variants"));
-  const packItems = sheetToObjects(ss.getSheetByName("PackItems"));
-  const options = {
-    colors_default:["Bleu","Blanc","Noir","Rose"],
-    logo:["Tennis","Padel","Aucun"]
+
+  return {
+    products:  sheetToObjects_(ss.getSheetByName("Products")),
+    variants:  sheetToObjects_(ss.getSheetByName("Variants")),
+    packItems: sheetToObjects_(ss.getSheetByName("PackItems")),
+    options: {
+      colors_default: ["Bleu","Blanc","Noir","Rose"],
+      logo: ["Tennis","Padel","Aucun"]
+    }
   };
-  return { products, variants, packItems, options };
 }
 
-function sheetToObjects(sheet){
-  if(!sheet) return [];
-  const [header, ...rows] = sheet.getDataRange().getValues().filter(r=>r.join("")!="");
-  return rows.map(r=>{
-    let o={}; header.forEach((h,i)=>o[h]=r[i]); return o;
+function sheetToObjects_(sheet) {
+  if (!sheet) return [];
+  const rows = sheet.getDataRange().getValues().filter(r => r.join("") !== "");
+  if (rows.length < 2) return [];
+  const headers = rows.shift();
+  return rows.map(r => {
+    const o = {};
+    headers.forEach((h,i)=>o[h]=r[i]);
+    return o;
   });
 }
 
-/*** Création PDF + e-mail ***/
-function createOrder(payload) {
-  try {
-    // 1) Sécurité / nettoyage
-    if (!payload || !payload.items || !payload.items.length) {
-      throw new Error("Panier vide");
-    }
-    const customer = payload.customer || {};
-    if (!customer.name || !customer.email) {
-      throw new Error("Nom et e-mail obligatoires");
-    }
-
-    // 2) Build order object attendu par pdf.html
-    const order_id = "CMD" + Utilities.getUuid().slice(0, 8).toUpperCase();
-    const order = {
-      customer: {
-        name:  String(customer.name || "").trim(),
-        email: String(customer.email || "").trim(),
-        phone: String(customer.phone || "").trim()
-      },
-      items: payload.items.map(it => ({
-        title: it.title,
-        color: it.color,
-        size: it.size,
-        gender: it.gender,
-        logo: it.logo,
-        flocage_text: it.flocage_text,
-        qty: Number(it.qty) || 1,
-        price: Number(it.price) || 0,
-        image_url: it.image_url || ""
-      })),
-      total: Number(payload.total) || 0
-    };
-
-    // 3) Enregistrer (optionnel) dans Sheets
-    const ss = SpreadsheetApp.getActive();
-    const ordersSh = ss.getSheetByName("Orders") || ss.insertSheet("Orders");
-    if (ordersSh.getLastRow() === 0) {
-      ordersSh.appendRow(["order_id","date","client","email","phone","total"]);
-    }
-    ordersSh.appendRow([
-      order_id,
-      Utilities.formatDate(new Date(), Session.getScriptTimeZone(), "yyyy-MM-dd HH:mm"),
-      order.customer.name,
-      order.customer.email,
-      order.customer.phone,
-      order.total
-    ]);
-
-    const itemsSh = ss.getSheetByName("OrderItems") || ss.insertSheet("OrderItems");
-    if (itemsSh.getLastRow() === 0) {
-      itemsSh.appendRow(["order_id","title","color","size","gender","logo","flocage","qty","price"]);
-    }
-    order.items.forEach(it => {
-      itemsSh.appendRow([order_id, it.title, it.color, it.size, it.gender, it.logo, it.flocage_text, it.qty, it.price]);
-    });
-
-    // 4) Générer le PDF (clé : passer 'order' et 'order_id' au template)
-    const t = HtmlService.createTemplateFromFile("pdf");
-    t.order = order;              // <<< important
-    t.order_id = order_id;        // <<< important
-    const blobPdf = t.evaluate().getBlob().getAs("application/pdf");
-    blobPdf.setName(order_id + ".pdf");
-    const file = DriveApp.createFile(blobPdf);
-
-    // 5) Email à l’organisation (et pas forcément au client)
-    const to = Session.getActiveUser().getEmail(); // mets ton mail si tu veux le forcer
-    const subject = "Commande " + order_id;
-    const body = "Commande " + order_id + " — total " + order.total.toFixed(2) + "€\n\nPDF : " + file.getUrl();
-    GmailApp.sendEmail(to, subject, body, {attachments:[file]});
-
-    // 6) Réponse à l’UI
-    return { ok:true, order_id: order_id, pdfUrl: file.getUrl() };
-
-  } catch (err) {
-    throw new Error(err && err.message ? err.message : String(err));
+/*** COMMANDE / PDF / EMAIL ***/
+function createOrder_(payload) {
+  if (!payload || !payload.items || !payload.items.length) {
+    throw new Error("Panier vide");
   }
-}
 
-/*** Template PDF (simple) ***/
-function createPdfTemplate() {
-  const html = `
-  <html><head><meta charset="UTF-8"><style>
-  body{font-family:Arial,Helvetica,sans-serif;font-size:12pt}
-  table{border-collapse:collapse;width:100%}
-  th,td{border:1px solid #ccc;padding:6px;text-align:left}
-  h1{font-size:16pt;margin:0 0 10px 0}
-  </style></head><body>
-  <h1>Les Acacias — Bon de commande</h1>
-  <p><b>Client :</b> <?= data.customer.name ?> — <?= data.customer.phone ?></p>
-  <table>
-    <tr><th>Article</th><th>Couleur</th><th>Taille</th><th>Genre</th><th>Logo</th><th>Flocage</th><th>Qté</th><th>PU</th></tr>
-    <? data.items.forEach(it => { ?>
-      <tr>
-        <td><?= it.title ?></td><td><?= it.color ?></td><td><?= it.size ?></td>
-        <td><?= it.gender ?></td><td><?= it.logo ?></td><td><?= it.flocage_text ?></td>
-        <td><?= it.qty ?></td><td><?= it.price ?>€</td>
-      </tr>
-    <? }); ?>
-  </table>
-  <p><b>Total :</b> <?= data.total ?>€</p>
-  </body></html>`;
-  return HtmlService.createHtmlOutput(html).getContent();
+  const c = payload.customer || {};
+  if (!c.name || !c.email) {
+    throw new Error("Nom et email requis");
+  }
+
+  const order_id = "CMD" + Utilities.getUuid().slice(0,8).toUpperCase();
+
+  const order = {
+    customer: c,
+    items: payload.items,
+    total: payload.total || 0
+  };
+
+  const ss = SpreadsheetApp.openById(SHEET_ID);
+
+  const sh = ss.getSheetByName("Orders") || ss.insertSheet("Orders");
+  if (sh.getLastRow() === 0) {
+    sh.appendRow(["order_id","date","client","email","total"]);
+  }
+  sh.appendRow([
+    order_id,
+    Utilities.formatDate(new Date(), TZ, "yyyy-MM-dd HH:mm"),
+    c.name,
+    c.email,
+    order.total
+  ]);
+
+  const t = HtmlService.createTemplateFromFile("pdf");
+  t.order = order;
+  t.order_id = order_id;
+
+  const pdf = t.evaluate().getBlob().setName(order_id + ".pdf");
+  const file = DriveApp.createFile(pdf);
+
+  GmailApp.sendEmail(
+    EMAIL_FOURNISSEUR,
+    "Commande " + order_id,
+    "Nouvelle commande\nPDF : " + file.getUrl(),
+    { attachments:[file] }
+  );
+
+  return { ok:true, order_id, pdfUrl:file.getUrl() };
 }
