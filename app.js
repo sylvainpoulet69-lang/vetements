@@ -58,28 +58,65 @@ function colorToHex(n) {
   return m[n] || "#CBD5E1";
 }
 
+function getJsonp(url) {
+  return new Promise((resolve, reject) => {
+    const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
+
+    window[cb] = (data) => {
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      script.remove();
+      resolve(data);
+    };
+
+    const script = document.createElement("script");
+    script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb;
+
+    script.onerror = () => {
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
+      script.remove();
+      reject(new Error("JSONP load failed"));
+    };
+
+    document.head.appendChild(script);
+  });
+}
+
 async function loadCatalog() {
+
+  /* === MODE APPS SCRIPT (HtmlService) === */
   if (isAppsScript) {
-    google.script.run.withSuccessHandler((data) => {
-      CATALOG = data;
-      renderHome();
-    }).getCatalog();
+    google.script.run
+      .withSuccessHandler((data) => {
+        CATALOG = data;
+        renderHome();
+      })
+      .withFailureHandler((err) => {
+        console.error(err);
+        $("#homeList").innerHTML =
+          '<div class="card"><div class="card-body"><div class="card-title-wrap">Erreur Apps Script (catalogue).</div></div></div>';
+      })
+      .getCatalog();
     return;
   }
 
+  /* === MODE GITHUB / WEB === */
   const list = $("#homeList");
+
   if (!APPS_SCRIPT_DEPLOY) {
     list.innerHTML =
-      '<div class="card"><div class="card-body"><div class="card-title-wrap">URL Apps Script manquante. Renseignez APPS_SCRIPT_DEPLOY dans app.js.</div></div></div>';
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">URL Apps Script manquante. Renseignez APPS_SCRIPT_DEPLOY.</div></div></div>';
     return;
   }
 
   try {
-    const res = await fetch(`${APPS_SCRIPT_DEPLOY}?api=catalog`, { method: "GET" });
-    if (!res.ok) throw new Error(res.statusText);
-    const data = await res.json();
-    CATALOG = data && data.ok !== false ? data : data.data || data;
+    const data = await getJsonp(`${APPS_SCRIPT_DEPLOY}?api=catalog`);
+
+    CATALOG = data && data.ok !== false
+      ? data
+      : (data && data.data ? data.data : data);
+
     renderHome();
+
   } catch (err) {
     console.error(err);
     list.innerHTML =
