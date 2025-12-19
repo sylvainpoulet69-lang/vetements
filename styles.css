@@ -17,7 +17,7 @@
 }
 
 /* ==== ÉCHELLE RWD ==== */
-html{font-size:clamp(16px, 1.7vw + 14px, 18px)}
+html{font-size:clamp(15px, 1.4vw + 14px, 17px)}
 html,body{
   margin:0;
   background:radial-gradient(1400px 900px at 0% 0%, #E3EDFF 0, #D0E0FF 45%, #C2D6FF 100%);
@@ -38,6 +38,7 @@ body{padding-bottom:32px}
   background:linear-gradient(180deg, rgba(226,236,255,.96), rgba(209,224,255,.90));
   backdrop-filter:blur(12px);
   border-bottom:1px solid #ffffff80;
+  border-radius:0 0 22px 22px;
 }
 .brand{
   display:flex;
@@ -57,13 +58,18 @@ body{padding-bottom:32px}
   background:rgba(15,23,42,.92);
   color:#fff;
   border-radius:999px;
-  padding:6px 12px;
+  padding:4px 10px;
+  min-width:32px;
+  text-align:center;
   margin-left:8px;
   border:1px solid #ffffffb0;
+  font-size:.95rem;
+  line-height:1.1;
+  box-shadow:0 6px 16px rgba(15,23,42,.18);
 }
 
 /* LAYOUT */
-.container{max-width:1080px;margin:0 auto;padding:16px}
+.container{max-width:1080px;margin:0 auto;padding:14px}
 .section{display:none}
 .section.active{display:block}
 .muted{color:var(--muted)}
@@ -173,14 +179,18 @@ body{padding-bottom:32px}
   appearance:none;
   border:none;
   border-radius:999px;
-  padding:16px 20px;
+  padding:14px 18px;
   font-weight:800;
   cursor:pointer;
-  min-height:68px;
-  font-size:1.05rem;
+  min-height:56px;
+  font-size:1rem;
   line-height:1.2;
   letter-spacing:.02em;
   transition:transform .08s ease, filter .16s ease, box-shadow .16s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
 }
 .btn:active{transform:translateY(2px)}
 
@@ -195,6 +205,7 @@ body{padding-bottom:32px}
   background:linear-gradient(180deg,#F4F7FF,#E2EBFF);
   color:var(--text);
   border:1px solid var(--border);
+  box-shadow:0 12px 26px rgba(15,23,42,.12);
 }
 .btn-link{
   background:none;
@@ -204,9 +215,13 @@ body{padding-bottom:32px}
 }
 
 .btn-small{
-  min-height:64px;
-  padding:14px 18px;
-  font-size:1rem;
+  min-height:52px;
+  padding:12px 14px;
+  font-size:.98rem;
+}
+.btn-cart{
+  min-height:48px;
+  padding:10px 14px;
 }
 
 /* Choisir */
@@ -347,21 +362,47 @@ label{
   margin-bottom:16px;  /* espace entre “Votre panier est vide” et le bloc formulaire */
 }
 .cart-line{
-  display:flex;
-  gap:14px;
+  display:grid;
+  grid-template-columns:100px 1fr auto;
+  align-items:center;
+  gap:12px;
   background:linear-gradient(180deg,#FFFFFF,#EAF1FF);
   border:1px solid var(--border);
   border-radius:22px;
-  padding:16px;
+  padding:16px 16px 14px;
   margin-bottom:16px;
-  box-shadow:var(--shadow);
+  box-shadow:0 18px 42px rgba(15,23,42,.18);
 }
 .cart-line img{
-  width:96px;
-  height:96px;
+  width:100px;
+  height:100px;
   object-fit:cover;
   border-radius:18px;
   background:#D8E4FF;
+}
+.cart-info{
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.cart-title{font-weight:900;font-size:1.05rem;line-height:1.2}
+.cart-meta{font-size:.98rem}
+.cart-qty{font-weight:800;font-size:1rem}
+.cart-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  align-items:flex-end;
+}
+.cart-total{
+  font-weight:900;
+  font-size:1.05rem;
+  color:var(--text);
+}
+.btn-remove{
+  min-height:44px;
+  padding:10px 14px;
+  font-size:.95rem;
 }
 .total{font-weight:900;margin:14px 0;font-size:1.25rem}
 .checkout{
@@ -419,7 +460,30 @@ label{
   .swatches{gap:22px}
   .swatch .dot{width:68px;height:68px}
   .sizes-grid{gap:16px}
-  .cart-line{gap:18px;padding:20px;border-radius:24px}
+  .cart-line{gap:18px;padding:20px;border-radius:24px;grid-template-columns:120px 1fr 160px}
   .cart-line img{width:118px;height:118px}
   .checkout{padding:22px;border-radius:28px}
+}
+
+@media (max-width:640px){
+  .container{padding:12px}
+  .app-header{padding:14px 16px;border-radius:0 0 18px 18px}
+  .card-body{align-items:flex-start}
+  .cart-line{
+    grid-template-columns:90px 1fr;
+    grid-template-areas:"img info" "actions actions";
+  }
+  .cart-line img{grid-area:img;width:90px;height:90px}
+  .cart-info{grid-area:info}
+  .cart-actions{
+    grid-area:actions;
+    flex-direction:row;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:8px;
+    padding-top:10px;
+    border-top:1px solid #d7e2ff;
+  }
+  .btn{min-height:52px}
+  .btn-primary{width:100%}
 }
