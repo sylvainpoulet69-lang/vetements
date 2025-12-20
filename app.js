@@ -627,60 +627,45 @@ function openPackDetail(p) {
     };
   });
 
-  return `
-  <div class="detail" style="margin-top:14px">
-    <h3 style="margin:0 0 8px 0">${s.slot_title}</h3>
-    <div class="muted" style="margin-bottom:10px">x${s.qty}</div>
+  // --- render vertical like your existing product detail (scroll) ---
+  const itemsHtml = slots.map((s) => {
+    const vars = getVariantsForProduct_(s.chosen_product_id);
+    const colors = uniq(vars.map((v) => v.color));
+    const genders = uniq(vars.map((v) => v.gender_scope));
+    const showGender = shouldShowGender_(genders);
 
-    <div style="display:flex;gap:12px;align-items:center;margin:10px 0 12px">
-      <img id="slotImg_${s.idx}" src="${s.img_fallback}" alt="${s.slot_title}"
-        style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid rgba(0,0,0,.06)">
-      <div class="muted" style="flex:1">
-        Personnalise cet article : couleur / taille / logo / flocage.
-      </div>
-    </div>
+    const sizes = getCandidateSizes_(vars, s.gender, s.color);
+    const showSize = sizes.length > 0;
 
-    ${upgradeHtml}
+    const upgradeHtml = (s.upgrades && s.upgrades.length)
+      ? `
+        <label>Option</label>
+        <div class="pills packUp" data-slot="${s.idx}">
+          <button class="pill active" data-up="base" data-extra="0">Base</button>
+          ${s.upgrades.map((u) => `
+            <button class="pill" data-up="${u.upgrade_product_id}" data-extra="${u.extra_price}">
+              ${u.label} +${euros(u.extra_price)}
+            </button>
+          `).join("")}
+        </div>
+      `
+      : "";
 
-    <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
-      <label>Genre</label>
-      <div class="pills pickGender" data-slot="${s.idx}">
-        ${["H", "F", "Unisexe", "Enfant"]
-          .filter((g) => !genders.length || genders.includes(g))
-          .map((g) => `<button class="pill ${String(g) === String(s.gender) ? "active" : ""}" data-val="${g}">${g}</button>`)
-          .join("")}
-      </div>
-    </div>
-
-    <div class="wrapSize" data-slot="${s.idx}" style="${showSize ? "" : "display:none"}">
-      <label>Taille</label>
-      <div class="pills sizes-grid pickSize" data-slot="${s.idx}">
-        ${sizes.map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
-      </div>
-    </div>
-
-    <label>Couleur</label>
-    <div class="swatches pickColor" data-slot="${s.idx}">
-      ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
-        .map((c) => `
-          <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
-            <div class="dot" style="background:${colorToHex(c)}"></div>
-            <div class="name">${c}</div>
+    return `
+      <div class="card" style="margin-top:14px">
+        <div class="card-body">
+          <div class="card-title-wrap" style="margin-bottom:8px">
+            <h3 style="margin:0">${s.slot_title}</h3>
+            <div class="muted">x${s.qty}</div>
           </div>
-        `).join("")}
-    </div>
 
-    <label>Logo (inclus)</label>
-    <div class="pills pickLogo" data-slot="${s.idx}">
-      ${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
-        .map((l) => `<button class="pill ${String(l) === String(s.logo) ? "active" : ""}" data-val="${l}">${l}</button>`)
-        .join("")}
-    </div>
-
-    <label>Flocage (inclus)</label>
-    <input class="inp pickFloc" data-slot="${s.idx}" value="${String(s.flocage_text || "")}" placeholder="Texte (ex: NOM)">
-  </div>
-`;
+          <div style="display:flex;gap:12px;align-items:center;margin:10px 0 6px">
+            <img id="slotImg_${s.idx}" src="${s.img_fallback}" alt="${s.slot_title}"
+              style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid rgba(0,0,0,.06)">
+            <div class="muted" style="flex:1">
+              Personnalise cet article : couleur / taille / logo / flocage.
+            </div>
+          </div>
 
           ${upgradeHtml}
 
