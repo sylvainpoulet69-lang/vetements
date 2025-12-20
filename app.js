@@ -676,12 +676,19 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
     const name = ($("#custName").value || "").trim();
-    const email = ($("#custEmail").value || "").trim();
-    const phone = ($("#custPhone").value || "").trim();
-    if (!name || !email) {
-      alert("Nom et e-mail sont obligatoires.");
-      return;
-    }
+const email = ($("#custEmail").value || "").trim();
+const phone = ($("#custPhone").value || "").trim();
+
+if (!name || !email) {
+  alert("Nom et e-mail sont obligatoires.");
+  return;
+}
+
+if (!phone) {
+  alert("Téléphone obligatoire.");
+  $("#custPhone").focus();
+  return;
+}
 
     $("#btnValidate").disabled = true;
     $("#result").textContent = isAppsScript
