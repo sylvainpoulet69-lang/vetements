@@ -667,10 +667,9 @@ window.addEventListener("DOMContentLoaded", () => {
     const name = ($("#custName").value || "").trim();
     const email = ($("#custEmail").value || "").trim();
     const phone = ($("#custPhone").value || "").trim();
-    if (!name || !email || !phone) {
-  alert("Nom, e-mail et téléphone sont obligatoires.");
-  return;
-}
+    if (!name || !email) {
+      alert("Nom et e-mail sont obligatoires.");
+      return;
     }
 
     $("#btnValidate").disabled = true;
