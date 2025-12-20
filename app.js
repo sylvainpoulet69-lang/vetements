@@ -83,18 +83,32 @@ function splitSizes_(sizeListStr) {
 }
 
 function getCandidateSizes_(vars, gender, color) {
-  const cands = (vars || []).filter((v) =>
+  const V = vars || [];
+
+  // 1) strict: gender + color
+  let cands = V.filter((v) =>
     (!gender || String(v.gender_scope) === String(gender)) &&
     (!color || String(v.color) === String(color))
   );
 
-  const sizes = [];
-  for (const v of cands) {
-    const list = splitSizes_(v.size_list);
-    for (const s of list) sizes.push(s);
-  }
+  let sizes = [];
+  for (const v of cands) sizes.push(...splitSizes_(v.size_list));
+  sizes = uniq(sizes);
+  if (sizes.length) return sizes;
+
+  // 2) fallback: gender only (ignore color)
+  cands = V.filter((v) => (!gender || String(v.gender_scope) === String(gender)));
+  sizes = [];
+  for (const v of cands) sizes.push(...splitSizes_(v.size_list));
+  sizes = uniq(sizes);
+  if (sizes.length) return sizes;
+
+  // 3) fallback: any size from product
+  sizes = [];
+  for (const v of V) sizes.push(...splitSizes_(v.size_list));
   return uniq(sizes);
 }
+
 
 function pickVariant_(vars, gender, color) {
   // 1) match gender+color
