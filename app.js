@@ -580,10 +580,8 @@ function openPackDetail(p) {
     return;
   }
 
-  // Optional upgrades (si un jour tu ajoutes packUpgrades au catalog.json)
   const packUpgrades = Array.isArray(CATALOG.packUpgrades) ? CATALOG.packUpgrades : [];
 
-  // Build slots (1 slot par ligne PackItems)
   const slots = packLines.map((line, idx) => {
     const baseProductId = String(line.product_id);
     const prod = CATALOG.products.find((pr) => String(pr.product_id) === baseProductId);
@@ -591,21 +589,21 @@ function openPackDetail(p) {
 
     const colors = uniq(vars.map((v) => v.color));
     const genders = uniq(vars.map((v) => v.gender_scope));
+
     const gender = defaultGender_(genders);
     const color = defaultColor_(colors);
 
     const sizes = getCandidateSizes_(vars, gender, color);
     const size = sizes[0] || "";
 
-    // upgrades for this slot (schema attendu : pack_id, base_product_id, upgrade_product_id, label, extra_price, active)
     const upgrades = packUpgrades
       .filter((u) =>
         String(u.pack_id) === String(p.product_id) &&
-        String(u.base_product_id || u.product_id || "") === baseProductId &&
+        String(u.base_product_id || "") === baseProductId &&
         (u.active === true || String(u.active).toLowerCase() === "true" || u.active === undefined)
       )
       .map((u) => ({
-        upgrade_product_id: String(u.upgrade_product_id || u.product_id || ""),
+        upgrade_product_id: String(u.upgrade_product_id || ""),
         label: String(u.label || "Upgrade"),
         extra_price: Number(u.extra_price || 0),
       }))
@@ -613,103 +611,105 @@ function openPackDetail(p) {
 
     return {
       idx,
-      title: String(line.title || (prod ? prod.title : "Article")),
       base_product_id: baseProductId,
+      chosen_product_id: baseProductId,
+      slot_title: String(line.title || (prod ? prod.title : "Article")),
       qty: Number(line.qty || 1),
-      // selection (par slot)
-      chosen_product_id: baseProductId, // peut changer si upgrade
       upgrades,
+
       gender,
       color,
       size,
       logo: "Aucun",
       flocage_text: "",
-      image_url: imgOrFallback((prod && prod.image_url) || p.image_url),
+
+      img_fallback: imgOrFallback((prod && prod.image_url) || p.image_url),
     };
   });
 
-  // Render HTML (design inchangé : on réutilise pills/swatches/inp)
-  const slotHtml = slots
-    .map((s) => {
-      const vars = getVariantsForProduct_(s.chosen_product_id);
-      const colors = uniq(vars.map((v) => v.color));
-      const genders = uniq(vars.map((v) => v.gender_scope));
-      const showGender = shouldShowGender_(genders);
-      const sizes = getCandidateSizes_(vars, s.gender, s.color);
-      const showSize = sizes.length > 0;
+  // --- render vertical like your existing product detail (scroll) ---
+  const itemsHtml = slots.map((s) => {
+    const vars = getVariantsForProduct_(s.chosen_product_id);
+    const colors = uniq(vars.map((v) => v.color));
+    const genders = uniq(vars.map((v) => v.gender_scope));
+    const showGender = shouldShowGender_(genders);
 
-      // upgrades UI (si dispo)
-      const upgradeHtml = s.upgrades && s.upgrades.length
-        ? `
-          <label style="margin-top:12px">Option</label>
-          <div class="pills pack-upgrades" data-slot="${s.idx}">
-            <button class="pill active" data-up="base">Base</button>
-            ${s.upgrades.map((u) => `<button class="pill" data-up="${u.upgrade_product_id}" data-extra="${u.extra_price}">${u.label} +${euros(u.extra_price)}</button>`).join("")}
-          </div>
-        `
-        : "";
+    const sizes = getCandidateSizes_(vars, s.gender, s.color);
+    const showSize = sizes.length > 0;
 
-      return `
-        <div class="card" style="margin-top:14px">
-          <div class="card-body">
-            <div class="card-title-wrap" style="margin-bottom:8px">
-              <h3 style="margin:0">${s.title}</h3>
-              <div class="muted">x${s.qty}</div>
-            </div>
-
-            <div style="display:flex;gap:12px;align-items:center;margin:10px 0 6px">
-              <img id="slotImg_${s.idx}" src="${imgOrFallback(s.image_url)}" alt="${s.title}" style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid rgba(0,0,0,.06)">
-              <div class="muted" style="flex:1">
-                Personnalise cet article : couleur / taille / logo / flocage.
-              </div>
-            </div>
-
-            ${upgradeHtml}
-
-            <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
-              <label>Genre</label>
-              <div class="pills pickGender" data-slot="${s.idx}">
-                ${["H", "F", "Unisexe", "Enfant"]
-                  .filter((g) => !genders.length || genders.includes(g))
-                  .map((g) => `<button class="pill ${String(g) === String(s.gender) ? "active" : ""}" data-val="${g}">${g}</button>`)
-                  .join("")}
-              </div>
-            </div>
-
-            <div class="wrapSize" data-slot="${s.idx}" style="${showSize ? "" : "display:none"}">
-              <label>Taille</label>
-              <div class="pills sizes-grid pickSize" data-slot="${s.idx}">
-                ${sizes.map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
-              </div>
-            </div>
-
-            <label>Couleur</label>
-            <div class="swatches pickColor" data-slot="${s.idx}">
-              ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
-                .map(
-                  (c) => `
-                  <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
-                    <div class="dot" style="background:${colorToHex(c)}"></div>
-                    <div class="name">${c}</div>
-                  </div>`
-                )
-                .join("")}
-            </div>
-
-            <label>Logo (inclus)</label>
-            <div class="pills pickLogo" data-slot="${s.idx}">
-              ${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
-                .map((l) => `<button class="pill ${String(l) === String(s.logo) ? "active" : ""}" data-val="${l}">${l}</button>`)
-                .join("")}
-            </div>
-
-            <label>Flocage (inclus)</label>
-            <input class="inp pickFloc" data-slot="${s.idx}" value="${String(s.flocage_text || "")}" placeholder="Texte (ex: NOM)">
-          </div>
+    const upgradeHtml = (s.upgrades && s.upgrades.length)
+      ? `
+        <label>Option</label>
+        <div class="pills packUp" data-slot="${s.idx}">
+          <button class="pill active" data-up="base" data-extra="0">Base</button>
+          ${s.upgrades.map((u) => `
+            <button class="pill" data-up="${u.upgrade_product_id}" data-extra="${u.extra_price}">
+              ${u.label} +${euros(u.extra_price)}
+            </button>
+          `).join("")}
         </div>
-      `;
-    })
-    .join("");
+      `
+      : "";
+
+    return `
+      <div class="card" style="margin-top:14px">
+        <div class="card-body">
+          <div class="card-title-wrap" style="margin-bottom:8px">
+            <h3 style="margin:0">${s.slot_title}</h3>
+            <div class="muted">x${s.qty}</div>
+          </div>
+
+          <div style="display:flex;gap:12px;align-items:center;margin:10px 0 6px">
+            <img id="slotImg_${s.idx}" src="${s.img_fallback}" alt="${s.slot_title}"
+              style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid rgba(0,0,0,.06)">
+            <div class="muted" style="flex:1">
+              Personnalise cet article : couleur / taille / logo / flocage.
+            </div>
+          </div>
+
+          ${upgradeHtml}
+
+          <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
+            <label>Genre</label>
+            <div class="pills pickGender" data-slot="${s.idx}">
+              ${["H", "F", "Unisexe", "Enfant"]
+                .filter((g) => !genders.length || genders.includes(g))
+                .map((g) => `<button class="pill ${String(g) === String(s.gender) ? "active" : ""}" data-val="${g}">${g}</button>`)
+                .join("")}
+            </div>
+          </div>
+
+          <div class="wrapSize" data-slot="${s.idx}" style="${showSize ? "" : "display:none"}">
+            <label>Taille</label>
+            <div class="pills sizes-grid pickSize" data-slot="${s.idx}">
+              ${sizes.map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
+            </div>
+          </div>
+
+          <label>Couleur</label>
+          <div class="swatches pickColor" data-slot="${s.idx}">
+            ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+              .map((c) => `
+                <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
+                  <div class="dot" style="background:${colorToHex(c)}"></div>
+                  <div class="name">${c}</div>
+                </div>
+              `).join("")}
+          </div>
+
+          <label>Logo (inclus)</label>
+          <div class="pills pickLogo" data-slot="${s.idx}">
+            ${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
+              .map((l) => `<button class="pill ${String(l) === String(s.logo) ? "active" : ""}" data-val="${l}">${l}</button>`)
+              .join("")}
+          </div>
+
+          <label>Flocage (inclus)</label>
+          <input class="inp pickFloc" data-slot="${s.idx}" value="${String(s.flocage_text || "")}" placeholder="Texte (ex: NOM)">
+        </div>
+      </div>
+    `;
+  }).join("");
 
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
@@ -725,12 +725,7 @@ function openPackDetail(p) {
       <label>Quantité de packs</label>
       <input id="packQty" class="inp" type="number" min="1" value="1">
 
-      <div style="display:flex;gap:10px;margin-top:10px">
-        <button id="copyLogoAll" class="btn btn-ghost btn-small" type="button">Copier logo sur tous</button>
-        <button id="copyFlocAll" class="btn btn-ghost btn-small" type="button">Copier flocage sur tous</button>
-      </div>
-
-      ${slotHtml}
+      ${itemsHtml}
 
       <div class="actions" style="margin-top:16px">
         <button id="btnAddPack" class="btn btn-primary">🛒 Ajouter le pack</button>
@@ -738,33 +733,71 @@ function openPackDetail(p) {
     </div>
   `;
 
-  // Apply variant images for each slot
+  // set images per selection
   slots.forEach((s) => {
-    const prodId = s.chosen_product_id;
-    const vars = getVariantsForProduct_(prodId);
-    const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(prodId));
+    const vars = getVariantsForProduct_(s.chosen_product_id);
+    const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(s.chosen_product_id));
     applyVariantImage_(document.getElementById(`slotImg_${s.idx}`), vars, s.gender, s.color, (prod && prod.image_url) || p.image_url);
   });
 
-  // --- Event delegation for slot pickers ---
+  // --- Delegation click ---
   $("#detail").addEventListener("click", (e) => {
-    // Gender
+    // upgrades
+    const upBtn = e.target.closest(".packUp .pill");
+    if (upBtn) {
+      const slotIndex = Number(upBtn.closest(".packUp").dataset.slot);
+      const slot = slots.find((x) => x.idx === slotIndex);
+      if (!slot) return;
+
+      upBtn.closest(".packUp").querySelectorAll(".pill").forEach((b) => b.classList.remove("active"));
+      upBtn.classList.add("active");
+
+      const up = upBtn.dataset.up;
+      if (up === "base") {
+        slot.chosen_product_id = slot.base_product_id;
+        slot.extra_price = 0;
+      } else {
+        slot.chosen_product_id = up;
+        slot.extra_price = Number(upBtn.dataset.extra || 0);
+      }
+
+      // refresh size list + image based on new chosen product
+      const vars = getVariantsForProduct_(slot.chosen_product_id);
+      const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
+      slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
+
+      const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
+      const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
+      if (sizes.length) {
+        if (sizeWrap) sizeWrap.style.display = "";
+        if (sizeBox) {
+          sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
+        }
+      } else {
+        if (sizeWrap) sizeWrap.style.display = "none";
+        slot.size = "";
+      }
+
+      const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
+      applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), vars, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
+      return;
+    }
+
+    // gender
     const g = e.target.closest(".pickGender .pill");
     if (g) {
       const slotIndex = Number(g.closest(".pickGender").dataset.slot);
       const slot = slots.find((x) => x.idx === slotIndex);
       if (!slot) return;
-      const container = g.closest(".pickGender");
-      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+
+      g.closest(".pickGender").querySelectorAll(".pill").forEach((b) => b.classList.remove("active"));
       g.classList.add("active");
       slot.gender = g.dataset.val;
 
-      // refresh sizes + image
       const vars = getVariantsForProduct_(slot.chosen_product_id);
       const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
       slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
 
-      // re-render sizes pills for this slot
       const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
       const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
       if (sizes.length) {
@@ -782,31 +815,29 @@ function openPackDetail(p) {
       return;
     }
 
-    // Size
+    // size
     const sBtn = e.target.closest(".pickSize .pill");
     if (sBtn) {
       const slotIndex = Number(sBtn.closest(".pickSize").dataset.slot);
       const slot = slots.find((x) => x.idx === slotIndex);
       if (!slot) return;
-      const container = sBtn.closest(".pickSize");
-      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+      sBtn.closest(".pickSize").querySelectorAll(".pill").forEach((b) => b.classList.remove("active"));
       sBtn.classList.add("active");
       slot.size = sBtn.dataset.val;
       return;
     }
 
-    // Color
+    // color
     const c = e.target.closest(".pickColor .swatch");
     if (c) {
       const slotIndex = Number(c.closest(".pickColor").dataset.slot);
       const slot = slots.find((x) => x.idx === slotIndex);
       if (!slot) return;
-      const container = c.closest(".pickColor");
-      container.querySelectorAll(".swatch").forEach((x) => x.classList.remove("active"));
+
+      c.closest(".pickColor").querySelectorAll(".swatch").forEach((b) => b.classList.remove("active"));
       c.classList.add("active");
       slot.color = c.dataset.val;
 
-      // refresh sizes + image
       const vars = getVariantsForProduct_(slot.chosen_product_id);
       const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
       slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
@@ -828,21 +859,21 @@ function openPackDetail(p) {
       return;
     }
 
-    // Logo
+    // logo
     const l = e.target.closest(".pickLogo .pill");
     if (l) {
       const slotIndex = Number(l.closest(".pickLogo").dataset.slot);
       const slot = slots.find((x) => x.idx === slotIndex);
       if (!slot) return;
-      const container = l.closest(".pickLogo");
-      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+
+      l.closest(".pickLogo").querySelectorAll(".pill").forEach((b) => b.classList.remove("active"));
       l.classList.add("active");
       slot.logo = l.dataset.val;
       return;
     }
   });
 
-  // Flocage inputs (input event)
+  // floc input
   $("#detail").addEventListener("input", (e) => {
     const inp = e.target.closest(".pickFloc");
     if (!inp) return;
@@ -852,66 +883,41 @@ function openPackDetail(p) {
     slot.flocage_text = String(inp.value || "");
   });
 
-  // Copy buttons
-  $("#copyLogoAll").addEventListener("click", () => {
-    const first = slots[0]?.logo || "Aucun";
-    slots.forEach((s) => (s.logo = first));
-    // update UI quickly
-    slots.forEach((s) => {
-      const box = document.querySelector(`.pickLogo[data-slot="${s.idx}"]`);
-      if (!box) return;
-      box.querySelectorAll(".pill").forEach((b) => {
-        b.classList.toggle("active", b.dataset.val === first);
-      });
-    });
-  });
-
-  $("#copyFlocAll").addEventListener("click", () => {
-    const first = slots[0]?.flocage_text || "";
-    slots.forEach((s) => (s.flocage_text = first));
-    slots.forEach((s) => {
-      const inp = document.querySelector(`.pickFloc[data-slot="${s.idx}"]`);
-      if (inp) inp.value = first;
-    });
-  });
-
-  // Add pack to cart
+  // add pack to cart as ONE bubble
   $("#btnAddPack").addEventListener("click", () => {
     const packQty = Math.max(1, Number($("#packQty").value || 1));
 
-    // 1) Base pack line (price = pack price)
-    CART.push({
-      product_id: p.product_id,
-      title: `${p.title} — Pack`,
-      color: "",
-      gender: "",
-      size: "",
-      qty: packQty,
-      price: p.price,
-      logo: "",
-      flocage_text: "",
-      image_url: imgOrFallback(p.image_url),
-      is_pack: true,
-    });
-
-    // 2) Items (included at 0€)
-    slots.forEach((s, idx) => {
+    const children = slots.map((s, i) => {
       const chosenProd = CATALOG.products.find((pr) => String(pr.product_id) === String(s.chosen_product_id));
+      const img = document.getElementById(`slotImg_${s.idx}`)?.src || imgOrFallback((chosenProd && chosenProd.image_url) || p.image_url);
 
-      CART.push({
+      return {
         product_id: s.chosen_product_id,
-        title: `${s.title}`,
+        title: s.slot_title,
         color: s.color || "",
         gender: s.gender || "Unisexe",
         size: s.size || "",
         qty: (s.qty || 1) * packQty,
-        price: 0,
+        price: 0, // inclus
         logo: s.logo || "Aucun",
         flocage_text: String(s.flocage_text || "").trim(),
-        image_url: document.getElementById(`slotImg_${s.idx}`)?.src || imgOrFallback((chosenProd && chosenProd.image_url) || p.image_url),
-        parent_pack: p.product_id,
-        slot_index: idx + 1,
-      });
+        image_url: img,
+        slot_index: i + 1,
+        extra_price: Number(s.extra_price || 0), // upgrade
+        base_product_id: s.base_product_id,
+      };
+    });
+
+    const extrasTotal = children.reduce((sum, it) => sum + (Number(it.extra_price) || 0) * (Number(it.qty) || 1), 0);
+
+    CART.push({
+      is_pack: true,
+      pack_id: p.product_id,
+      title: `${p.title} — Pack`,
+      qty: packQty,
+      price: Number(p.price || 0) + extrasTotal,
+      image_url: imgOrFallback(p.image_url),
+      children,
     });
 
     saveCart();
@@ -931,20 +937,50 @@ function openPackDetail(p) {
 function renderCart() {
   const box = $("#cartLines");
   box.innerHTML = "";
+
   if (!CART.length) {
     box.innerHTML =
       '<div class="card"><div class="card-body"><div class="card-title-wrap">Votre panier est vide.</div></div></div>';
   }
+
   CART.forEach((l, i) => {
+    // ✅ PACK (1 seule bulle)
+    if (l.is_pack) {
+      const row = document.createElement("div");
+      row.className = "cart-line";
+      row.innerHTML = `
+        <img src="${imgOrFallback(l.image_url)}" alt="${l.title}">
+        <div class="cart-info">
+          <div class="cart-title">${l.title}</div>
+          <div class="cart-meta muted">${l.qty} pack(s)</div>
+
+          <div class="muted" style="margin-top:8px;line-height:1.35">
+            ${(l.children || []).map(ch => {
+              const up = (Number(ch.extra_price) || 0) > 0 ? ` (+${euros(ch.extra_price)} /u)` : "";
+              const fl = ch.flocage_text ? ` · Flocage: ${ch.flocage_text}` : "";
+              return `• ${ch.qty}× ${ch.title} — ${ch.size || "-"} · ${ch.color || "-"} · ${ch.gender || "-"} · Logo: ${ch.logo || "-"}${fl}${up}`;
+            }).join("<br>")}
+          </div>
+
+          <div class="cart-qty" style="margin-top:10px">${l.qty} × ${euros(l.price)}</div>
+        </div>
+        <div class="cart-actions">
+          <div class="cart-total">${euros((Number(l.price) || 0) * (Number(l.qty) || 1))}</div>
+          <button class="btn btn-outline btn-remove" data-i="${i}">Supprimer</button>
+        </div>
+      `;
+      box.appendChild(row);
+      return;
+    }
+
+    // ✅ LIGNE NORMAL
     const row = document.createElement("div");
     row.className = "cart-line";
     row.innerHTML = `
       <img src="${imgOrFallback(l.image_url)}" alt="${l.title}">
       <div class="cart-info">
         <div class="cart-title">${l.title}</div>
-        <div class="cart-meta muted">${l.size || "-"} · ${l.color || "-"} · ${l.gender || "-"} · Logo: ${
-          l.logo || "-"
-        }${l.flocage_text ? " · Flocage: " + l.flocage_text : ""}</div>
+        <div class="cart-meta muted">${l.size || "-"} · ${l.color || "-"} · ${l.gender || "-"} · Logo: ${l.logo || "-"}${l.flocage_text ? " · Flocage: " + l.flocage_text : ""}</div>
         <div class="cart-qty">${l.qty} × ${euros(l.price)}</div>
       </div>
       <div class="cart-actions">
@@ -953,6 +989,7 @@ function renderCart() {
       </div>`;
     box.appendChild(row);
   });
+
   box.onclick = (e) => {
     const b = e.target.closest("button[data-i]");
     if (!b) return;
@@ -961,6 +998,7 @@ function renderCart() {
     renderCart();
     refreshCartBadge();
   };
+
   $("#cartTotal").textContent = euros(cartTotal());
 }
 
@@ -1074,19 +1112,64 @@ window.addEventListener("DOMContentLoaded", () => {
       status: "new",
     };
 
-    const items = CART.map((it, idx) => ({
-      line: idx + 1,
-      product_id: it.product_id || "",
-      title: it.title || "",
-      color: it.color || "",
-      gender: it.gender || "",
-      size: it.size || "",
-      qty: it.qty || 1,
-      unit_price: it.price || 0,
-      logo: it.logo || "",
-      flocage_text: it.flocage_text || "",
-      image_url: it.image_url || "",
-    }));
+    // ✅ Flatten panier (packs -> lignes) pour Worker/Sheet
+const flatCart = [];
+CART.forEach((l) => {
+  if (l.is_pack) {
+    // 1 ligne "pack" au prix du pack
+    flatCart.push({
+      product_id: l.pack_id || l.product_id || "",
+      title: l.title || "Pack",
+      color: "",
+      gender: "",
+      size: "",
+      qty: l.qty || 1,
+      price: l.price || 0,
+      logo: "",
+      flocage_text: "",
+      image_url: l.image_url || "",
+      is_pack: true,
+    });
+
+    // + les items inclus à 0€
+    (l.children || []).forEach((ch) => {
+      flatCart.push({
+        product_id: ch.product_id || "",
+        title: ch.title || "",
+        color: ch.color || "",
+        gender: ch.gender || "",
+        size: ch.size || "",
+        qty: ch.qty || 1,
+        price: 0,
+        logo: ch.logo || "",
+        flocage_text: ch.flocage_text || "",
+        image_url: ch.image_url || "",
+        parent_pack: l.pack_id || "",
+        extra_price: ch.extra_price || 0,
+      });
+    });
+
+    return;
+  }
+
+  // produit normal
+  flatCart.push(l);
+});
+
+// ✅ Worker attend items[] -> on mappe flatCart
+const items = flatCart.map((it, idx) => ({
+  line: idx + 1,
+  product_id: it.product_id || "",
+  title: it.title || "",
+  color: it.color || "",
+  gender: it.gender || "",
+  size: it.size || "",
+  qty: it.qty || 1,
+  unit_price: it.price || 0,
+  logo: it.logo || "",
+  flocage_text: it.flocage_text || "",
+  image_url: it.image_url || "",
+}));
 
     fetch(orderUrl, {
       method: "POST",
