@@ -171,6 +171,24 @@ function loadCatalog_AppsScriptFallback(list) {
   loadCatalog_JSONP();
 }
 
+// JSONP catalogue (si tu l'utilises encore)
+function loadCatalog_JSONP() {
+  const list = $("#homeList");
+  const url = APPS_SCRIPT_DEPLOY + "?callback=?"; // placeholder, remplacé dans getJsonp
+  // Ici, ton ancien JSONP (si nécessaire) : on tente /exec?action=getCatalog ou similaire
+  // Comme tu as déjà CATALOG_URL, ce chemin ne devrait presque jamais servir.
+  const jsonpUrl = APPS_SCRIPT_DEPLOY + "?action=getCatalog";
+  getJsonp(jsonpUrl)
+    .then((data) => {
+      CATALOG = data;
+      renderHome();
+    })
+    .catch(() => {
+      list.innerHTML =
+        '<div class="card"><div class="card-body"><div class="card-title-wrap">Impossible de charger le catalogue (JSONP).</div></div></div>';
+    });
+}
+
 /* -------- ACCUEIL -------- */
 function renderHome() {
   const hh = $("#heroTitle");
@@ -181,10 +199,7 @@ function renderHome() {
   const list = $("#homeList");
   list.innerHTML = "";
   const items = CATALOG.products
-    .filter(
-      (p) =>
-        p.active === true || String(p.active).toLowerCase() === "true"
-    )
+    .filter((p) => p.active === true || String(p.active).toLowerCase() === "true")
     .slice(0, 4);
 
   if (!items.length) {
@@ -201,15 +216,13 @@ function renderHome() {
       <div class="card-body">
         <div class="card-title-wrap">
           <h3>${p.title}${
-      String(p.type).toLowerCase() === "pack"
-        ? " <span class='muted'>(Pack)</span>"
-        : ""
-    }</h3>
+            String(p.type).toLowerCase() === "pack"
+              ? " <span class='muted'>(Pack)</span>"
+              : ""
+          }</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
-        <button class="btn btn-ghost btn-small" data-id="${
-          p.product_id
-        }">Choisir</button>
+        <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
       </div>`;
     list.appendChild(card);
   });
@@ -241,15 +254,13 @@ function renderProducts() {
       <div class="card-body">
         <div class="card-title-wrap">
           <h3>${p.title}${
-      String(p.type).toLowerCase() === "pack"
-        ? " <span class='muted'>(Pack)</span>"
-        : ""
-    }</h3>
+            String(p.type).toLowerCase() === "pack"
+              ? " <span class='muted'>(Pack)</span>"
+              : ""
+          }</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
-        <button class="btn btn-ghost btn-small" data-id="${
-          p.product_id
-        }">Choisir</button>
+        <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
       </div>`;
     list.appendChild(card);
   });
@@ -304,7 +315,7 @@ function openDetail(pid) {
             <div class="swatch" data-val="${c}">
               <div class="dot" style="background:${colorToHex(c)}"></div>
               <div class="name">${c}</div>
-            </div>`,
+            </div>`
           )
           .join("")}
       </div>
@@ -615,8 +626,8 @@ function renderCart() {
       <div class="cart-info">
         <div class="cart-title">${l.title}</div>
         <div class="cart-meta muted">${l.size || "-"} · ${l.color || "-"} · ${l.gender || "-"} · Logo: ${
-      l.logo || "-"
-    }${l.flocage_text ? " · Flocage: " + l.flocage_text : ""}</div>
+          l.logo || "-"
+        }${l.flocage_text ? " · Flocage: " + l.flocage_text : ""}</div>
         <div class="cart-qty">${l.qty} × ${euros(l.price)}</div>
       </div>
       <div class="cart-actions">
@@ -677,14 +688,29 @@ window.addEventListener("DOMContentLoaded", () => {
       ? "Génération du PDF…"
       : "Envoi de la commande…";
 
-    // ---- APPS SCRIPT (inchangé) ----
+    // ---- APPS SCRIPT (inchangé, sauf lien PDF) ----
     if (isAppsScript) {
       const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
 
       google.script.run
         .withSuccessHandler((res) => {
           $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
-          $("#donePdf").href = res.pdfUrl;
+
+          // ✅ FIX: compat pdfUrl / pdf_url + ouvre en nouvel onglet
+          const pdf = (res && (res.pdf_url || res.pdfUrl)) ? String(res.pdf_url || res.pdfUrl).trim() : "";
+          const a = $("#donePdf");
+          if (pdf) {
+            a.href = pdf;
+            a.target = "_blank";
+            a.rel = "noopener";
+            a.style.pointerEvents = "auto";
+            a.style.opacity = "1";
+          } else {
+            a.href = "#";
+            a.style.pointerEvents = "none";
+            a.style.opacity = "0.5";
+          }
+
           $("#btnValidate").disabled = false;
           $("#result").textContent = "";
           CART = [];
@@ -759,7 +785,21 @@ window.addEventListener("DOMContentLoaded", () => {
         if (res.ok === false) throw new Error(res.error || "Erreur inconnue");
 
         $("#doneMsg").textContent = `Commande n° ${res.order_id || "?"}. L'organisation a bien reçu votre commande.`;
-        $("#donePdf").href = "#"; // pas de PDF pour l'instant
+
+        // ✅ FIX: set PDF link returned by Worker (pdf_url) + ouvre en nouvel onglet
+        const pdf = (res && (res.pdf_url || res.pdfUrl)) ? String(res.pdf_url || res.pdfUrl).trim() : "";
+        const a = $("#donePdf");
+        if (pdf) {
+          a.href = pdf;
+          a.target = "_blank";
+          a.rel = "noopener";
+          a.style.pointerEvents = "auto";
+          a.style.opacity = "1";
+        } else {
+          a.href = "#";
+          a.style.pointerEvents = "none";
+          a.style.opacity = "0.5";
+        }
 
         $("#btnValidate").disabled = false;
         $("#result").textContent = "";
