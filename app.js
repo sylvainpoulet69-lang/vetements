@@ -7,7 +7,7 @@ const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
 /* === CONFIG BACKEND APPS SCRIPT === */
 window.APPS_SCRIPT_DEPLOY =
-  "https://script.google.com/macros/s/AKfycbwWiVuQR40EjRCYDNooJyLIAJ41tHMzjXlOBKXQqbR2B6CBf6nMsA8iQJq0N5KF8YTEpQ/exec";
+  "https://script.google.com/macros/s/AKfycbyT0xk6dAiPoBIGf96VT52HC6FcWqG7M40Wv_Om3hLRy3ITQXZPs32l8Kb2rZp-MZl0Dw/exec";
 
 /* === CONFIG MODE GITHUB PAGES === */
 // URL du catalogue statique généré par GitHub Actions (Sheets → data/catalog.json)
@@ -66,6 +66,83 @@ function colorToHex(n) {
     Gris: "#64748b",
   };
   return m[n] || "#CBD5E1";
+}
+
+/* === Helpers catalogue / variantes === */
+const uniq = (arr) => [...new Set((arr || []).filter((x) => x !== null && x !== undefined && String(x).trim() !== "").map((x) => String(x)))];
+
+function getVariantsForProduct_(productId) {
+  return (CATALOG.variants || []).filter((v) => String(v.product_id) === String(productId));
+}
+
+function splitSizes_(sizeListStr) {
+  return String(sizeListStr || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+function getCandidateSizes_(vars, gender, color) {
+  const cands = (vars || []).filter((v) =>
+    (!gender || String(v.gender_scope) === String(gender)) &&
+    (!color || String(v.color) === String(color))
+  );
+
+  const sizes = [];
+  for (const v of cands) {
+    const list = splitSizes_(v.size_list);
+    for (const s of list) sizes.push(s);
+  }
+  return uniq(sizes);
+}
+
+function pickVariant_(vars, gender, color) {
+  // 1) match gender+color
+  let v = (vars || []).find((x) =>
+    (!gender || String(x.gender_scope) === String(gender)) &&
+    (!color || String(x.color) === String(color)) &&
+    String(x.image_url || "").trim()
+  );
+  if (v) return v;
+
+  // 2) match color
+  v = (vars || []).find((x) => (!color || String(x.color) === String(color)) && String(x.image_url || "").trim());
+  if (v) return v;
+
+  // 3) any with image
+  v = (vars || []).find((x) => String(x.image_url || "").trim());
+  return v || null;
+}
+
+function applyVariantImage_(imgEl, vars, gender, color, fallbackUrl) {
+  if (!imgEl) return;
+  const v = pickVariant_(vars, gender, color);
+  const u = v && String(v.image_url || "").trim() ? String(v.image_url).trim() : fallbackUrl;
+  imgEl.src = imgOrFallback(u);
+}
+
+function shouldShowGender_(genders) {
+  const gs = uniq(genders);
+  if (gs.length <= 1) return false;
+  if (gs.length === 1 && gs[0] === "Unisexe") return false;
+  // si Unisexe + autres, on affiche
+  return true;
+}
+
+function defaultGender_(genders) {
+  const gs = uniq(genders);
+  // priorité : H puis F puis Unisexe puis Enfant
+  const prio = ["H", "F", "Unisexe", "Enfant"];
+  for (const p of prio) if (gs.includes(p)) return p;
+  return gs[0] || null;
+}
+
+function defaultColor_(colors) {
+  const cs = uniq(colors);
+  // si le club a une liste par défaut, on préfère une couleur existante proche
+  const preferred = (CATALOG.options && CATALOG.options.colors_default) ? CATALOG.options.colors_default : [];
+  for (const p of preferred) if (cs.includes(String(p))) return String(p);
+  return cs[0] || null;
 }
 
 /* ✅ JSONP pour contourner CORS sur GitHub Pages (catalogue) */
@@ -277,14 +354,34 @@ function renderProducts() {
 function openDetail(pid) {
   const p = CATALOG.products.find((x) => String(x.product_id) === String(pid));
   if (!p) return;
+
+  // Packs
   if (String(p.type).toLowerCase() === "pack") {
     return openPackDetail(p);
   }
 
-  const vars = CATALOG.variants.filter((v) => String(v.product_id) === String(pid));
-  const colors = [...new Set(vars.map((v) => v.color).filter(Boolean))];
-  const genders = [...new Set(vars.map((v) => v.gender_scope).filter(Boolean))];
+  const vars = getVariantsForProduct_(pid);
+  const colors = uniq(vars.map((v) => v.color));
+  const genders = uniq(vars.map((v) => v.gender_scope));
 
+  // UI defaults
+  const sel = {
+    color: defaultColor_(colors),
+    gender: defaultGender_(genders),
+    size: null,
+    logo: "Aucun",
+  };
+
+  // Compute sizes (may be empty for accessories like casquette)
+  const sizesFromVars = getCandidateSizes_(vars, sel.gender, sel.color);
+  const shouldShowSize = sizesFromVars.length > 0;
+
+  // If we show size, set default to first
+  if (shouldShowSize) sel.size = sizesFromVars[0];
+
+  const showGender = shouldShowGender_(genders);
+
+  // --- Render ---
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
       <button id="goHome" class="back">Accueil</button>
@@ -292,24 +389,28 @@ function openDetail(pid) {
     </div>
 
     <div class="detail">
-      <img class="detail-img" src="${imgOrFallback(p.image_url)}" alt="${p.title}">
+      <img id="detailImg" class="detail-img" src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <h3>${p.title}</h3>
       <div class="price" style="margin-bottom:12px">${euros(p.price)}</div>
 
-      <label>Genre</label>
-      <div class="pills" id="pickGender">
-        ${["H", "F", "Unisexe", "Enfant"]
-          .filter((g) => !genders.length || genders.includes(g))
-          .map((g) => `<button class="pill" data-val="${g}">${g}</button>`)
-          .join("")}
+      <div id="wrapGender" style="${showGender ? "" : "display:none"}">
+        <label>Genre</label>
+        <div class="pills" id="pickGender">
+          ${["H", "F", "Unisexe", "Enfant"]
+            .filter((g) => !genders.length || genders.includes(g))
+            .map((g) => `<button class="pill" data-val="${g}">${g}</button>`)
+            .join("")}
+        </div>
       </div>
 
-      <label>Taille</label>
-      <div class="pills sizes-grid" id="pickSize"></div>
+      <div id="wrapSize" style="${shouldShowSize ? "" : "display:none"}">
+        <label>Taille</label>
+        <div class="pills sizes-grid" id="pickSize"></div>
+      </div>
 
       <label>Couleur</label>
       <div class="swatches" id="pickColor">
-        ${(colors.length ? colors : CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"])
+        ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
           .map(
             (c) => `
             <div class="swatch" data-val="${c}">
@@ -339,71 +440,78 @@ function openDetail(pid) {
     </div>
   `;
 
-  const sel = { color: null, gender: null, size: null, logo: "Aucun" };
-
-  function renderSizes() {
-    const base = sel.gender === "Enfant" ? KID_SIZES : ADULT_SIZES;
-    const cands = vars.filter(
-      (v) =>
-        (!sel.color || v.color === sel.color) &&
-        (!sel.gender || v.gender_scope === sel.gender)
-    );
-    const set = new Set(
-      cands.flatMap((v) => {
-        const list = (v.size_list || "")
-          .toString()
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean);
-        return list.length ? list : base;
-      })
-    );
-    const final = set.size ? Array.from(set) : base;
-
-    const box = $("#pickSize");
-    box.innerHTML = final.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
-
-    if (sel.size) {
-      const match = Array.from(box.querySelectorAll(".pill")).find(
-        (b) => b.dataset.val === sel.size
-      );
-      if (match) match.classList.add("active");
-      else sel.size = null;
+  // Activate defaults (gender/logo/color)
+  if (showGender) {
+    const gbtn = Array.from($$("#pickGender .pill")).find((b) => b.dataset.val === sel.gender) || $("#pickGender .pill");
+    if (gbtn) {
+      $$("#pickGender .pill").forEach((x) => x.classList.remove("active"));
+      gbtn.classList.add("active");
+      sel.gender = gbtn.dataset.val;
     }
   }
 
-  const g0 = $("#pickGender .pill");
-  if (g0) {
-    g0.classList.add("active");
-    sel.gender = g0.dataset.val;
+  const lbtn = Array.from($$("#pickLogo .pill")).find((b) => b.dataset.val === sel.logo) || $("#pickLogo .pill");
+  if (lbtn) {
+    $$("#pickLogo .pill").forEach((x) => x.classList.remove("active"));
+    lbtn.classList.add("active");
+    sel.logo = lbtn.dataset.val;
   }
-  const l0 = $("#pickLogo .pill");
-  if (l0) {
-    l0.classList.add("active");
-    sel.logo = l0.dataset.val;
+
+  const cbtn = Array.from($$("#pickColor .swatch")).find((b) => b.dataset.val === sel.color) || $("#pickColor .swatch");
+  if (cbtn) {
+    $$("#pickColor .swatch").forEach((x) => x.classList.remove("active"));
+    cbtn.classList.add("active");
+    sel.color = cbtn.dataset.val;
   }
-  const c0 = $("#pickColor .swatch");
-  if (c0) {
-    c0.classList.add("active");
-    sel.color = c0.dataset.val;
+
+  // Render sizes if needed
+  function renderSizes() {
+    const sizes = getCandidateSizes_(vars, sel.gender, sel.color);
+    const wrap = $("#wrapSize");
+    const box = $("#pickSize");
+
+    if (!sizes.length) {
+      if (wrap) wrap.style.display = "none";
+      sel.size = "";
+      return;
+    }
+
+    if (wrap) wrap.style.display = "";
+    box.innerHTML = sizes.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
+
+    // Keep selection
+    if (!sel.size || !sizes.includes(sel.size)) sel.size = sizes[0];
+
+    const sbtn = Array.from(box.querySelectorAll(".pill")).find((b) => b.dataset.val === sel.size);
+    if (sbtn) sbtn.classList.add("active");
   }
+
   renderSizes();
 
-  $("#pickGender").addEventListener("click", (e) => {
-    const b = e.target.closest(".pill");
-    if (!b) return;
-    $$("#pickGender .pill").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-    sel.gender = b.dataset.val;
-    renderSizes();
-  });
-  $("#pickSize").addEventListener("click", (e) => {
+  // Apply image based on selected color/gender if variant has image_url
+  applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
+
+  // Events
+  if (showGender) {
+    $("#pickGender").addEventListener("click", (e) => {
+      const b = e.target.closest(".pill");
+      if (!b) return;
+      $$("#pickGender .pill").forEach((x) => x.classList.remove("active"));
+      b.classList.add("active");
+      sel.gender = b.dataset.val;
+      renderSizes();
+      applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
+    });
+  }
+
+  $("#pickSize")?.addEventListener("click", (e) => {
     const b = e.target.closest(".pill");
     if (!b) return;
     $$("#pickSize .pill").forEach((x) => x.classList.remove("active"));
     b.classList.add("active");
     sel.size = b.dataset.val;
   });
+
   $("#pickColor").addEventListener("click", (e) => {
     const s = e.target.closest(".swatch");
     if (!s) return;
@@ -411,7 +519,9 @@ function openDetail(pid) {
     s.classList.add("active");
     sel.color = s.dataset.val;
     renderSizes();
+    applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
   });
+
   $("#pickLogo").addEventListener("click", (e) => {
     const b = e.target.closest(".pill");
     if (!b) return;
@@ -422,22 +532,33 @@ function openDetail(pid) {
 
   $("#btnAdd").addEventListener("click", () => {
     const qty = Math.max(1, Number($("#qty").value || 1));
-    if (!sel.gender || !sel.size || !sel.color) {
-      alert("Choisir genre, taille et couleur.");
+    if (showGender && !sel.gender) {
+      alert("Choisir un genre.");
       return;
     }
+    // Taille peut être vide pour accessoires
+    if ($("#wrapSize") && $("#wrapSize").style.display !== "none" && !sel.size) {
+      alert("Choisir une taille.");
+      return;
+    }
+    if (!sel.color) {
+      alert("Choisir une couleur.");
+      return;
+    }
+
     CART.push({
       product_id: p.product_id,
       title: p.title,
       color: sel.color,
-      gender: sel.gender,
-      size: sel.size,
+      gender: sel.gender || "Unisexe",
+      size: sel.size || "",
       qty,
       price: p.price,
       logo: sel.logo,
       flocage_text: ($("#flocText").value || "").trim(),
-      image_url: imgOrFallback(p.image_url),
+      image_url: $("#detailImg")?.src || imgOrFallback(p.image_url),
     });
+
     saveCart();
     refreshCartBadge();
     show("#sectionCategories");
@@ -453,159 +574,355 @@ function openDetail(pid) {
 
 /* -------- Pack -------- */
 function openPackDetail(p) {
-  const items = CATALOG.packItems.filter(
-    (x) => String(x.pack_id) === String(p.product_id)
-  );
+  const packLines = (CATALOG.packItems || []).filter((x) => String(x.pack_id) === String(p.product_id));
+  if (!packLines.length) {
+    alert("Pack incomplet : aucun item défini dans PackItems.");
+    return;
+  }
+
+  // Optional upgrades (si un jour tu ajoutes packUpgrades au catalog.json)
+  const packUpgrades = Array.isArray(CATALOG.packUpgrades) ? CATALOG.packUpgrades : [];
+
+  // Build slots (1 slot par ligne PackItems)
+  const slots = packLines.map((line, idx) => {
+    const baseProductId = String(line.product_id);
+    const prod = CATALOG.products.find((pr) => String(pr.product_id) === baseProductId);
+    const vars = getVariantsForProduct_(baseProductId);
+
+    const colors = uniq(vars.map((v) => v.color));
+    const genders = uniq(vars.map((v) => v.gender_scope));
+    const gender = defaultGender_(genders);
+    const color = defaultColor_(colors);
+
+    const sizes = getCandidateSizes_(vars, gender, color);
+    const size = sizes[0] || "";
+
+    // upgrades for this slot (schema attendu : pack_id, base_product_id, upgrade_product_id, label, extra_price, active)
+    const upgrades = packUpgrades
+      .filter((u) =>
+        String(u.pack_id) === String(p.product_id) &&
+        String(u.base_product_id || u.product_id || "") === baseProductId &&
+        (u.active === true || String(u.active).toLowerCase() === "true" || u.active === undefined)
+      )
+      .map((u) => ({
+        upgrade_product_id: String(u.upgrade_product_id || u.product_id || ""),
+        label: String(u.label || "Upgrade"),
+        extra_price: Number(u.extra_price || 0),
+      }))
+      .filter((u) => u.upgrade_product_id);
+
+    return {
+      idx,
+      title: String(line.title || (prod ? prod.title : "Article")),
+      base_product_id: baseProductId,
+      qty: Number(line.qty || 1),
+      // selection (par slot)
+      chosen_product_id: baseProductId, // peut changer si upgrade
+      upgrades,
+      gender,
+      color,
+      size,
+      logo: "Aucun",
+      flocage_text: "",
+      image_url: imgOrFallback((prod && prod.image_url) || p.image_url),
+    };
+  });
+
+  // Render HTML (design inchangé : on réutilise pills/swatches/inp)
+  const slotHtml = slots
+    .map((s) => {
+      const vars = getVariantsForProduct_(s.chosen_product_id);
+      const colors = uniq(vars.map((v) => v.color));
+      const genders = uniq(vars.map((v) => v.gender_scope));
+      const showGender = shouldShowGender_(genders);
+      const sizes = getCandidateSizes_(vars, s.gender, s.color);
+      const showSize = sizes.length > 0;
+
+      // upgrades UI (si dispo)
+      const upgradeHtml = s.upgrades && s.upgrades.length
+        ? `
+          <label style="margin-top:12px">Option</label>
+          <div class="pills pack-upgrades" data-slot="${s.idx}">
+            <button class="pill active" data-up="base">Base</button>
+            ${s.upgrades.map((u) => `<button class="pill" data-up="${u.upgrade_product_id}" data-extra="${u.extra_price}">${u.label} +${euros(u.extra_price)}</button>`).join("")}
+          </div>
+        `
+        : "";
+
+      return `
+        <div class="card" style="margin-top:14px">
+          <div class="card-body">
+            <div class="card-title-wrap" style="margin-bottom:8px">
+              <h3 style="margin:0">${s.title}</h3>
+              <div class="muted">x${s.qty}</div>
+            </div>
+
+            <div style="display:flex;gap:12px;align-items:center;margin:10px 0 6px">
+              <img id="slotImg_${s.idx}" src="${imgOrFallback(s.image_url)}" alt="${s.title}" style="width:92px;height:92px;object-fit:cover;border-radius:14px;border:1px solid rgba(0,0,0,.06)">
+              <div class="muted" style="flex:1">
+                Personnalise cet article : couleur / taille / logo / flocage.
+              </div>
+            </div>
+
+            ${upgradeHtml}
+
+            <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
+              <label>Genre</label>
+              <div class="pills pickGender" data-slot="${s.idx}">
+                ${["H", "F", "Unisexe", "Enfant"]
+                  .filter((g) => !genders.length || genders.includes(g))
+                  .map((g) => `<button class="pill ${String(g) === String(s.gender) ? "active" : ""}" data-val="${g}">${g}</button>`)
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="wrapSize" data-slot="${s.idx}" style="${showSize ? "" : "display:none"}">
+              <label>Taille</label>
+              <div class="pills sizes-grid pickSize" data-slot="${s.idx}">
+                ${sizes.map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
+              </div>
+            </div>
+
+            <label>Couleur</label>
+            <div class="swatches pickColor" data-slot="${s.idx}">
+              ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+                .map(
+                  (c) => `
+                  <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
+                    <div class="dot" style="background:${colorToHex(c)}"></div>
+                    <div class="name">${c}</div>
+                  </div>`
+                )
+                .join("")}
+            </div>
+
+            <label>Logo (inclus)</label>
+            <div class="pills pickLogo" data-slot="${s.idx}">
+              ${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
+                .map((l) => `<button class="pill ${String(l) === String(s.logo) ? "active" : ""}" data-val="${l}">${l}</button>`)
+                .join("")}
+            </div>
+
+            <label>Flocage (inclus)</label>
+            <input class="inp pickFloc" data-slot="${s.idx}" value="${String(s.flocage_text || "")}" placeholder="Texte (ex: NOM)">
+          </div>
+        </div>
+      `;
+    })
+    .join("");
 
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
       <button id="goHome" class="back">Accueil</button>
       <button id="backList" class="back">Produits</button>
     </div>
+
     <div class="detail">
       <img class="detail-img" src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <h3>${p.title} — Pack</h3>
       <div class="price" style="margin-bottom:12px">${euros(p.price)}</div>
 
-      <label>Genre</label>
-      <div class="pills" id="packGender">${["H", "F", "Unisexe", "Enfant"]
-        .map((g) => `<button class="pill" data-val="${g}">${g}</button>`)
-        .join("")}</div>
-
-      <label>Taille</label>
-      <div class="pills sizes-grid" id="packSize"></div>
-
-      <label>Couleur</label>
-      <div class="swatches" id="packColor">
-        ${(CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"])
-          .map((c) => `
-          <div class="swatch" data-val="${c}">
-            <div class="dot" style="background:${colorToHex(c)}"></div>
-            <div class="name">${c}</div>
-          </div>`)
-          .join("")}
-      </div>
-
-      <label>Logo (inclus)</label>
-      <div class="pills" id="packLogo">${(CATALOG.options.logo || ["Tennis", "Padel", "Aucun"])
-        .map((l) => `<button class="pill" data-val="${l}">${l}</button>`)
-        .join("")}</div>
-
-      <label>Flocage (inclus)</label>
-      <input id="packFloc" class="inp" placeholder="Texte (ex: NOM)">
       <label>Quantité de packs</label>
       <input id="packQty" class="inp" type="number" min="1" value="1">
 
-      <div class="actions"><button id="btnAddPack" class="btn btn-primary">🛒 Ajouter le pack</button></div>
+      <div style="display:flex;gap:10px;margin-top:10px">
+        <button id="copyLogoAll" class="btn btn-ghost btn-small" type="button">Copier logo sur tous</button>
+        <button id="copyFlocAll" class="btn btn-ghost btn-small" type="button">Copier flocage sur tous</button>
+      </div>
+
+      ${slotHtml}
+
+      <div class="actions" style="margin-top:16px">
+        <button id="btnAddPack" class="btn btn-primary">🛒 Ajouter le pack</button>
+      </div>
     </div>
   `;
 
-  const sel = { color: null, gender: null, size: null, logo: "Aucun" };
-
-  function ensureSize() {
-    const base = sel.gender === "Enfant" ? KID_SIZES : ADULT_SIZES;
-    const box = $("#packSize");
-    box.innerHTML = base.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
-    if (sel.size) {
-      const match = Array.from(box.querySelectorAll(".pill")).find(
-        (b) => b.dataset.val === sel.size
-      );
-      if (match) match.classList.add("active");
-      else sel.size = null;
-    }
-  }
-  ensureSize();
-
-  const g0 = $("#packGender .pill");
-  if (g0) {
-    g0.classList.add("active");
-    sel.gender = g0.dataset.val;
-  }
-  const l0 = $("#packLogo .pill");
-  if (l0) {
-    l0.classList.add("active");
-    sel.logo = l0.dataset.val;
-  }
-  const c0 = $("#packColor .swatch");
-  if (c0) {
-    c0.classList.add("active");
-    sel.color = c0.dataset.val;
-  }
-
-  $("#packGender").addEventListener("click", (e) => {
-    const b = e.target.closest(".pill");
-    if (!b) return;
-    $$("#packGender .pill").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-    sel.gender = b.dataset.val;
-    ensureSize();
-  });
-  $("#packSize").addEventListener("click", (e) => {
-    const b = e.target.closest(".pill");
-    if (!b) return;
-    $$("#packSize .pill").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-    sel.size = b.dataset.val;
-  });
-  $("#packColor").addEventListener("click", (e) => {
-    const s = e.target.closest(".swatch");
-    if (!s) return;
-    $$("#packColor .swatch").forEach((x) => x.classList.remove("active"));
-    s.classList.add("active");
-    sel.color = s.dataset.val;
-  });
-  $("#packLogo").addEventListener("click", (e) => {
-    const b = e.target.closest(".pill");
-    if (!b) return;
-    $$("#packLogo .pill").forEach((x) => x.classList.remove("active"));
-    b.classList.add("active");
-    sel.logo = b.dataset.val;
+  // Apply variant images for each slot
+  slots.forEach((s) => {
+    const prodId = s.chosen_product_id;
+    const vars = getVariantsForProduct_(prodId);
+    const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(prodId));
+    applyVariantImage_(document.getElementById(`slotImg_${s.idx}`), vars, s.gender, s.color, (prod && prod.image_url) || p.image_url);
   });
 
-  $("#btnAddPack").addEventListener("click", () => {
-    const qty = Math.max(1, Number($("#packQty").value || 1));
-    if (!sel.gender || !sel.size || !sel.color) {
-      alert("Choisir genre, taille et couleur.");
+  // --- Event delegation for slot pickers ---
+  $("#detail").addEventListener("click", (e) => {
+    // Gender
+    const g = e.target.closest(".pickGender .pill");
+    if (g) {
+      const slotIndex = Number(g.closest(".pickGender").dataset.slot);
+      const slot = slots.find((x) => x.idx === slotIndex);
+      if (!slot) return;
+      const container = g.closest(".pickGender");
+      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+      g.classList.add("active");
+      slot.gender = g.dataset.val;
+
+      // refresh sizes + image
+      const vars = getVariantsForProduct_(slot.chosen_product_id);
+      const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
+      slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
+
+      // re-render sizes pills for this slot
+      const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
+      const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
+      if (sizes.length) {
+        if (sizeWrap) sizeWrap.style.display = "";
+        if (sizeBox) {
+          sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
+        }
+      } else {
+        if (sizeWrap) sizeWrap.style.display = "none";
+        slot.size = "";
+      }
+
+      const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
+      applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), vars, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
       return;
     }
+
+    // Size
+    const sBtn = e.target.closest(".pickSize .pill");
+    if (sBtn) {
+      const slotIndex = Number(sBtn.closest(".pickSize").dataset.slot);
+      const slot = slots.find((x) => x.idx === slotIndex);
+      if (!slot) return;
+      const container = sBtn.closest(".pickSize");
+      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+      sBtn.classList.add("active");
+      slot.size = sBtn.dataset.val;
+      return;
+    }
+
+    // Color
+    const c = e.target.closest(".pickColor .swatch");
+    if (c) {
+      const slotIndex = Number(c.closest(".pickColor").dataset.slot);
+      const slot = slots.find((x) => x.idx === slotIndex);
+      if (!slot) return;
+      const container = c.closest(".pickColor");
+      container.querySelectorAll(".swatch").forEach((x) => x.classList.remove("active"));
+      c.classList.add("active");
+      slot.color = c.dataset.val;
+
+      // refresh sizes + image
+      const vars = getVariantsForProduct_(slot.chosen_product_id);
+      const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
+      slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
+
+      const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
+      const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
+      if (sizes.length) {
+        if (sizeWrap) sizeWrap.style.display = "";
+        if (sizeBox) {
+          sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
+        }
+      } else {
+        if (sizeWrap) sizeWrap.style.display = "none";
+        slot.size = "";
+      }
+
+      const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
+      applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), vars, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
+      return;
+    }
+
+    // Logo
+    const l = e.target.closest(".pickLogo .pill");
+    if (l) {
+      const slotIndex = Number(l.closest(".pickLogo").dataset.slot);
+      const slot = slots.find((x) => x.idx === slotIndex);
+      if (!slot) return;
+      const container = l.closest(".pickLogo");
+      container.querySelectorAll(".pill").forEach((x) => x.classList.remove("active"));
+      l.classList.add("active");
+      slot.logo = l.dataset.val;
+      return;
+    }
+  });
+
+  // Flocage inputs (input event)
+  $("#detail").addEventListener("input", (e) => {
+    const inp = e.target.closest(".pickFloc");
+    if (!inp) return;
+    const slotIndex = Number(inp.dataset.slot);
+    const slot = slots.find((x) => x.idx === slotIndex);
+    if (!slot) return;
+    slot.flocage_text = String(inp.value || "");
+  });
+
+  // Copy buttons
+  $("#copyLogoAll").addEventListener("click", () => {
+    const first = slots[0]?.logo || "Aucun";
+    slots.forEach((s) => (s.logo = first));
+    // update UI quickly
+    slots.forEach((s) => {
+      const box = document.querySelector(`.pickLogo[data-slot="${s.idx}"]`);
+      if (!box) return;
+      box.querySelectorAll(".pill").forEach((b) => {
+        b.classList.toggle("active", b.dataset.val === first);
+      });
+    });
+  });
+
+  $("#copyFlocAll").addEventListener("click", () => {
+    const first = slots[0]?.flocage_text || "";
+    slots.forEach((s) => (s.flocage_text = first));
+    slots.forEach((s) => {
+      const inp = document.querySelector(`.pickFloc[data-slot="${s.idx}"]`);
+      if (inp) inp.value = first;
+    });
+  });
+
+  // Add pack to cart
+  $("#btnAddPack").addEventListener("click", () => {
+    const packQty = Math.max(1, Number($("#packQty").value || 1));
+
+    // 1) Base pack line (price = pack price)
     CART.push({
       product_id: p.product_id,
-      title: p.title + " — Pack",
-      color: sel.color,
-      gender: sel.gender,
-      size: sel.size,
-      qty,
+      title: `${p.title} — Pack`,
+      color: "",
+      gender: "",
+      size: "",
+      qty: packQty,
       price: p.price,
-      logo: sel.logo,
-      flocage_text: ($("#packFloc").value || "").trim(),
+      logo: "",
+      flocage_text: "",
       image_url: imgOrFallback(p.image_url),
       is_pack: true,
     });
-    items.forEach((it) => {
-      const prod = CATALOG.products.find(
-        (pr) => String(pr.product_id) === String(it.product_id)
-      );
+
+    // 2) Items (included at 0€)
+    slots.forEach((s, idx) => {
+      const chosenProd = CATALOG.products.find((pr) => String(pr.product_id) === String(s.chosen_product_id));
+
       CART.push({
-        product_id: it.product_id,
-        title: it.title,
-        color: sel.color,
-        gender: sel.gender,
-        size: sel.size,
-        qty: (it.qty || 1) * qty,
+        product_id: s.chosen_product_id,
+        title: `${s.title}`,
+        color: s.color || "",
+        gender: s.gender || "Unisexe",
+        size: s.size || "",
+        qty: (s.qty || 1) * packQty,
         price: 0,
-        logo: sel.logo,
-        flocage_text: ($("#packFloc").value || "").trim(),
-        image_url: prod ? imgOrFallback(prod.image_url) : imgOrFallback(p.image_url),
+        logo: s.logo || "Aucun",
+        flocage_text: String(s.flocage_text || "").trim(),
+        image_url: document.getElementById(`slotImg_${s.idx}`)?.src || imgOrFallback((chosenProd && chosenProd.image_url) || p.image_url),
         parent_pack: p.product_id,
+        slot_index: idx + 1,
       });
     });
+
     saveCart();
     refreshCartBadge();
     show("#sectionCategories");
+    window.scrollTo({ top: 0 });
   });
 
   $("#backList").addEventListener("click", () => show("#sectionProducts"));
   $("#goHome").addEventListener("click", () => show("#sectionCategories"));
+
   show("#sectionDetail");
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -676,26 +993,27 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
     const name = ($("#custName").value || "").trim();
-const email = ($("#custEmail").value || "").trim();
-const phone = ($("#custPhone").value || "").trim();
+    const email = ($("#custEmail").value || "").trim();
+    const phone = ($("#custPhone").value || "").trim();
 
-if (!name || !email) {
-  alert("Nom et e-mail sont obligatoires.");
-  return;
-}
+    if (!name || !email) {
+      alert("Nom et e-mail sont obligatoires.");
+      return;
+    }
 
-if (!phone) {
-  alert("Téléphone obligatoire.");
-  $("#custPhone").focus();
-  return;
-}
+    if (!phone) {
+      alert("Téléphone obligatoire.");
+      $("#result").textContent = "";
+      $("#custPhone").focus();
+      return;
+    }
 
     $("#btnValidate").disabled = true;
     $("#result").textContent = isAppsScript
       ? "Génération du PDF…"
       : "Envoi de la commande…";
 
-    // ---- APPS SCRIPT (inchangé, sauf lien PDF) ----
+    // ---- APPS SCRIPT ----
     if (isAppsScript) {
       const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
 
@@ -703,7 +1021,6 @@ if (!phone) {
         .withSuccessHandler((res) => {
           $("#doneMsg").textContent = `Commande n° ${res.order_id}. L'organisation a bien reçu votre commande.`;
 
-          // ✅ FIX: compat pdfUrl / pdf_url + ouvre en nouvel onglet
           const pdf = (res && (res.pdf_url || res.pdfUrl)) ? String(res.pdf_url || res.pdfUrl).trim() : "";
           const a = $("#donePdf");
           if (pdf) {
@@ -748,18 +1065,13 @@ if (!phone) {
       return;
     }
 
-    // Worker expects /api/order
     const orderUrl = base.includes("workers.dev") ? base + "/api/order" : base;
 
-    // ✅ Build payload for your Worker: { order, items }
     const order = {
       customer_name: name,
       phone: phone || "",
       total: cartTotal(),
       status: "new",
-      // optionnel:
-      // date: new Date().toISOString(),
-      // pdf_url: ""
     };
 
     const items = CART.map((it, idx) => ({
@@ -793,7 +1105,6 @@ if (!phone) {
 
         $("#doneMsg").textContent = `Commande n° ${res.order_id || "?"}. L'organisation a bien reçu votre commande.`;
 
-        // ✅ FIX: set PDF link returned by Worker (pdf_url) + ouvre en nouvel onglet
         const pdf = (res && (res.pdf_url || res.pdfUrl)) ? String(res.pdf_url || res.pdfUrl).trim() : "";
         const a = $("#donePdf");
         if (pdf) {
@@ -811,7 +1122,6 @@ if (!phone) {
         $("#btnValidate").disabled = false;
         $("#result").textContent = "";
 
-        // reset
         CART = [];
         saveCart();
         refreshCartBadge();
