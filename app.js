@@ -7,7 +7,7 @@ const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
 /* === CONFIG BACKEND APPS SCRIPT === */
 window.APPS_SCRIPT_DEPLOY =
-  "https://script.google.com/macros/s/AKfycbyT0xk6dAiPoBIGf96VT52HC6FcWqG7M40Wv_Om3hLRy3ITQXZPs32l8Kb2rZp-MZl0Dw/exec";
+  "https://script.google.com/macros/s/AKfycbxxG_wkUlhIKpYa1mLO-OUHGm0Yakc7oh3pj_FUyhqf958wGek94vabhfCK-iZovTMfHQ/exec";
 
 /* === CONFIG MODE GITHUB PAGES === */
 // URL du catalogue statique généré par GitHub Actions (Sheets → data/catalog.json)
