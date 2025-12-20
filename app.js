@@ -652,8 +652,8 @@ function openPackDetail(p) {
       : "";
 
     return `
-      <div class="card" style="margin-top:14px">
-        <div class="card-body">
+  <div class="card pack-slot" style="margin-top:14px">
+    <div class="card-body">
           <div class="card-title-wrap" style="margin-bottom:8px">
             <h3 style="margin:0">${s.slot_title}</h3>
             <div class="muted">x${s.qty}</div>
