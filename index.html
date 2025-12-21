@@ -9,22 +9,21 @@
 
 <body>
   <header class="app-header">
-    <div class="brand">
-      <img
-        src="https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/logo_complexe.png"
-        alt="Logo Les Acacias"
-        class="brand-logo">
-      <div class="brand-text">
-        <span class="brand-line">Boutique —</span>
-        <span class="brand-line brand-line-secondary">Les Acacias</span>
-      </div>
+  <div class="brand">
+    <img
+      src="https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/logo.png"
+      alt="Logo Les Acacias"
+      class="brand-logo">
+    <div class="brand-text">
+      <span class="brand-line">Boutique —</span>
+      <span class="brand-line brand-line-secondary">Les Acacias</span>
     </div>
+  </div>
 
-    <!-- ✅ PILS PANIER en haut à droite (mêmes IDs pour app.js) -->
-    <button id="btnCart" class="btn btn-outline btn-cart cart-pill" aria-label="Ouvrir le panier">
-      PANIER <span id="cartCount" class="badge">0</span>
-    </button>
-  </header>
+  <button id="btnCart" class="btn btn-outline btn-cart">
+    Panier <span id="cartCount" class="badge">0</span>
+  </button>
+</header>
 
   <div class="container">
 
@@ -51,73 +50,9 @@
       <div id="productList" class="grid"></div>
     </section>
 
-    <!-- DETAIL PRODUIT -->
+    <!-- DÉTAIL PRODUIT -->
     <section id="sectionDetail" class="section">
-      <button id="backProducts" class="back">Retour</button>
-
-      <div class="detail">
-        <div class="detail-visual">
-          <img id="detailImg" src="" alt="Produit" class="detail-img">
-        </div>
-
-        <div class="detail-info">
-          <h2 id="detailTitle">Produit</h2>
-          <p id="detailDesc" class="muted"></p>
-
-          <div class="row">
-            <div class="col">
-              <label>Genre</label>
-              <select id="optGender" class="inp">
-                <option value="">—</option>
-                <option>Homme</option>
-                <option>Femme</option>
-                <option>Enfant</option>
-              </select>
-            </div>
-            <div class="col">
-              <label>Taille</label>
-              <select id="optSize" class="inp">
-                <option value="">—</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="row">
-            <div class="col">
-              <label>Couleur</label>
-              <select id="optColor" class="inp">
-                <option value="">—</option>
-              </select>
-            </div>
-            <div class="col">
-              <label>Logo</label>
-              <select id="optLogo" class="inp">
-                <option value="">—</option>
-                <option>Les Acacias</option>
-                <option>Acacias Padel</option>
-                <option>Acacias Foot</option>
-              </select>
-            </div>
-          </div>
-
-          <label>Flocage (optionnel)</label>
-          <input id="optFlocage" class="inp" placeholder="Ex : NOM 10">
-
-          <div class="row">
-            <div class="col">
-              <label>Quantité</label>
-              <input id="optQty" type="number" class="inp" min="1" value="1">
-            </div>
-            <div class="col">
-              <label>Prix</label>
-              <div id="detailPrice" class="price">0€</div>
-            </div>
-          </div>
-
-          <button id="btnAdd" class="btn btn-primary">Ajouter au panier</button>
-          <div id="addMsg" class="muted" style="margin-top:10px"></div>
-        </div>
-      </div>
+      <div id="detail"></div>
     </section>
 
     <!-- PANIER -->
