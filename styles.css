@@ -504,7 +504,6 @@ label{
   }
   .btn-primary{width:100%}
 }
-
 /* ===========================
    PACKS — Slot cards en VERTICAL
    (ne touche pas aux cards produits)
@@ -519,13 +518,4 @@ label{
   justify-content:space-between;
   align-items:baseline;
   gap:12px;
-}
-
-/* ===========================
-   PANIER — PILS HEADER (haut droite)
-   =========================== */
-.cart-pill{
-  white-space:nowrap;
-  text-transform:uppercase;
-  letter-spacing:.04em;
 }
