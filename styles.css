@@ -24,7 +24,7 @@ html,body{
   color:var(--text);
   font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
 }
-body{padding-bottom:110px}
+body{padding-bottom:32px}
 
 /* HEADER */
 .app-header{
@@ -442,7 +442,7 @@ label{
 
 /* ==== TABLETTES & + ==== */
 @media (min-width:768px){
-  body{padding-bottom:120px}
+  body{padding-bottom:44px}
   .app-header{padding:24px}
   .brand{font-size:1.1rem;gap:12px}
   .brand-logo{width:44px;height:44px}
@@ -509,9 +509,11 @@ label{
    PACKS — Slot cards en VERTICAL
    (ne touche pas aux cards produits)
    =========================== */
+
 .card.pack-slot .card-body{
   display:block;            /* au lieu du flex horizontal des cards normales */
 }
+
 .card.pack-slot .card-title-wrap{
   display:flex;
   justify-content:space-between;
@@ -520,52 +522,10 @@ label{
 }
 
 /* ===========================
-   PANIER — PILL FLOTTANT
+   PANIER — PILS HEADER (haut droite)
    =========================== */
-.cart-fab{
-  position: fixed;
-  right: 16px;
-  bottom: calc(16px + env(safe-area-inset-bottom));
-  z-index: 9999;
-
-  width: 64px;
-  height: 64px;
-  border-radius: 999px;
-  border: 1px solid #ffffffb0;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  background: linear-gradient(180deg,var(--primary-soft),var(--primary));
-  color: #fff;
-  font-weight: 900;
-  font-size: 22px;
-
-  box-shadow: 0 22px 40px rgba(47,111,239,.55);
-  cursor: pointer;
-}
-.cart-fab:active{ transform: translateY(2px); }
-
-.cart-fab-badge{
-  position: absolute;
-  top: -8px;
-  right: -6px;
-
-  min-width: 26px;
-  height: 26px;
-  padding: 0 8px;
-
-  border-radius: 999px;
-  background: rgba(15,23,42,.92);
-  color: #fff;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 13px;
-  font-weight: 900;
-  border: 1px solid #ffffffb0;
-  box-shadow: 0 6px 16px rgba(15,23,42,.18);
+.cart-pill{
+  white-space:nowrap;
+  text-transform:uppercase;
+  letter-spacing:.04em;
 }
