@@ -1,407 +1,267 @@
 {
   "products": [
     {
-      "product_id": "H-SWEAT-ROYAL",
-      "title": "Sweat Club Homme - Bleu roi",
+      "product_id": "SWEAT",
+      "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Bleu%20roi",
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "H-SWEAT-WHITE",
-      "title": "Sweat Club Homme - Blanc",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Blanc",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "H-SWEAT-BLACK",
-      "title": "Sweat Club Homme - Noir",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "H-SWEAT-NAVY",
-      "title": "Sweat Club Homme - Bleu foncé",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Bleu%20fonc%C3%A9",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "H-TSHIRT-ROYAL",
-      "title": "T-shirt Club Homme - Bleu roi",
+      "product_id": "TSHIRT",
+      "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Homme%20-%20Bleu%20roi",
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "H-TSHIRT-WHITE",
-      "title": "T-shirt Club Homme - Blanc",
-      "category": "Vêtements",
-      "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Homme%20-%20Blanc",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "H-SHORT-WHITE",
-      "title": "Short Club Homme - Blanc",
+      "product_id": "SHORT",
+      "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Homme%20-%20Blanc",
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "H-SHORT-ROYAL",
-      "title": "Short Club Homme - Bleu roi",
-      "category": "Vêtements",
-      "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Homme%20-%20Bleu%20roi",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "H-JOGGING-NAVY",
-      "title": "Jogging Club Homme - Bleu foncé",
+      "product_id": "JOGGING",
+      "title": "Jogging Club",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Homme%20-%20Bleu%20fonc%C3%A9",
+      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "H-JOGGING-BLACK",
-      "title": "Jogging Club Homme - Noir",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Homme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SWEAT-ROYAL",
-      "title": "Sweat Club Femme - Bleu roi",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Bleu%20roi",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SWEAT-WHITE",
-      "title": "Sweat Club Femme - Blanc",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Blanc",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SWEAT-BLACK",
-      "title": "Sweat Club Femme - Noir",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SWEAT-PINK",
-      "title": "Sweat Club Femme - Rose pâle",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Rose%20p%C3%A2le",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-TSHIRT-ROYAL",
-      "title": "T-shirt Club Femme - Bleu roi",
-      "category": "Vêtements",
-      "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Bleu%20roi",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-TSHIRT-WHITE",
-      "title": "T-shirt Club Femme - Blanc",
-      "category": "Vêtements",
-      "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Blanc",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-TSHIRT-BLACK",
-      "title": "T-shirt Club Femme - Noir",
-      "category": "Vêtements",
-      "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-TSHIRT-PINK",
-      "title": "T-shirt Club Femme - Rose pâle",
-      "category": "Vêtements",
-      "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Rose%20p%C3%A2le",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SHORT-WHITE",
-      "title": "Short Club Femme - Blanc",
-      "category": "Vêtements",
-      "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Blanc",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SHORT-ROYAL",
-      "title": "Short Club Femme - Bleu roi",
-      "category": "Vêtements",
-      "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Bleu%20roi",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SHORT-BLACK",
-      "title": "Short Club Femme - Noir",
-      "category": "Vêtements",
-      "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-SHORT-PINK",
-      "title": "Short Club Femme - Rose pâle",
-      "category": "Vêtements",
-      "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Rose%20p%C3%A2le",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-JOGGING-NAVY",
-      "title": "Jogging Club Femme - Bleu foncé",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Femme%20-%20Bleu%20fonc%C3%A9",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "F-JOGGING-BLACK",
-      "title": "Jogging Club Femme - Noir",
-      "category": "Vêtements",
-      "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Femme%20-%20Noir",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "UNI-CASQUETTE-BLACK",
-      "title": "Casquette Club - Noir",
+      "product_id": "CASQUETTE",
+      "title": "Casquette Club",
       "category": "Accessoires",
       "price": 20,
-      "image_url": "https://via.placeholder.com/900x650?text=Casquette%20Club%20-%20Noir",
+      "image_url": "https://via.placeholder.com/900x650?text=Casquette%20Club",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "PACK-COMPLET-150",
+      "product_id": "PK150",
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
-      "image_url": "https://via.placeholder.com/900x650?text=Pack%20Club%20Complet%20150%E2%82%AC",
+      "image_url": "https://via.placeholder.com/900x650?text=Pack%20Club%20150",
       "type": "pack",
       "active": true
     }
   ],
   "variants": [
     {
-      "variant_id": "V1",
-      "product_id": "T001",
-      "color": "Bleu",
+      "variant_id": "V_SWEAT_H_BLEU_ROI",
+      "product_id": "SWEAT",
+      "color": "Bleu roi",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Bleu%20roi"
     },
     {
-      "variant_id": "V2",
-      "product_id": "T001",
+      "variant_id": "V_SWEAT_H_BLANC",
+      "product_id": "SWEAT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Blanc"
+    },
+    {
+      "variant_id": "V_SWEAT_H_NOIR",
+      "product_id": "SWEAT",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Noir"
+    },
+    {
+      "variant_id": "V_SWEAT_H_BLEU_FONCE",
+      "product_id": "SWEAT",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Bleu%20fonc%C3%A9"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_BLEU_ROI",
+      "product_id": "TSHIRT",
+      "color": "Bleu roi",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20H%20Bleu%20roi"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_BLANC",
+      "product_id": "TSHIRT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20H%20Blanc"
+    },
+    {
+      "variant_id": "V_SHORT_H_BLANC",
+      "product_id": "SHORT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20H%20Blanc"
+    },
+    {
+      "variant_id": "V_SHORT_H_BLEU_ROI",
+      "product_id": "SHORT",
+      "color": "Bleu roi",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20H%20Bleu%20roi"
+    },
+    {
+      "variant_id": "V_JOGGING_H_BLEU_FONCE",
+      "product_id": "JOGGING",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20H%20Bleu%20fonc%C3%A9"
+    },
+    {
+      "variant_id": "V_JOGGING_H_NOIR",
+      "product_id": "JOGGING",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20H%20Noir"
+    },
+    {
+      "variant_id": "V_SWEAT_F_BLEU_ROI",
+      "product_id": "SWEAT",
+      "color": "Bleu roi",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Bleu%20roi"
+    },
+    {
+      "variant_id": "V_SWEAT_F_BLANC",
+      "product_id": "SWEAT",
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Blanc"
     },
     {
-      "variant_id": "V3",
-      "product_id": "T001",
+      "variant_id": "V_SWEAT_F_NOIR",
+      "product_id": "SWEAT",
       "color": "Noir",
-      "gender_scope": "Unisexe",
+      "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Noir"
     },
     {
-      "variant_id": "V4",
-      "product_id": "P001",
-      "color": "Bleu",
-      "gender_scope": "H",
+      "variant_id": "V_SWEAT_F_ROSE_PÂLE",
+      "product_id": "SWEAT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Rose%20p%C3%A2le"
     },
     {
-      "variant_id": "V5",
-      "product_id": "P001",
+      "variant_id": "V_TSHIRT_F_BLEU_ROI",
+      "product_id": "TSHIRT",
+      "color": "Bleu roi",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Bleu%20roi"
+    },
+    {
+      "variant_id": "V_TSHIRT_F_BLANC",
+      "product_id": "TSHIRT",
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Blanc"
     },
     {
-      "variant_id": "V6",
-      "product_id": "C001",
-      "color": "Bleu",
-      "gender_scope": "Unisexe",
-      "size_list": "",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V7",
-      "product_id": "C001",
+      "variant_id": "V_TSHIRT_F_NOIR",
+      "product_id": "TSHIRT",
       "color": "Noir",
-      "gender_scope": "Unisexe",
-      "size_list": "",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_T001_H_BLEU",
-      "product_id": "T001",
-      "color": "Bleu",
-      "gender_scope": "H",
+      "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Noir"
     },
     {
-      "variant_id": "V_T001_F_BLANC",
-      "product_id": "T001",
+      "variant_id": "V_TSHIRT_F_ROSE_PÂLE",
+      "product_id": "TSHIRT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Rose%20p%C3%A2le"
+    },
+    {
+      "variant_id": "V_SHORT_F_BLANC",
+      "product_id": "SHORT",
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Blanc"
     },
     {
-      "variant_id": "V_T001_U_NOIR",
-      "product_id": "T001",
-      "color": "Noir",
-      "gender_scope": "Unisexe",
-      "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_T001_E_BLEU",
-      "product_id": "T001",
-      "color": "Bleu",
-      "gender_scope": "Enfant",
-      "size_list": "4,6,8,10,12,14",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_P001_H_BLEU",
-      "product_id": "P001",
-      "color": "Bleu",
-      "gender_scope": "H",
-      "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_P001_F_BLANC",
-      "product_id": "P001",
-      "color": "Blanc",
+      "variant_id": "V_SHORT_F_BLEU_ROI",
+      "product_id": "SHORT",
+      "color": "Bleu roi",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Bleu%20roi"
     },
     {
-      "variant_id": "V_SW01_U_BLEU",
-      "product_id": "SWEAT01",
-      "color": "Bleu",
-      "gender_scope": "Unisexe",
-      "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_SW01_U_NOIR",
-      "product_id": "SWEAT01",
-      "color": "Noir",
-      "gender_scope": "Unisexe",
-      "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_SH01_H_BLEU",
-      "product_id": "SH01",
-      "color": "Bleu",
-      "gender_scope": "H",
-      "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_SH01_F_NOIR",
-      "product_id": "SH01",
+      "variant_id": "V_SHORT_F_NOIR",
+      "product_id": "SHORT",
       "color": "Noir",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Noir"
     },
     {
-      "variant_id": "V_C001_U_BLEU",
-      "product_id": "C001",
-      "color": "Bleu",
-      "gender_scope": "Unisexe",
-      "size_list": "",
-      "image_url": ""
+      "variant_id": "V_SHORT_F_ROSE_PÂLE",
+      "product_id": "SHORT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Rose%20p%C3%A2le"
     },
     {
-      "variant_id": "V_C001_U_NOIR",
-      "product_id": "C001",
+      "variant_id": "V_JOGGING_F_BLEU_FONCE",
+      "product_id": "JOGGING",
+      "color": "Bleu foncé",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20F%20Bleu%20fonc%C3%A9"
+    },
+    {
+      "variant_id": "V_JOGGING_F_NOIR",
+      "product_id": "JOGGING",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20F%20Noir"
+    },
+    {
+      "variant_id": "V_CASQUETTE_UNISEXE_NOIR",
+      "product_id": "CASQUETTE",
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
-    },
-    {
-      "variant_id": "V_SAC01_U_NOIR",
-      "product_id": "SAC01",
-      "color": "Noir",
-      "gender_scope": "Unisexe",
-      "size_list": "",
-      "image_url": ""
+      "image_url": "https://via.placeholder.com/900x650?text=CASQUETTE%20Noir"
     }
   ],
   "packItems": [
     {
-      "pack_id": "PKS",
-      "product_id": "T001",
-      "title": "T-shirt",
+      "pack_id": "PK150",
+      "product_id": "SWEAT",
+      "title": "Sweat Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
@@ -409,9 +269,9 @@
       "extra_price": 0
     },
     {
-      "pack_id": "PKS",
-      "product_id": "SH01",
-      "title": "Short",
+      "pack_id": "PK150",
+      "product_id": "TSHIRT",
+      "title": "T-shirt Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
@@ -419,9 +279,9 @@
       "extra_price": 0
     },
     {
-      "pack_id": "PKS",
-      "product_id": "T001",
-      "title": "T-shirt",
+      "pack_id": "PK150",
+      "product_id": "TSHIRT",
+      "title": "T-shirt Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
@@ -429,9 +289,9 @@
       "extra_price": 0
     },
     {
-      "pack_id": "PKS",
-      "product_id": "SH01",
-      "title": "Short",
+      "pack_id": "PK150",
+      "product_id": "JOGGING",
+      "title": "Jogging Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
@@ -439,59 +299,19 @@
       "extra_price": 0
     },
     {
-      "pack_id": "PKM",
-      "product_id": "SWEAT01",
-      "title": "Sweat",
+      "pack_id": "PK150",
+      "product_id": "CASQUETTE",
+      "title": "Casquette Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_size": "FALSE",
       "extra_price": 0
     },
     {
-      "pack_id": "PKM",
-      "product_id": "T001",
-      "title": "T-shirt",
-      "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
-      "extra_price": 0
-    },
-    {
-      "pack_id": "PKF",
-      "product_id": "SWEAT01",
-      "title": "Sweat",
-      "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
-      "extra_price": 0
-    },
-    {
-      "pack_id": "PKF",
-      "product_id": "T001",
-      "title": "T-shirt",
-      "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
-      "extra_price": 0
-    },
-    {
-      "pack_id": "PKF",
-      "product_id": "SH01",
-      "title": "Short",
-      "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
-      "extra_price": 0
-    },
-    {
-      "pack_id": "PKF",
-      "product_id": "C001",
-      "title": "Casquette",
+      "pack_id": "PK150",
+      "product_id": "SHORT",
+      "title": "Short Club",
       "qty": 1,
       "apply_pack_color": "TRUE",
       "apply_pack_gender": "TRUE",
