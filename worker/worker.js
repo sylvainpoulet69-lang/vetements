@@ -2,14 +2,14 @@
  * Cloudflare Worker – Order API → Google Sheets
  *
  * Endpoints:
- *  - POST /api/order   { payload: {...} }  -> append Orders + OrderItems
+ *  - POST /api/order
  *  - GET  /health
  *
- * Secrets (Workers -> Settings -> Variables):
- *  - SHEET_ID : Google Sheet ID
- *  - GOOGLE_SERVICE_ACCOUNT_JSON : full JSON of a Google service account (single-line or multiline)
- *  - ORDERS_SHEET_NAME : (optional) default "Orders"
- *  - ITEMS_SHEET_NAME  : (optional) default "OrderItems"
+ * Secrets:
+ *  - SHEET_ID
+ *  - GOOGLE_SERVICE_ACCOUNT_JSON
+ *  - ORDERS_SHEET_NAME (optional) default "Orders"
+ *  - ITEMS_SHEET_NAME  (optional) default "OrderItems"
  *
  * Google side:
  *  - Share the Google Sheet with the service account email (Editor).
@@ -48,15 +48,13 @@ export default {
       return json({ ok: false, error: "Invalid JSON" }, 400);
     }
 
-    const payload = body && body.payload;
-    if (!payload || !payload.cart || !payload.customer) {
-      return json({ ok: false, error: "Missing payload.cart or payload.customer" }, 400);
-    }
-
     const sheetId = env.SHEET_ID;
     const saJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
     if (!sheetId || !saJson) {
-      return json({ ok: false, error: "Worker missing SHEET_ID or GOOGLE_SERVICE_ACCOUNT_JSON" }, 500);
+      return json(
+        { ok: false, error: "Worker missing SHEET_ID or GOOGLE_SERVICE_ACCOUNT_JSON" },
+        500
+      );
     }
 
     const ordersTab = env.ORDERS_SHEET_NAME || "Orders";
@@ -65,7 +63,75 @@ export default {
     const orderId = makeOrderId();
     const nowIso = new Date().toISOString();
 
-    // Flatten order header
+    /* =========================================================
+       ✅ NEW: Support 2 formats (sans casser l'ancien)
+       - ancien: { payload: { customer, cart, total, ... } }
+       - nouveau: { order: {...}, items: [...] }
+       ========================================================= */
+    let payload = null;
+
+    // 1) Ancien format
+    if (body && body.payload) {
+      payload = body.payload;
+    }
+
+    // 2) Nouveau format (celui de ton app.js actuel)
+    if (!payload && body && body.order && Array.isArray(body.items)) {
+      const o = body.order || {};
+      const items = body.items || [];
+
+      payload = {
+        customer: {
+          name: o.customer_name || "",
+          email: o.email || "",
+          phone: o.phone || "",
+          company: o.company || "",
+          // ✅ NEW: on met la note INFO ici
+          notes: o.note || o.notes || "",
+        },
+        // ✅ On reconstruit un "cart" compatible avec l'ancien mapping
+        cart: items.map((it) => ({
+          product_id: it.product_id || "",
+          title: it.title || "",
+          qty: it.qty || 1,
+          price: it.unit_price || 0,
+          gender: it.gender || "",
+          size: it.size || "",
+          color: it.color || "",
+          logo: it.logo || "",
+          flocage: it.flocage || "",
+          flocage_text: it.flocage_text || "",
+          pack_parent_id: it.parent_pack || it.pack_parent_id || "",
+          extra: it.extra || "",
+        })),
+        total: o.total || 0,
+        currency: o.currency || "EUR",
+        source: o.source || "github-pages",
+      };
+    }
+
+    if (!payload || !payload.customer) {
+      return json(
+        { ok: false, error: "Missing payload.customer (or body.order/body.items)" },
+        400
+      );
+    }
+    if (!payload.cart || !Array.isArray(payload.cart)) {
+      return json(
+        { ok: false, error: "Missing payload.cart (or body.items)" },
+        400
+      );
+    }
+
+    /* =========================================================
+       ✅ NEW: récupérer la note INFO de façon robuste
+       ========================================================= */
+    const note =
+      (payload.customer && (payload.customer.notes || payload.customer.note)) ||
+      payload.note ||
+      "";
+
+    // Flatten order header (structure IDENTIQUE à ton worker)
     const orderRow = [
       orderId,
       nowIso,
@@ -73,13 +139,14 @@ export default {
       payload.customer.email || "",
       payload.customer.phone || "",
       payload.customer.company || "",
-      payload.customer.notes || "",
+      // ✅ NEW: ici on écrit la note (colonne "notes" existante)
+      String(note || ""),
       payload.total || "",
       payload.currency || "EUR",
       payload.source || "github-pages",
     ];
 
-    // Flatten items
+    // Flatten items (structure IDENTIQUE à ton worker)
     const itemRows = (payload.cart || []).map((line, idx) => ([
       orderId,
       String(idx + 1),
