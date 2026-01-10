@@ -38,9 +38,18 @@ function normalizeBool(v) {
   const s = String(v).trim().toLowerCase();
   return s === "true" || s === "1" || s === "yes" || s === "oui";
 }
+
 function normalizeNum(v) {
   const n = Number(String(v).replace(",", "."));
   return Number.isFinite(n) ? n : 0;
+}
+
+// ✅ AJOUT: normalisation HEX (#RRGGBB)
+function normalizeHex(v) {
+  const s = String(v || "").trim();
+  if (!s) return "";
+  const h = s.startsWith("#") ? s : "#" + s;
+  return /^#[0-9A-Fa-f]{6}$/.test(h) ? h : "";
 }
 
 function normalizeCatalog({ products, variants, packItems, options }) {
@@ -65,6 +74,14 @@ const products = await readTab("Products");
 const variants = await readTab("Variants");
 const packItems = await readTab("PackItems");
 
+// ✅ AJOUT: Colors (optionnel)
+let colors = [];
+try {
+  colors = await readTab("Colors");
+} catch {
+  colors = [];
+}
+
 // Optionnel: Options (key/value) pour couleurs par défaut, etc.
 let options = {};
 try {
@@ -76,6 +93,24 @@ try {
 } catch {
   options = {};
 }
+
+// ✅ AJOUT: build options.colors_hex depuis l'onglet Colors
+const colors_hex = (colors || []).reduce((acc, r) => {
+  const name = String(r.color || "").trim();
+  const hex = normalizeHex(r.hex);
+
+  // active: si vide => on considère actif (évite les surprises)
+  const isActive = String(r.active || "").trim() === "" ? true : normalizeBool(r.active);
+
+  if (name && hex && isActive) acc[name] = hex;
+  return acc;
+}, {});
+
+// ✅ AJOUT: injecter dans options sans casser le reste
+options = {
+  ...options,
+  colors_hex,
+};
 
 const catalog = normalizeCatalog({ products, variants, packItems, options });
 
