@@ -5,7 +5,7 @@
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/5d5a57c42635462704256a77b87822496b7db3ac/sweat-a.jpg",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg",
       "type": "single",
       "active": true
     },
@@ -14,7 +14,7 @@
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/5d5a57c42635462704256a77b87822496b7db3ac/tee-shirt-a.jpg",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg",
       "type": "single",
       "active": true
     },
@@ -23,7 +23,7 @@
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
-      "image_url": "https://cdn.jsdelivr.net/gh/sylvainpoulet69-lang/phototrainingaddict@5d5a57c42635462704256a77b87822496b7db3ac/short-a.jpg",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg",
       "type": "single",
       "active": true
     },
@@ -62,7 +62,7 @@
       "color": "Bleu roi",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_H_BLANC",
@@ -70,7 +70,7 @@
       "color": "Blanc",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_H_NOIR",
@@ -78,7 +78,7 @@
       "color": "Noir",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_H_BLEU_FONCE",
@@ -86,7 +86,7 @@
       "color": "Bleu foncé",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20H%20Bleu%20fonc%C3%A9"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_H_BLEU_ROI",
@@ -94,7 +94,7 @@
       "color": "Bleu roi",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20H%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_H_BLANC",
@@ -102,7 +102,7 @@
       "color": "Blanc",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20H%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_SHORT_H_BLANC",
@@ -110,7 +110,7 @@
       "color": "Blanc",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20H%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_SHORT_H_BLEU_ROI",
@@ -118,7 +118,7 @@
       "color": "Bleu roi",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20H%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_JOGGING_H_BLEU_FONCE",
@@ -126,7 +126,7 @@
       "color": "Bleu foncé",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20H%20Bleu%20fonc%C3%A9"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg"
     },
     {
       "variant_id": "V_JOGGING_H_NOIR",
@@ -134,7 +134,7 @@
       "color": "Noir",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20H%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_F_BLEU_ROI",
@@ -142,7 +142,7 @@
       "color": "Bleu roi",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_F_BLANC",
@@ -150,7 +150,7 @@
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_F_NOIR",
@@ -158,7 +158,7 @@
       "color": "Noir",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_SWEAT_F_ROSE_PÂLE",
@@ -166,7 +166,7 @@
       "color": "Rose pâle",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SWEAT%20F%20Rose%20p%C3%A2le"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_F_BLEU_ROI",
@@ -174,7 +174,7 @@
       "color": "Bleu roi",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_F_BLANC",
@@ -182,7 +182,7 @@
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_F_NOIR",
@@ -190,7 +190,7 @@
       "color": "Noir",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_TSHIRT_F_ROSE_PÂLE",
@@ -198,7 +198,7 @@
       "color": "Rose pâle",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=TSHIRT%20F%20Rose%20p%C3%A2le"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg"
     },
     {
       "variant_id": "V_SHORT_F_BLANC",
@@ -206,7 +206,7 @@
       "color": "Blanc",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Blanc"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_SHORT_F_BLEU_ROI",
@@ -214,7 +214,7 @@
       "color": "Bleu roi",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Bleu%20roi"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_SHORT_F_NOIR",
@@ -222,7 +222,7 @@
       "color": "Noir",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_SHORT_F_ROSE_PÂLE",
@@ -230,7 +230,7 @@
       "color": "Rose pâle",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=SHORT%20F%20Rose%20p%C3%A2le"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-a.jpg"
     },
     {
       "variant_id": "V_JOGGING_F_BLEU_FONCE",
@@ -238,7 +238,7 @@
       "color": "Bleu foncé",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20F%20Bleu%20fonc%C3%A9"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg"
     },
     {
       "variant_id": "V_JOGGING_F_NOIR",
@@ -246,7 +246,7 @@
       "color": "Noir",
       "gender_scope": "F",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": "https://via.placeholder.com/900x650?text=JOGGING%20F%20Noir"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg"
     },
     {
       "variant_id": "V_CASQUETTE_UNISEXE_NOIR",
@@ -254,7 +254,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": "https://via.placeholder.com/900x650?text=CASQUETTE%20Noir"
+      "image_url": ""
     }
   ],
   "packItems": [
