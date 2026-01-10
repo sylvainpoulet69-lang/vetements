@@ -1,13 +1,14 @@
 /**
- * Cloudflare Worker – Order API → Google Sheets
+ * Cloudflare Worker – Orders API → Google Sheets + trigger PDF WebApp (Apps Script)
  *
  * Endpoints:
  *  - POST /api/order
  *  - GET  /health
  *
- * Secrets:
+ * Secrets (Workers -> Settings -> Variables):
  *  - SHEET_ID
  *  - GOOGLE_SERVICE_ACCOUNT_JSON
+ *  - PDF_WEBAPP_URL                 // ✅ Apps Script /exec
  *  - ORDERS_SHEET_NAME (optional) default "Orders"
  *  - ITEMS_SHEET_NAME  (optional) default "OrderItems"
  *
@@ -50,9 +51,16 @@ export default {
 
     const sheetId = env.SHEET_ID;
     const saJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
+    const pdfWebappUrl = (env.PDF_WEBAPP_URL || "").replace(/\/$/, "");
     if (!sheetId || !saJson) {
       return json(
         { ok: false, error: "Worker missing SHEET_ID or GOOGLE_SERVICE_ACCOUNT_JSON" },
+        500
+      );
+    }
+    if (!pdfWebappUrl) {
+      return json(
+        { ok: false, error: "Worker missing PDF_WEBAPP_URL (Apps Script /exec)" },
         500
       );
     }
@@ -60,126 +68,90 @@ export default {
     const ordersTab = env.ORDERS_SHEET_NAME || "Orders";
     const itemsTab = env.ITEMS_SHEET_NAME || "OrderItems";
 
+    // ✅ Nouveau format attendu depuis ton app.js:
+    // { order: {...}, items: [...] }
+    if (!body || !body.order || !Array.isArray(body.items)) {
+      return json({ ok: false, error: "Missing body.order or body.items[]" }, 400);
+    }
+
+    const o = body.order || {};
+    const items = body.items || [];
+
     const orderId = makeOrderId();
     const nowIso = new Date().toISOString();
 
-    /* =========================================================
-       ✅ NEW: Support 2 formats (sans casser l'ancien)
-       - ancien: { payload: { customer, cart, total, ... } }
-       - nouveau: { order: {...}, items: [...] }
-       ========================================================= */
-    let payload = null;
-
-    // 1) Ancien format
-    if (body && body.payload) {
-      payload = body.payload;
-    }
-
-    // 2) Nouveau format (celui de ton app.js actuel)
-    if (!payload && body && body.order && Array.isArray(body.items)) {
-      const o = body.order || {};
-      const items = body.items || [];
-
-      payload = {
-        customer: {
-          name: o.customer_name || "",
-          email: o.email || "",
-          phone: o.phone || "",
-          company: o.company || "",
-          // ✅ NEW: on met la note INFO ici
-          notes: o.note || o.notes || "",
-        },
-        // ✅ On reconstruit un "cart" compatible avec l'ancien mapping
-        cart: items.map((it) => ({
-          product_id: it.product_id || "",
-          title: it.title || "",
-          qty: it.qty || 1,
-          price: it.unit_price || 0,
-          gender: it.gender || "",
-          size: it.size || "",
-          color: it.color || "",
-          logo: it.logo || "",
-          flocage: it.flocage || "",
-          flocage_text: it.flocage_text || "",
-          pack_parent_id: it.parent_pack || it.pack_parent_id || "",
-          extra: it.extra || "",
-        })),
-        total: o.total || 0,
-        currency: o.currency || "EUR",
-        source: o.source || "github-pages",
-      };
-    }
-
-    if (!payload || !payload.customer) {
-      return json(
-        { ok: false, error: "Missing payload.customer (or body.order/body.items)" },
-        400
-      );
-    }
-    if (!payload.cart || !Array.isArray(payload.cart)) {
-      return json(
-        { ok: false, error: "Missing payload.cart (or body.items)" },
-        400
-      );
-    }
-
-    /* =========================================================
-       ✅ NEW: récupérer la note INFO de façon robuste
-       ========================================================= */
-    const note =
-      (payload.customer && (payload.customer.notes || payload.customer.note)) ||
-      payload.note ||
-      "";
-
-    // Flatten order header (structure IDENTIQUE à ton worker)
+    // =========================
+    // ✅ ORDERS: MATCH EXACT HEADERS
+    // order_id | date | customer_name | phone | total | status | pdf_url | email | note | pdf_vendor_url
+    // =========================
     const orderRow = [
       orderId,
       nowIso,
-      payload.customer.name || "",
-      payload.customer.email || "",
-      payload.customer.phone || "",
-      payload.customer.company || "",
-      // ✅ NEW: ici on écrit la note (colonne "notes" existante)
-      String(note || ""),
-      payload.total || "",
-      payload.currency || "EUR",
-      payload.source || "github-pages",
+      String(o.customer_name || ""),
+      String(o.phone || ""),
+      Number(o.total || 0),
+      String(o.status || "new"),
+      "", // pdf_url (sera rempli par Apps Script)
+      String(o.email || ""),
+      String(o.note || ""),
+      "", // pdf_vendor_url (sera rempli par Apps Script)
     ];
 
-    // Flatten items (structure IDENTIQUE à ton worker)
-    const itemRows = (payload.cart || []).map((line, idx) => ([
+    // =========================
+    // ✅ ORDERITEMS: MATCH EXACT HEADERS
+    // order_id|line|product_id|title|color|gender|size|qty|unit_price|logo|flocage_text|image_url
+    // =========================
+    const itemRows = items.map((it, idx) => ([
       orderId,
-      String(idx + 1),
-      String(line.product_id || ""),
-      String(line.title || ""),
-      String(line.qty || 1),
-      String(line.price || 0),
-      String(line.gender || ""),
-      String(line.size || ""),
-      String(line.color || ""),
-      String(line.logo || ""),
-      String(line.flocage || ""),
-      String(line.flocage_text || ""),
-      String(line.pack_parent_id || ""), // if pack item
-      String(line.extra || ""),          // json/string free field
+      String(it.line || (idx + 1)),
+      String(it.product_id || ""),
+      String(it.title || ""),
+      String(it.color || ""),
+      String(it.gender || ""),
+      String(it.size || ""),
+      Number(it.qty || 1),
+      Number(it.unit_price || 0),
+      String(it.logo || ""),
+      String(it.flocage_text || ""),
+      String(it.image_url || ""),
     ]));
 
     try {
       const token = await getAccessToken(JSON.parse(saJson));
 
-      // Append order header
+      // Append Orders
       await appendValues(token, sheetId, `${ordersTab}!A1`, [orderRow]);
 
-      // Append items
+      // Append OrderItems
       if (itemRows.length) {
         await appendValues(token, sheetId, `${itemsTab}!A1`, itemRows);
       }
 
-      // Response
+      // ✅ Trigger Apps Script: generate BOTH PDFs + email + update sheet urls
+      let pdfRes = null;
+      try {
+        const r = await fetch(pdfWebappUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "makePdfAndMail", order_id: orderId }),
+        });
+        const t = await r.text();
+        pdfRes = safeJsonParse(t) || { raw: t };
+        if (!r.ok) {
+          return json({ ok: false, error: "PDF webapp error", order_id: orderId, details: pdfRes }, 500);
+        }
+      } catch (e) {
+        return json({ ok: false, error: "PDF webapp call failed", order_id: orderId, details: String(e) }, 500);
+      }
+
       return json({
         ok: true,
         order_id: orderId,
         ts: nowIso,
+        pdf_url: pdfRes && (pdfRes.pdf_url || pdfRes.pdfUrl) ? String(pdfRes.pdf_url || pdfRes.pdfUrl) : "",
+        pdf_vendor_url: pdfRes && pdfRes.pdf_vendor_url ? String(pdfRes.pdf_vendor_url) : "",
+        mail_ok: pdfRes && typeof pdfRes.mail_ok !== "undefined" ? pdfRes.mail_ok : undefined,
+        mail_error: pdfRes && pdfRes.mail_error ? pdfRes.mail_error : "",
       }, 200);
 
     } catch (e) {
@@ -195,16 +167,18 @@ function json(obj, status = 200) {
   });
 }
 
+function safeJsonParse(s) {
+  try { return JSON.parse(s); } catch { return null; }
+}
+
 function makeOrderId() {
   const t = Date.now().toString(36).toUpperCase();
   const r = crypto.getRandomValues(new Uint32Array(2));
-  return `O-${t}-${r[0].toString(36).toUpperCase()}${r[1].toString(36).toUpperCase()}`;
+  return `ORD-${t}-${r[0].toString(36).toUpperCase()}${r[1].toString(36).toUpperCase()}`;
 }
 
 /**
  * Google OAuth2 Service Account JWT flow
- * - create JWT assertion signed RS256
- * - exchange for access token
  */
 async function getAccessToken(sa) {
   if (!sa.client_email || !sa.private_key) throw new Error("Invalid service account JSON");
