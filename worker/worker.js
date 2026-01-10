@@ -52,6 +52,7 @@ export default {
     const sheetId = env.SHEET_ID;
     const saJson = env.GOOGLE_SERVICE_ACCOUNT_JSON;
     const pdfWebappUrl = (env.PDF_WEBAPP_URL || "").replace(/\/$/, "");
+
     if (!sheetId || !saJson) {
       return json(
         { ok: false, error: "Worker missing SHEET_ID or GOOGLE_SERVICE_ACCOUNT_JSON" },
@@ -68,38 +69,52 @@ export default {
     const ordersTab = env.ORDERS_SHEET_NAME || "Orders";
     const itemsTab = env.ITEMS_SHEET_NAME || "OrderItems";
 
-    // ✅ Nouveau format attendu depuis ton app.js:
-    // { order: {...}, items: [...] }
-    if (!body || !body.order || !Array.isArray(body.items)) {
-      return json({ ok: false, error: "Missing body.order or body.items[]" }, 400);
-    }
+    // ✅ Supporte le format: { order:{...}, items:[...] }
+    // (et garde une tolérance si tu envoies directement des champs)
+    const hasNewFormat = body && body.order && Array.isArray(body.items);
+    const o = hasNewFormat ? (body.order || {}) : (body || {});
+    const items = hasNewFormat ? (body.items || []) : (Array.isArray(body.items) ? body.items : []);
 
-    const o = body.order || {};
-    const items = body.items || [];
+    if (!Array.isArray(items)) {
+      return json({ ok: false, error: "Missing items[]" }, 400);
+    }
 
     const orderId = makeOrderId();
     const nowIso = new Date().toISOString();
 
+    // ✅ IMPORTANT : on mappe l’INFO panier vers la colonne `note`
+    // selon les noms possibles côté front
+    const note =
+      (o.note ?? o.info ?? o.infos ?? o.message ?? o.comment ?? o.comments ?? "");
+
+    // Si total pas fourni, on le calcule vite fait depuis items
+    const total =
+      (o.total !== undefined && o.total !== null && o.total !== "")
+        ? Number(o.total || 0)
+        : items.reduce((sum, it) => {
+            const qty = Number(it.qty || 1);
+            const pu = Number(it.unit_price || 0);
+            return sum + qty * pu;
+          }, 0);
+
     // =========================
-    // ✅ ORDERS: MATCH EXACT HEADERS
-    // order_id | date | customer_name | phone | total | status | pdf_url | email | note | pdf_vendor_url
+    // ORDERS: order_id | date | customer_name | phone | total | status | pdf_url | email | note | pdf_vendor_url
     // =========================
     const orderRow = [
       orderId,
       nowIso,
       String(o.customer_name || ""),
       String(o.phone || ""),
-      Number(o.total || 0),
+      Number(total || 0),
       String(o.status || "new"),
-      "", // pdf_url (sera rempli par Apps Script)
+      "", // pdf_url
       String(o.email || ""),
-      String(o.note || ""),
-      "", // pdf_vendor_url (sera rempli par Apps Script)
+      String(note || ""), // ✅ note = INFO panier
+      "", // pdf_vendor_url
     ];
 
     // =========================
-    // ✅ ORDERITEMS: MATCH EXACT HEADERS
-    // order_id|line|product_id|title|color|gender|size|qty|unit_price|logo|flocage_text|image_url
+    // ORDERITEMS: order_id|line|product_id|title|color|gender|size|qty|unit_price|logo|flocage_text|image_url
     // =========================
     const itemRows = items.map((it, idx) => ([
       orderId,
@@ -119,10 +134,8 @@ export default {
     try {
       const token = await getAccessToken(JSON.parse(saJson));
 
-      // Append Orders
       await appendValues(token, sheetId, `${ordersTab}!A1`, [orderRow]);
 
-      // Append OrderItems
       if (itemRows.length) {
         await appendValues(token, sheetId, `${itemsTab}!A1`, itemRows);
       }
@@ -135,8 +148,10 @@ export default {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ action: "makePdfAndMail", order_id: orderId }),
         });
+
         const t = await r.text();
         pdfRes = safeJsonParse(t) || { raw: t };
+
         if (!r.ok) {
           return json({ ok: false, error: "PDF webapp error", order_id: orderId, details: pdfRes }, 500);
         }
@@ -149,9 +164,9 @@ export default {
         order_id: orderId,
         ts: nowIso,
         pdf_url: pdfRes && (pdfRes.pdf_url || pdfRes.pdfUrl) ? String(pdfRes.pdf_url || pdfRes.pdfUrl) : "",
-        pdf_vendor_url: pdfRes && pdfRes.pdf_vendor_url ? String(pdfRes.pdf_vendor_url) : "",
+        pdf_vendor_url: pdfRes && (pdfRes.pdf_vendor_url || pdfRes.pdfVendorUrl) ? String(pdfRes.pdf_vendor_url || pdfRes.pdfVendorUrl) : "",
         mail_ok: pdfRes && typeof pdfRes.mail_ok !== "undefined" ? pdfRes.mail_ok : undefined,
-        mail_error: pdfRes && pdfRes.mail_error ? pdfRes.mail_error : "",
+        mail_error: pdfRes && pdfRes.mail_error ? String(pdfRes.mail_error) : "",
       }, 200);
 
     } catch (e) {
