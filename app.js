@@ -1208,6 +1208,7 @@ window.addEventListener("DOMContentLoaded", () => {
     // ✅ NEW: note
     const order = {
       customer_name: name,
+      email: email || "",
       phone: phone || "",
       total: cartTotal(),
       status: "new",
