@@ -1,119 +1,236 @@
 {
   "products": [
     {
-      "product_id": "T001",
-      "title": "T-shirt Club Classique",
-      "category": "Vêtements",
-      "price": 20,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "P001",
-      "title": "Polo Club",
-      "category": "Vêtements",
-      "price": 28,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "C001",
-      "title": "Casquette",
-      "category": "Accessoires",
-      "price": 15,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-noir-vespin-2048x1609.png",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "PKS",
-      "title": "Pack Small (T-shirt + Short)",
-      "category": "Vêtements",
-      "price": 32,
-      "image_url": "https://via.placeholder.com/600x400?text=Pack+Small",
-      "type": "pack",
-      "active": true
-    },
-    {
-      "product_id": "T001",
-      "title": "T-shirt Club Classique",
-      "category": "Vêtements",
-      "price": 20,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "P001",
-      "title": "Polo Club",
-      "category": "Vêtements",
-      "price": 28,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/ts-blanc-vespin-2048x1609.png",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "SWEAT01",
-      "title": "Sweat Capuche Club",
+      "product_id": "H-SWEAT-ROYAL",
+      "title": "Sweat Club Homme - Bleu roi",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-blanc-vespin-2048x1609.png",
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Bleu%20roi",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "SH01",
-      "title": "Short Club",
+      "product_id": "H-SWEAT-WHITE",
+      "title": "Sweat Club Homme - Blanc",
       "category": "Vêtements",
-      "price": 22,
-      "image_url": "https://via.placeholder.com/600x400?text=Short",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Blanc",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "C001",
-      "title": "Casquette",
+      "product_id": "H-SWEAT-BLACK",
+      "title": "Sweat Club Homme - Noir",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-SWEAT-NAVY",
+      "title": "Sweat Club Homme - Bleu foncé",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Homme%20-%20Bleu%20fonc%C3%A9",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-TSHIRT-ROYAL",
+      "title": "T-shirt Club Homme - Bleu roi",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Homme%20-%20Bleu%20roi",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-TSHIRT-WHITE",
+      "title": "T-shirt Club Homme - Blanc",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Homme%20-%20Blanc",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-SHORT-WHITE",
+      "title": "Short Club Homme - Blanc",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Homme%20-%20Blanc",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-SHORT-ROYAL",
+      "title": "Short Club Homme - Bleu roi",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Homme%20-%20Bleu%20roi",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-JOGGING-NAVY",
+      "title": "Jogging Club Homme - Bleu foncé",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Homme%20-%20Bleu%20fonc%C3%A9",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "H-JOGGING-BLACK",
+      "title": "Jogging Club Homme - Noir",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Homme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SWEAT-ROYAL",
+      "title": "Sweat Club Femme - Bleu roi",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Bleu%20roi",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SWEAT-WHITE",
+      "title": "Sweat Club Femme - Blanc",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Blanc",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SWEAT-BLACK",
+      "title": "Sweat Club Femme - Noir",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SWEAT-PINK",
+      "title": "Sweat Club Femme - Rose pâle",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club%20Femme%20-%20Rose%20p%C3%A2le",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-TSHIRT-ROYAL",
+      "title": "T-shirt Club Femme - Bleu roi",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Bleu%20roi",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-TSHIRT-WHITE",
+      "title": "T-shirt Club Femme - Blanc",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Blanc",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-TSHIRT-BLACK",
+      "title": "T-shirt Club Femme - Noir",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-TSHIRT-PINK",
+      "title": "T-shirt Club Femme - Rose pâle",
+      "category": "Vêtements",
+      "price": 25,
+      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club%20Femme%20-%20Rose%20p%C3%A2le",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SHORT-WHITE",
+      "title": "Short Club Femme - Blanc",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Blanc",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SHORT-ROYAL",
+      "title": "Short Club Femme - Bleu roi",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Bleu%20roi",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SHORT-BLACK",
+      "title": "Short Club Femme - Noir",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-SHORT-PINK",
+      "title": "Short Club Femme - Rose pâle",
+      "category": "Vêtements",
+      "price": 30,
+      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club%20Femme%20-%20Rose%20p%C3%A2le",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-JOGGING-NAVY",
+      "title": "Jogging Club Femme - Bleu foncé",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Femme%20-%20Bleu%20fonc%C3%A9",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "F-JOGGING-BLACK",
+      "title": "Jogging Club Femme - Noir",
+      "category": "Vêtements",
+      "price": 35,
+      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club%20Femme%20-%20Noir",
+      "type": "single",
+      "active": true
+    },
+    {
+      "product_id": "UNI-CASQUETTE-BLACK",
+      "title": "Casquette Club - Noir",
       "category": "Accessoires",
-      "price": 15,
-      "image_url": "https://via.placeholder.com/600x400?text=Casquette",
+      "price": 20,
+      "image_url": "https://via.placeholder.com/900x650?text=Casquette%20Club%20-%20Noir",
       "type": "single",
       "active": true
     },
     {
-      "product_id": "SAC01",
-      "title": "Sac à cordons",
-      "category": "Accessoires",
-      "price": 12,
-      "image_url": "https://via.placeholder.com/600x400?text=Sac",
-      "type": "single",
-      "active": true
-    },
-    {
-      "product_id": "PKS",
-      "title": "Pack Small (T-shirt + Short)",
+      "product_id": "PACK-COMPLET-150",
+      "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
-      "price": 32,
-      "image_url": "https://via.placeholder.com/600x400?text=Pack+Small",
-      "type": "pack",
-      "active": true
-    },
-    {
-      "product_id": "PKM",
-      "title": "Pack Medium (Sweat + T-shirt)",
-      "category": "Vêtements",
-      "price": 52,
-      "image_url": "https://via.placeholder.com/600x400?text=Pack+Medium",
-      "type": "pack",
-      "active": true
-    },
-    {
-      "product_id": "PKF",
-      "title": "Pack Full (Sweat + T-shirt + Short + Casquette)",
-      "category": "Vêtements",
-      "price": 65,
-      "image_url": "https://via.placeholder.com/600x400?text=Pack+Full",
+      "price": 150,
+      "image_url": "https://via.placeholder.com/900x650?text=Pack%20Club%20Complet%20150%E2%82%AC",
       "type": "pack",
       "active": true
     }
