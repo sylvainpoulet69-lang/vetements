@@ -56,6 +56,13 @@ function imgOrFallback(u) {
     : "https://picsum.photos/seed/acacias/1600/1200";
 }
 function colorToHex(n) {
+  const key = String(n || "").trim();
+
+  // ✅ priorité aux couleurs définies dans Google Sheets via catalog.json
+  const dyn = (CATALOG.options && CATALOG.options.colors_hex) ? CATALOG.options.colors_hex : {};
+  if (dyn && dyn[key]) return dyn[key];
+
+  // fallback (tes couleurs génériques si jamais)
   const m = {
     Bleu: "#2563EB",
     Blanc: "#FFFFFF",
@@ -65,7 +72,8 @@ function colorToHex(n) {
     Vert: "#22c55e",
     Gris: "#64748b",
   };
-  return m[n] || "#CBD5E1";
+
+  return m[key] || "#CBD5E1";
 }
 
 /* === Helpers catalogue / variantes === */
