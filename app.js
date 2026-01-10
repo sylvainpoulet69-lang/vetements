@@ -2,6 +2,72 @@ let CATALOG = { products: [], variants: [], packItems: [], options: {} };
 let CURRENT_CAT = null;
 let CART = [];
 
+/* =========================
+   ✅ NEW: NOTE "INFO" PANIER
+   ========================= */
+let CART_NOTE = "";
+
+function loadCartNote() {
+  try { CART_NOTE = String(localStorage.getItem("cart_note") || ""); }
+  catch (e) { CART_NOTE = ""; }
+}
+
+function saveCartNote() {
+  try { localStorage.setItem("cart_note", String(CART_NOTE || "")); }
+  catch (e) {}
+}
+
+function clearCartNote() {
+  CART_NOTE = "";
+  try { localStorage.removeItem("cart_note"); } catch (e) {}
+}
+
+function ensureCartInfoBox() {
+  // Place entre la liste des produits (#cartLines) et le début du formulaire client (#custName)
+  const cartLines = document.getElementById("cartLines");
+  const custName = document.getElementById("custName");
+  if (!cartLines || !custName) return;
+
+  // évite doublon
+  if (document.getElementById("orderNote")) return;
+
+  // insère juste avant le bloc qui contient le champ Nom client
+  const insertBefore = custName.closest(".card") || custName.parentElement;
+
+  const wrap = document.createElement("div");
+  wrap.className = "card";
+  wrap.id = "cartInfoCard";
+  wrap.style.marginTop = "14px";
+  wrap.innerHTML = `
+    <div class="card-body">
+      <div class="card-title-wrap" style="margin-bottom:8px">
+        <h3 style="margin:0">INFO</h3>
+        <div class="muted">Visible sur le PDF</div>
+      </div>
+      <textarea
+        id="orderNote"
+        class="inp"
+        rows="4"
+        placeholder="Ex: Urgent / Regrouper avec commande X / Taille à vérifier / Livraison..."
+        style="resize:vertical"
+      ></textarea>
+    </div>
+  `;
+
+  insertBefore.parentNode.insertBefore(wrap, insertBefore);
+
+  // hydrate + events
+  const ta = document.getElementById("orderNote");
+  ta.value = CART_NOTE || "";
+
+  ta.addEventListener("input", () => {
+    CART_NOTE = ta.value || "";
+    saveCartNote();
+  });
+}
+
+/* ========================= */
+
 const ADULT_SIZES = ["S", "M", "L", "XL", "XXL"];
 const KID_SIZES = ["4", "6", "8", "10", "12", "14"];
 
@@ -46,6 +112,9 @@ function loadCart() {
     CART = [];
   }
   refreshCartBadge();
+
+  // ✅ NEW
+  loadCartNote();
 }
 function saveCart() {
   localStorage.setItem("cart", JSON.stringify(CART));
@@ -116,7 +185,6 @@ function getCandidateSizes_(vars, gender, color) {
   for (const v of V) sizes.push(...splitSizes_(v.size_list));
   return uniq(sizes);
 }
-
 
 function pickVariant_(vars, gender, color) {
   // 1) match gender+color
@@ -1021,6 +1089,9 @@ function renderCart() {
     refreshCartBadge();
   };
 
+  // ✅ NEW (insert + bind textarea)
+  ensureCartInfoBox();
+
   $("#cartTotal").textContent = euros(cartTotal());
 }
 
@@ -1075,7 +1146,13 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // ---- APPS SCRIPT ----
     if (isAppsScript) {
-      const payload = { customer: { name, email, phone }, items: CART, total: cartTotal() };
+      // ✅ NEW: note
+      const payload = {
+        customer: { name, email, phone },
+        items: CART,
+        total: cartTotal(),
+        note: (CART_NOTE || "").trim(),
+      };
 
       google.script.run
         .withSuccessHandler((res) => {
@@ -1100,6 +1177,7 @@ window.addEventListener("DOMContentLoaded", () => {
           CART = [];
           saveCart();
           refreshCartBadge();
+          clearCartNote(); // ✅ NEW
           show("#sectionDone");
           window.scrollTo({ top: 0, behavior: "smooth" });
         })
@@ -1127,71 +1205,73 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const orderUrl = base.includes("workers.dev") ? base + "/api/order" : base;
 
+    // ✅ NEW: note
     const order = {
       customer_name: name,
       phone: phone || "",
       total: cartTotal(),
       status: "new",
+      note: (CART_NOTE || "").trim(),
     };
 
     // ✅ Flatten panier (packs -> lignes) pour Worker/Sheet
-const flatCart = [];
-CART.forEach((l) => {
-  if (l.is_pack) {
-    // 1 ligne "pack" au prix du pack
-    flatCart.push({
-      product_id: l.pack_id || l.product_id || "",
-      title: l.title || "Pack",
-      color: "",
-      gender: "",
-      size: "",
-      qty: l.qty || 1,
-      price: l.price || 0,
-      logo: "",
-      flocage_text: "",
-      image_url: l.image_url || "",
-      is_pack: true,
+    const flatCart = [];
+    CART.forEach((l) => {
+      if (l.is_pack) {
+        // 1 ligne "pack" au prix du pack
+        flatCart.push({
+          product_id: l.pack_id || l.product_id || "",
+          title: l.title || "Pack",
+          color: "",
+          gender: "",
+          size: "",
+          qty: l.qty || 1,
+          price: l.price || 0,
+          logo: "",
+          flocage_text: "",
+          image_url: l.image_url || "",
+          is_pack: true,
+        });
+
+        // + les items inclus à 0€
+        (l.children || []).forEach((ch) => {
+          flatCart.push({
+            product_id: ch.product_id || "",
+            title: ch.title || "",
+            color: ch.color || "",
+            gender: ch.gender || "",
+            size: ch.size || "",
+            qty: ch.qty || 1,
+            price: 0,
+            logo: ch.logo || "",
+            flocage_text: ch.flocage_text || "",
+            image_url: ch.image_url || "",
+            parent_pack: l.pack_id || "",
+            extra_price: ch.extra_price || 0,
+          });
+        });
+
+        return;
+      }
+
+      // produit normal
+      flatCart.push(l);
     });
 
-    // + les items inclus à 0€
-    (l.children || []).forEach((ch) => {
-      flatCart.push({
-        product_id: ch.product_id || "",
-        title: ch.title || "",
-        color: ch.color || "",
-        gender: ch.gender || "",
-        size: ch.size || "",
-        qty: ch.qty || 1,
-        price: 0,
-        logo: ch.logo || "",
-        flocage_text: ch.flocage_text || "",
-        image_url: ch.image_url || "",
-        parent_pack: l.pack_id || "",
-        extra_price: ch.extra_price || 0,
-      });
-    });
-
-    return;
-  }
-
-  // produit normal
-  flatCart.push(l);
-});
-
-// ✅ Worker attend items[] -> on mappe flatCart
-const items = flatCart.map((it, idx) => ({
-  line: idx + 1,
-  product_id: it.product_id || "",
-  title: it.title || "",
-  color: it.color || "",
-  gender: it.gender || "",
-  size: it.size || "",
-  qty: it.qty || 1,
-  unit_price: it.price || 0,
-  logo: it.logo || "",
-  flocage_text: it.flocage_text || "",
-  image_url: it.image_url || "",
-}));
+    // ✅ Worker attend items[] -> on mappe flatCart
+    const items = flatCart.map((it, idx) => ({
+      line: idx + 1,
+      product_id: it.product_id || "",
+      title: it.title || "",
+      color: it.color || "",
+      gender: it.gender || "",
+      size: it.size || "",
+      qty: it.qty || 1,
+      unit_price: it.price || 0,
+      logo: it.logo || "",
+      flocage_text: it.flocage_text || "",
+      image_url: it.image_url || "",
+    }));
 
     fetch(orderUrl, {
       method: "POST",
@@ -1230,6 +1310,7 @@ const items = flatCart.map((it, idx) => ({
         CART = [];
         saveCart();
         refreshCartBadge();
+        clearCartNote(); // ✅ NEW
         renderCart();
         show("#sectionDone");
         window.scrollTo({ top: 0 });
