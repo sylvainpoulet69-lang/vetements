@@ -5,7 +5,7 @@
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Sweat%20Club",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/5d5a57c42635462704256a77b87822496b7db3ac/sweat-a.jpg",
       "type": "single",
       "active": true
     },
@@ -14,7 +14,7 @@
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
-      "image_url": "https://via.placeholder.com/900x650?text=T-shirt%20Club",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/5d5a57c42635462704256a77b87822496b7db3ac/tee-shirt-a.jpg",
       "type": "single",
       "active": true
     },
@@ -23,7 +23,7 @@
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
-      "image_url": "https://via.placeholder.com/900x650?text=Short%20Club",
+      "image_url": "https://cdn.jsdelivr.net/gh/sylvainpoulet69-lang/phototrainingaddict@5d5a57c42635462704256a77b87822496b7db3ac/short-a.jpg",
       "type": "single",
       "active": true
     },
@@ -32,7 +32,7 @@
       "title": "Jogging Club",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "https://via.placeholder.com/900x650?text=Jogging%20Club",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg",
       "type": "single",
       "active": true
     },
@@ -41,7 +41,7 @@
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 20,
-      "image_url": "https://via.placeholder.com/900x650?text=Casquette%20Club",
+      "image_url": "",
       "type": "single",
       "active": true
     },
@@ -50,7 +50,7 @@
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
-      "image_url": "https://via.placeholder.com/900x650?text=Pack%20Club%20150",
+      "image_url": "",
       "type": "pack",
       "active": true
     }
