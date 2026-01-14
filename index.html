@@ -1,109 +1,144 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Boutique — Les Acacias</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
   <header class="app-header">
-  <div class="brand">
-    <img
-      src="https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/logo.png"
-      alt="Logo Les Acacias"
-      class="brand-logo">
-    <div class="brand-text">
-      <span class="brand-line">Boutique —</span>
-      <span class="brand-line brand-line-secondary">Les Acacias</span>
+    <div class="brand">
+      <img
+        src="https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/logo.png"
+        alt="Logo Les Acacias"
+        class="brand-logo"
+      />
+      <div class="brand-text">
+        <span class="brand-line">Boutique —</span>
+        <span class="brand-line brand-line-secondary">Les Acacias</span>
+      </div>
     </div>
-  </div>
 
-  <button id="btnCart" class="btn btn-outline btn-cart">
-    Panier <span id="cartCount" class="badge">0</span>
-  </button>
-</header>
+    <div style="display:flex; gap:10px; align-items:center;">
+      <!-- ✅ NEW: Bouton Accueil header (caché sur l’accueil) -->
+      <button id="btnHome" class="btn btn-outline" style="display:none">
+        Accueil
+      </button>
+
+      <button id="btnCart" class="btn btn-outline btn-cart">
+        Panier <span id="cartCount" class="badge">0</span>
+      </button>
+    </div>
+  </header>
 
   <div class="container">
 
-    <!-- ACCUEIL -->
+    <!-- =========================
+         ACCUEIL / CATÉGORIES
+         ========================= -->
     <section id="sectionCategories" class="section active">
-      <div class="hero hero-tall">
-        <div class="hero-content">
-          <h1 id="heroTitle">Choisis tes vêtements club</h1>
-          <p id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</p>
+      <div class="hero">
+        <h1 id="heroTitle">Choisis tes vêtements club</h1>
+        <div id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</div>
+      </div>
 
-          <!-- ✅ Étape 1 : Homme / Femme / Enfant -->
-          <div id="genderRow" class="cats-row" style="margin-top:14px">
-            <button id="btnGenderH" class="chip gender" data-gender="H">Homme</button>
-            <button id="btnGenderF" class="chip gender" data-gender="F">Femme</button>
-          </div>
-          <div id="genderRow2" class="cats-row" style="margin-top:14px">
-            <button id="btnGenderE" class="chip gender" data-gender="Enfant">Enfant</button>
-            <button id="btnResetHome" class="chip" style="display:none">Retour accueil</button>
-          </div>
+      <!-- ✅ Étape 1 : Choix rayon (H/F/E) -->
+      <div id="rowGender" class="chips" style="margin-top:14px">
+        <button class="chip gender" data-gender="H">Homme</button>
+        <button class="chip gender" data-gender="F">Femme</button>
+        <button class="chip gender" data-gender="E">Enfant</button>
+      </div>
 
-          <!-- ✅ Étape 2 : Vêtements / Accessoires (caché tant qu’on n’a pas choisi le genre) -->
-          <div id="catRow" class="cats-row" style="margin-top:14px; display:none">
-            <button class="chip cat" data-cat="Vêtements">👕 Vêtements</button>
-            <button class="chip cat" data-cat="Accessoires">🧢 Accessoires</button>
-          </div>
+      <!-- ✅ Étape 2 : Retour + Catégories (cachés tant que H/F/E non choisi) -->
+      <div id="rowCatsWrap" style="display:none; margin-top:14px">
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px">
+          <button id="btnReturnHome" class="btn btn-outline">Retour accueil</button>
+          <div id="homeContext" class="muted"></div>
+        </div>
 
-          <!-- ✅ rappel de contexte -->
-          <div id="homeContext" class="muted" style="margin-top:10px; display:none">
-            Rayon : <strong id="homeGenderLabel"></strong>
-          </div>
-
+        <div id="rowCats" class="chips">
+          <button class="chip cat" data-cat="Vêtements">Vêtements</button>
+          <button class="chip cat" data-cat="Accessoires">Accessoires</button>
         </div>
       </div>
 
-      <h2 style="margin:18px 0 8px">Produits</h2>
-      <div id="homeList" class="grid"></div>
+      <!-- Liste “home” (tes produits mis en avant) -->
+      <div id="homeList" class="grid" style="margin-top:16px"></div>
     </section>
 
-    <!-- PRODUITS (liste) -->
+    <!-- =========================
+         LISTE PRODUITS
+         ========================= -->
     <section id="sectionProducts" class="section">
-      <button id="backHome" class="back">Accueil</button>
-      <h2 id="prodTitle">Produits</h2>
-      <div id="prodContext" class="muted" style="margin:-8px 0 12px; display:none"></div>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px">
+        <button id="backHome" class="back">Accueil</button>
+        <div>
+          <div id="prodTitle" style="font-weight:700"></div>
+          <!-- ✅ NEW: rappel visible -->
+          <div id="prodContext" class="muted" style="margin-top:2px"></div>
+        </div>
+      </div>
+
       <div id="productList" class="grid"></div>
     </section>
 
-    <!-- DÉTAIL PRODUIT -->
+    <!-- =========================
+         DÉTAIL PRODUIT / PACK
+         ========================= -->
     <section id="sectionDetail" class="section">
       <div id="detail"></div>
     </section>
 
-    <!-- PANIER -->
+    <!-- =========================
+         PANIER
+         ========================= -->
     <section id="sectionCart" class="section">
-      <button id="backHome2" class="back">Accueil</button>
-      <h2>🛒 Votre panier</h2>
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px">
+        <button id="backHome2" class="back">Accueil</button>
+        <div style="font-weight:700">Panier</div>
+      </div>
+
       <div id="cartLines"></div>
-      <div class="checkout">
-        <div class="total">Total : <span id="cartTotal">0€</span></div>
 
-        <label>Nom du client *</label>
-        <input id="custName" class="inp" placeholder="Nom prénom" required>
+      <div class="card" style="margin-top:14px">
+        <div class="card-body">
+          <div class="card-title-wrap">
+            <h3 style="margin:0">Total</h3>
+            <div class="price" id="cartTotal">0,00€</div>
+          </div>
 
-        <label>Email *</label>
-        <input id="custEmail" type="email" class="inp" placeholder="exemple@mail.com" required>
+          <div style="display:grid; gap:10px; margin-top:12px">
+            <input id="custName" class="inp" placeholder="Nom et prénom *" />
+            <input id="custEmail" class="inp" placeholder="Email *" />
+            <input id="custPhone" class="inp" placeholder="Téléphone *" />
+          </div>
 
-        <label>Téléphone *</label>
-        <input id="custPhone" class="inp" placeholder="06...">
-
-        <button id="btnValidate" class="btn btn-primary">Valider la commande</button>
-        <div id="result" class="result"></div>
+          <div style="display:flex; gap:10px; align-items:center; margin-top:12px">
+            <button id="btnValidate" class="btn btn-primary">Valider</button>
+            <div id="result" class="muted"></div>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- CONFIRMATION -->
+    <!-- =========================
+         DONE
+         ========================= -->
     <section id="sectionDone" class="section">
-      <div class="card" style="padding:20px;text-align:center;">
-        <h2>✅ Commande envoyée</h2>
-        <p id="doneMsg">Merci pour votre commande !</p>
-        <p><a id="donePdf" href="#" target="_blank" class="btn btn-outline">📄 Ouvrir le PDF</a></p>
-        <button id="doneBack" class="btn btn-primary">Retour à l'accueil</button>
+      <div class="card">
+        <div class="card-body">
+          <h3 style="margin:0 0 8px">Commande envoyée</h3>
+          <div id="doneMsg" class="muted"></div>
+
+          <div style="margin-top:12px; display:flex; gap:10px; align-items:center">
+            <a id="donePdf" class="btn btn-outline" href="#" style="pointer-events:none; opacity:.5">
+              Télécharger le PDF
+            </a>
+            <button id="doneBack" class="btn btn-primary">Retour accueil</button>
+          </div>
+        </div>
       </div>
     </section>
 
