@@ -47,8 +47,8 @@
     },
     {
       "product_id": "TEST1",
-      "title": "",
-      "category": "",
+      "title": "Test1",
+      "category": "Vêtements",
       "price": 0,
       "image_url": "",
       "type": "single",
