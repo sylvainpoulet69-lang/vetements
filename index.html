@@ -33,7 +33,14 @@
         <div class="hero-content">
           <h1 id="heroTitle">Choisis tes vêtements club</h1>
           <p id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</p>
-          <div class="cats-row">
+
+          <!-- ✅ NEW: choix Homme / Femme à l’accueil -->
+          <div class="cats-row" style="margin-top:14px">
+            <button id="btnGenderH" class="chip gender" data-gender="H">Homme</button>
+            <button id="btnGenderF" class="chip gender" data-gender="F">Femme</button>
+          </div>
+
+          <div class="cats-row" style="margin-top:14px">
             <button class="chip cat" data-cat="Vêtements">👕 Vêtements</button>
             <button class="chip cat" data-cat="Accessoires">🧢 Accessoires</button>
           </div>
