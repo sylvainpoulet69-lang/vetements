@@ -22,7 +22,7 @@
     </div>
 
     <div style="display:flex; gap:10px; align-items:center;">
-      <!-- ✅ NEW: Bouton Accueil header (caché sur l’accueil) -->
+      <!-- Bouton Accueil header (caché sur l’accueil via app.js) -->
       <button id="btnHome" class="btn btn-outline" style="display:none">
         Accueil
       </button>
@@ -39,19 +39,23 @@
          ACCUEIL / CATÉGORIES
          ========================= -->
     <section id="sectionCategories" class="section active">
-      <div class="hero">
-        <h1 id="heroTitle">Choisis tes vêtements club</h1>
-        <div id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</div>
+
+      <!-- ✅ FIX: Hero qui ne clippe pas + H/F/E dedans comme avant -->
+      <div class="hero" style="overflow:visible;">
+        <h1 id="heroTitle" style="white-space:normal;">Choisis tes vêtements club</h1>
+        <div id="heroSubtitle" class="muted" style="white-space:normal;">
+          Logos inclus · Flocage personnalisé inclus
+        </div>
+
+        <!-- ✅ H/F/E dans le bloc hero -->
+        <div id="rowGender" class="chips" style="margin-top:14px">
+          <button class="chip gender" data-gender="H">Homme</button>
+          <button class="chip gender" data-gender="F">Femme</button>
+          <button class="chip gender" data-gender="E">Enfant</button>
+        </div>
       </div>
 
-      <!-- ✅ Étape 1 : Choix rayon (H/F/E) -->
-      <div id="rowGender" class="chips" style="margin-top:14px">
-        <button class="chip gender" data-gender="H">Homme</button>
-        <button class="chip gender" data-gender="F">Femme</button>
-        <button class="chip gender" data-gender="E">Enfant</button>
-      </div>
-
-      <!-- ✅ Étape 2 : Retour + Catégories (cachés tant que H/F/E non choisi) -->
+      <!-- Étape 2 : Retour + Catégories (cachés tant que H/F/E non choisi) -->
       <div id="rowCatsWrap" style="display:none; margin-top:14px">
         <div style="display:flex; gap:10px; align-items:center; margin-bottom:12px">
           <button id="btnReturnHome" class="btn btn-outline">Retour accueil</button>
@@ -64,7 +68,7 @@
         </div>
       </div>
 
-      <!-- Liste “home” (tes produits mis en avant) -->
+      <!-- Liste “home” -->
       <div id="homeList" class="grid" style="margin-top:16px"></div>
     </section>
 
@@ -76,7 +80,6 @@
         <button id="backHome" class="back">Accueil</button>
         <div>
           <div id="prodTitle" style="font-weight:700"></div>
-          <!-- ✅ NEW: rappel visible -->
           <div id="prodContext" class="muted" style="margin-top:2px"></div>
         </div>
       </div>
@@ -102,20 +105,25 @@
 
       <div id="cartLines"></div>
 
+      <!-- ✅ FIX: Retour EXACT de la carte Total + infos client comme avant -->
       <div class="card" style="margin-top:14px">
         <div class="card-body">
-          <div class="card-title-wrap">
-            <h3 style="margin:0">Total</h3>
-            <div class="price" id="cartTotal">0,00€</div>
+          <div style="font-weight:800; font-size:28px; margin-bottom:14px;">
+            Total : <span id="cartTotal">0,00€</span>
           </div>
 
-          <div style="display:grid; gap:10px; margin-top:12px">
-            <input id="custName" class="inp" placeholder="Nom et prénom *" />
+          <div style="display:grid; gap:12px;">
+            <div style="font-weight:700;">Nom du client *</div>
+            <input id="custName" class="inp" placeholder="Nom prénom" />
+
+            <div style="font-weight:700;">Email *</div>
             <input id="custEmail" class="inp" placeholder="Email *" />
+
+            <div style="font-weight:700;">Téléphone *</div>
             <input id="custPhone" class="inp" placeholder="Téléphone *" />
           </div>
 
-          <div style="display:flex; gap:10px; align-items:center; margin-top:12px">
+          <div style="margin-top:14px; display:grid; gap:10px;">
             <button id="btnValidate" class="btn btn-primary">Valider</button>
             <div id="result" class="muted"></div>
           </div>
