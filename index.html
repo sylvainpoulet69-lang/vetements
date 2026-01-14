@@ -40,18 +40,35 @@
          ========================= -->
     <section id="sectionCategories" class="section active">
 
-      <!-- ✅ FIX: Hero qui ne clippe pas + H/F/E dedans comme avant -->
-      <div class="hero" style="overflow:visible;">
-        <h1 id="heroTitle" style="white-space:normal;">Choisis tes vêtements club</h1>
-        <div id="heroSubtitle" class="muted" style="white-space:normal;">
+      <!-- ✅ FIX ALIGNEMENT HERO (centré + padding + spacing propre) -->
+      <div class="hero" style="overflow:visible; text-align:center; padding:16px 16px 18px;">
+        <h1 id="heroTitle" style="white-space:normal; margin:0; line-height:1.1;">
+          Choisis tes vêtements club
+        </h1>
+
+        <div
+          id="heroSubtitle"
+          class="muted"
+          style="white-space:normal; margin-top:10px; line-height:1.35;"
+        >
           Logos inclus · Flocage personnalisé inclus
         </div>
 
-        <!-- ✅ H/F/E dans le bloc hero -->
-        <div id="rowGender" class="chips" style="margin-top:14px">
-          <button class="chip gender" data-gender="H">Homme</button>
-          <button class="chip gender" data-gender="F">Femme</button>
-          <button class="chip gender" data-gender="E">Enfant</button>
+        <!-- ✅ Boutons H/F/E centrés + bien espacés -->
+        <div
+          id="rowGender"
+          class="chips"
+          style="
+            margin-top:14px;
+            display:flex;
+            justify-content:center;
+            gap:12px;
+            flex-wrap:wrap;
+          "
+        >
+          <button class="chip gender" data-gender="H" style="min-width:110px;">Homme</button>
+          <button class="chip gender" data-gender="F" style="min-width:110px;">Femme</button>
+          <button class="chip gender" data-gender="E" style="min-width:110px;">Enfant</button>
         </div>
       </div>
 
@@ -68,7 +85,6 @@
         </div>
       </div>
 
-      <!-- Liste “home” -->
       <div id="homeList" class="grid" style="margin-top:16px"></div>
     </section>
 
@@ -105,28 +121,32 @@
 
       <div id="cartLines"></div>
 
-      <!-- ✅ FIX: Retour EXACT de la carte Total + infos client comme avant -->
+      <!-- ✅ FIX: Retour STRICT photo 3 (Total en haut + champs empilés + Valider en dessous) -->
       <div class="card" style="margin-top:14px">
         <div class="card-body">
-          <div style="font-weight:800; font-size:28px; margin-bottom:14px;">
+
+          <div style="font-weight:900; font-size:30px; margin:0 0 14px;">
             Total : <span id="cartTotal">0,00€</span>
           </div>
 
-          <div style="display:grid; gap:12px;">
-            <div style="font-weight:700;">Nom du client *</div>
-            <input id="custName" class="inp" placeholder="Nom prénom" />
+          <div style="font-weight:800; margin-top:6px;">Nom du client *</div>
+          <input id="custName" class="inp" placeholder="Nom prénom" style="margin-top:10px;" />
 
-            <div style="font-weight:700;">Email *</div>
-            <input id="custEmail" class="inp" placeholder="Email *" />
+          <div style="font-weight:800; margin-top:16px;">Email *</div>
+          <input id="custEmail" class="inp" placeholder="Email *" style="margin-top:10px;" />
 
-            <div style="font-weight:700;">Téléphone *</div>
-            <input id="custPhone" class="inp" placeholder="Téléphone *" />
-          </div>
+          <div style="font-weight:800; margin-top:16px;">Téléphone *</div>
+          <input id="custPhone" class="inp" placeholder="Téléphone *" style="margin-top:10px;" />
 
-          <div style="margin-top:14px; display:grid; gap:10px;">
-            <button id="btnValidate" class="btn btn-primary">Valider</button>
-            <div id="result" class="muted"></div>
-          </div>
+          <button
+            id="btnValidate"
+            class="btn btn-primary"
+            style="margin-top:16px; width:100%;"
+          >
+            Valider
+          </button>
+
+          <div id="result" class="muted" style="margin-top:10px;"></div>
         </div>
       </div>
     </section>
