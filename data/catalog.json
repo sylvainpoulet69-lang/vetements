@@ -4,7 +4,7 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "category": "Vêtements",
-      "price": 35,
+      "price": 0,
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg",
       "type": "single",
       "active": true
@@ -13,7 +13,7 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "category": "Vêtements",
-      "price": 25,
+      "price": 0,
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg",
       "type": "single",
       "active": true
@@ -22,7 +22,7 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "category": "Vêtements",
-      "price": 30,
+      "price": 0,
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short.jpg",
       "type": "single",
       "active": true
@@ -31,7 +31,7 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "category": "Vêtements",
-      "price": 35,
+      "price": 0,
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg",
       "type": "single",
       "active": true
@@ -40,7 +40,7 @@
       "product_id": "POLO",
       "title": "Polo",
       "category": "Vêtements",
-      "price": 35,
+      "price": 0,
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo.jpg",
       "type": "single",
       "active": true
@@ -49,7 +49,7 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "category": "Accessoires",
-      "price": 20,
+      "price": 0,
       "image_url": "",
       "type": "single",
       "active": true
@@ -58,7 +58,7 @@
       "product_id": "PK150",
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
-      "price": 150,
+      "price": 0,
       "image_url": "",
       "type": "pack",
       "active": true
