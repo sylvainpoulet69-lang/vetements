@@ -158,17 +158,10 @@ body{padding-bottom:32px}
   display:flex;
   flex-direction:column;
 }
-
-/* ✅ MODIF: images toujours bien cadrées (pas de crop)
-   - contain au lieu de cover
-   - fond + padding visuel pour que ça reste propre
-*/
 .card.product img{
   width:100%;
   height:clamp(220px, 58vw, 360px);
-  object-fit:contain;              /* <- CHANGÉ (était cover) */
-  object-position:center;          /* <- AJOUT */
-  background:#F3F7FF;              /* <- AJOUT (fond propre) */
+  object-fit:cover;
   border-bottom:1px solid var(--border);
 }
 
@@ -286,17 +279,13 @@ body{padding-bottom:32px}
   padding:18px;
   box-shadow:var(--shadow);
 }
-
-/* ✅ MODIF: image fiche produit toujours bien cadrée (pas de crop) */
 .detail-img{
   width:100%;
   height:clamp(280px, 65vw, 520px);
-  object-fit:contain;              /* <- CHANGÉ (était cover) */
-  object-position:center;          /* <- AJOUT */
+  object-fit:cover;
   border-radius:24px;
-  background:#F3F7FF;              /* <- AJOUT (fond propre) */
+  background:#D8E4FF;
 }
-
 h3{margin:14px 0 10px;font-size:1.25rem}
 label{
   display:block;
@@ -396,17 +385,13 @@ label{
   margin-bottom:16px;
   box-shadow:0 18px 42px rgba(15,23,42,.18);
 }
-
-/* ✅ MODIF: image panier bien cadrée */
 .cart-line img{
   width:100px;
   height:100px;
-  object-fit:contain;              /* <- CHANGÉ (était cover) */
-  object-position:center;          /* <- AJOUT */
+  object-fit:cover;
   border-radius:18px;
-  background:#F3F7FF;              /* <- AJOUT */
+  background:#D8E4FF;
 }
-
 .cart-info{
   display:flex;
   flex-direction:column;
@@ -471,19 +456,13 @@ label{
   .grid{gap:20px}
   .card{border-radius:26px}
   .card-body{padding:22px}
-
-  /* ✅ garde la hauteur mais toujours contain */
   .card.product img{height:420px}
-
   .card.product h3{font-size:1.3rem}
   .btn{min-height:72px;padding:18px 22px;font-size:1.05rem}
   .btn-small{min-height:64px;font-size:1.02rem}
   .back{padding:18px 22px;font-size:1.1rem}
   .detail{padding:22px;border-radius:28px}
-
-  /* ✅ idem: contain + hauteur */
   .detail-img{height:580px}
-
   h3{font-size:1.35rem;margin:16px 0 12px}
   label{font-size:1.1rem;margin:22px 0 12px}
   .inp{padding:18px 20px;border-radius:18px;font-size:1.05rem}
