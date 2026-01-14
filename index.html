@@ -23,9 +23,7 @@
 
     <div style="display:flex; gap:10px; align-items:center;">
       <!-- Bouton Accueil header (caché sur l’accueil via app.js) -->
-      <button id="btnHome" class="btn btn-outline" style="display:none">
-        Accueil
-      </button>
+      <button id="btnHome" class="btn btn-outline" style="display:none">Accueil</button>
 
       <button id="btnCart" class="btn btn-outline btn-cart">
         Panier <span id="cartCount" class="badge">0</span>
@@ -40,31 +38,20 @@
          ========================= -->
     <section id="sectionCategories" class="section active">
 
-      <!-- ✅ FIX ALIGNEMENT HERO (centré + padding + spacing propre) -->
+      <!-- Hero centré + boutons dans l’encadré -->
       <div class="hero" style="overflow:visible; text-align:center; padding:16px 16px 18px;">
         <h1 id="heroTitle" style="white-space:normal; margin:0; line-height:1.1;">
           Choisis tes vêtements club
         </h1>
 
-        <div
-          id="heroSubtitle"
-          class="muted"
-          style="white-space:normal; margin-top:10px; line-height:1.35;"
-        >
+        <div id="heroSubtitle" class="muted" style="white-space:normal; margin-top:10px; line-height:1.35;">
           Logos inclus · Flocage personnalisé inclus
         </div>
 
-        <!-- ✅ Boutons H/F/E centrés + bien espacés -->
         <div
           id="rowGender"
           class="chips"
-          style="
-            margin-top:14px;
-            display:flex;
-            justify-content:center;
-            gap:12px;
-            flex-wrap:wrap;
-          "
+          style="margin-top:14px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;"
         >
           <button class="chip gender" data-gender="H" style="min-width:110px;">Homme</button>
           <button class="chip gender" data-gender="F" style="min-width:110px;">Femme</button>
@@ -111,62 +98,40 @@
     </section>
 
     <!-- =========================
-         PANIER
+         PANIER (✅ TON ANCIEN CODE EXACT)
          ========================= -->
     <section id="sectionCart" class="section">
-      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px">
-        <button id="backHome2" class="back">Accueil</button>
-        <div style="font-weight:700">Panier</div>
-      </div>
+      <button id="backHome2" class="back">Accueil</button>
+      <h2>🛒 Votre panier</h2>
 
       <div id="cartLines"></div>
 
-      <!-- ✅ FIX: Retour STRICT photo 3 (Total en haut + champs empilés + Valider en dessous) -->
-      <div class="card" style="margin-top:14px">
-        <div class="card-body">
+      <div class="checkout">
+        <div class="total">Total : <span id="cartTotal">0€</span></div>
 
-          <div style="font-weight:900; font-size:30px; margin:0 0 14px;">
-            Total : <span id="cartTotal">0,00€</span>
-          </div>
+        <label>Nom du client *</label>
+        <input id="custName" class="inp" placeholder="Nom prénom" required>
 
-          <div style="font-weight:800; margin-top:6px;">Nom du client *</div>
-          <input id="custName" class="inp" placeholder="Nom prénom" style="margin-top:10px;" />
+        <label>Email *</label>
+        <input id="custEmail" type="email" class="inp" placeholder="exemple@mail.com" required>
 
-          <div style="font-weight:800; margin-top:16px;">Email *</div>
-          <input id="custEmail" class="inp" placeholder="Email *" style="margin-top:10px;" />
+        <label>Téléphone *</label>
+        <input id="custPhone" class="inp" placeholder="06...">
 
-          <div style="font-weight:800; margin-top:16px;">Téléphone *</div>
-          <input id="custPhone" class="inp" placeholder="Téléphone *" style="margin-top:10px;" />
-
-          <button
-            id="btnValidate"
-            class="btn btn-primary"
-            style="margin-top:16px; width:100%;"
-          >
-            Valider
-          </button>
-
-          <div id="result" class="muted" style="margin-top:10px;"></div>
-        </div>
+        <button id="btnValidate" class="btn btn-primary">Valider la commande</button>
+        <div id="result" class="result"></div>
       </div>
     </section>
 
     <!-- =========================
-         DONE
+         CONFIRMATION
          ========================= -->
     <section id="sectionDone" class="section">
-      <div class="card">
-        <div class="card-body">
-          <h3 style="margin:0 0 8px">Commande envoyée</h3>
-          <div id="doneMsg" class="muted"></div>
-
-          <div style="margin-top:12px; display:flex; gap:10px; align-items:center">
-            <a id="donePdf" class="btn btn-outline" href="#" style="pointer-events:none; opacity:.5">
-              Télécharger le PDF
-            </a>
-            <button id="doneBack" class="btn btn-primary">Retour accueil</button>
-          </div>
-        </div>
+      <div class="card" style="padding:20px;text-align:center;">
+        <h2>✅ Commande envoyée</h2>
+        <p id="doneMsg">Merci pour votre commande !</p>
+        <p><a id="donePdf" href="#" target="_blank" class="btn btn-outline">📄 Ouvrir le PDF</a></p>
+        <button id="doneBack" class="btn btn-primary">Retour à l'accueil</button>
       </div>
     </section>
 
