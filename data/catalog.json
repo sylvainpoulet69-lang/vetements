@@ -62,15 +62,6 @@
       "image_url": "",
       "type": "pack",
       "active": true
-    },
-    {
-      "product_id": "PK151",
-      "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
-      "category": "Vêtements",
-      "price": 150,
-      "image_url": "",
-      "type": "single",
-      "active": false
     }
   ],
   "variants": [
