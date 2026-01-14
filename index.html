@@ -34,13 +34,15 @@
           <h1 id="heroTitle">Choisis tes vêtements club</h1>
           <p id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</p>
 
-          <!-- ✅ NEW: choix Homme / Femme à l’accueil -->
+          <!-- ✅ NEW: choix Homme / Femme / Enfant à l’accueil -->
           <div class="cats-row" style="margin-top:14px">
             <button id="btnGenderH" class="chip gender" data-gender="H">Homme</button>
             <button id="btnGenderF" class="chip gender" data-gender="F">Femme</button>
+            <button id="btnGenderE" class="chip gender" data-gender="E">Enfant</button>
           </div>
 
-          <div class="cats-row" style="margin-top:14px">
+          <!-- ✅ Catégories affichées après choix du genre (via app.js) -->
+          <div id="rowCats" class="cats-row" style="margin-top:14px; display:none;">
             <button class="chip cat" data-cat="Vêtements">👕 Vêtements</button>
             <button class="chip cat" data-cat="Accessoires">🧢 Accessoires</button>
           </div>
