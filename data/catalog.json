@@ -52,7 +52,7 @@
       "price": 1,
       "image_url": "",
       "type": "single",
-      "active": false
+      "active": true
     },
     {
       "product_id": "CASQUETTE",
