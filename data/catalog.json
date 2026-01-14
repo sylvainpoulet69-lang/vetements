@@ -49,7 +49,7 @@
       "product_id": "TEST1",
       "title": "Test1",
       "category": "Vêtements",
-      "price": 0,
+      "price": 1,
       "image_url": "",
       "type": "single",
       "active": false
