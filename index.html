@@ -34,20 +34,30 @@
           <h1 id="heroTitle">Choisis tes vêtements club</h1>
           <p id="heroSubtitle" class="muted">Logos inclus · Flocage personnalisé inclus</p>
 
-          <!-- ✅ NEW: choix Homme / Femme / Enfant à l’accueil -->
-          <div class="cats-row" style="margin-top:14px">
+          <!-- ✅ Étape 1 : Homme / Femme / Enfant -->
+          <div id="genderRow" class="cats-row" style="margin-top:14px">
             <button id="btnGenderH" class="chip gender" data-gender="H">Homme</button>
             <button id="btnGenderF" class="chip gender" data-gender="F">Femme</button>
-            <button id="btnGenderE" class="chip gender" data-gender="E">Enfant</button>
+          </div>
+          <div id="genderRow2" class="cats-row" style="margin-top:14px">
+            <button id="btnGenderE" class="chip gender" data-gender="Enfant">Enfant</button>
+            <button id="btnResetHome" class="chip" style="display:none">Retour accueil</button>
           </div>
 
-          <!-- ✅ Catégories affichées après choix du genre (via app.js) -->
-          <div id="rowCats" class="cats-row" style="margin-top:14px; display:none;">
+          <!-- ✅ Étape 2 : Vêtements / Accessoires (caché tant qu’on n’a pas choisi le genre) -->
+          <div id="catRow" class="cats-row" style="margin-top:14px; display:none">
             <button class="chip cat" data-cat="Vêtements">👕 Vêtements</button>
             <button class="chip cat" data-cat="Accessoires">🧢 Accessoires</button>
           </div>
+
+          <!-- ✅ rappel de contexte -->
+          <div id="homeContext" class="muted" style="margin-top:10px; display:none">
+            Rayon : <strong id="homeGenderLabel"></strong>
+          </div>
+
         </div>
       </div>
+
       <h2 style="margin:18px 0 8px">Produits</h2>
       <div id="homeList" class="grid"></div>
     </section>
@@ -56,6 +66,7 @@
     <section id="sectionProducts" class="section">
       <button id="backHome" class="back">Accueil</button>
       <h2 id="prodTitle">Produits</h2>
+      <div id="prodContext" class="muted" style="margin:-8px 0 12px; display:none"></div>
       <div id="productList" class="grid"></div>
     </section>
 
