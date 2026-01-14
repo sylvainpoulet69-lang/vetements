@@ -3,7 +3,7 @@ let CURRENT_CAT = null;
 let CART = [];
 
 /* =========================
-   ✅ NEW: NOTE "INFO" PANIER
+   ✅ NOTE "INFO" PANIER
    ========================= */
 let CART_NOTE = "";
 
@@ -37,7 +37,11 @@ function ensureCartInfoBox() {
   const wrap = document.createElement("div");
   wrap.className = "card";
   wrap.id = "cartInfoCard";
-  wrap.style.marginTop = "14px";
+
+  // ✅ NEW: plus de marge (validé)
+  wrap.style.marginTop = "18px";
+  wrap.style.marginBottom = "18px";
+
   wrap.innerHTML = `
     <div class="card-body">
       <div class="card-title-wrap" style="margin-bottom:8px">
@@ -76,7 +80,6 @@ window.APPS_SCRIPT_DEPLOY =
   "https://script.google.com/macros/s/AKfycbynQ91SCza8sIz9auJ-GB2iLO-EeOwZ6S-hjqeLZrtXj8p53tborgWOGlDo294RP__sWw/exec";
 
 /* === CONFIG MODE GITHUB PAGES === */
-// URL du catalogue statique généré par GitHub Actions (Sheets → data/catalog.json)
 window.CATALOG_URL = window.CATALOG_URL || "./data/catalog.json";
 
 // ✅ Endpoint de commande (Cloudflare Worker) – BASE URL (sans /api/order)
@@ -88,17 +91,18 @@ const isAppsScript =
   typeof google !== "undefined" && google.script && google.script.run;
 
 const APPS_SCRIPT_DEPLOY = (window.APPS_SCRIPT_DEPLOY || "").replace(/\/$/, "");
-
-// (Optionnel) Proxy CORS (ex: Cloudflare Worker) pour que POST fonctionne sur GitHub Pages
 const APPS_SCRIPT_PROXY = (window.APPS_SCRIPT_PROXY || "").replace(/\/$/, "");
 
 const euros = (n) => (Number(n) || 0).toFixed(2).replace(".", ",") + "€";
 const $ = (s) => document.querySelector(s);
 const $$ = (s) => Array.from(document.querySelectorAll(s));
+
 function show(id) {
   $$(".section").forEach((s) => s.classList.remove("active"));
   $(id).classList.add("active");
+  refreshHeaderHomeVisibility(); // ✅ NEW
 }
+
 function refreshCartBadge() {
   $("#cartCount").textContent = CART.reduce((a, l) => a + (l.qty || 1), 0);
 }
@@ -106,32 +110,24 @@ function cartTotal() {
   return CART.reduce((s, l) => s + (Number(l.price) || 0) * (l.qty || 1), 0);
 }
 function loadCart() {
-  try {
-    CART = JSON.parse(localStorage.getItem("cart") || "[]");
-  } catch (e) {
-    CART = [];
-  }
+  try { CART = JSON.parse(localStorage.getItem("cart") || "[]"); }
+  catch (e) { CART = []; }
   refreshCartBadge();
-
-  // ✅ NEW
-  loadCartNote();
+  loadCartNote(); // ✅
 }
-function saveCart() {
-  localStorage.setItem("cart", JSON.stringify(CART));
-}
+function saveCart() { localStorage.setItem("cart", JSON.stringify(CART)); }
 function imgOrFallback(u) {
   return u && String(u).trim()
     ? u
     : "https://picsum.photos/seed/acacias/1600/1200";
 }
+
 function colorToHex(n) {
   const key = String(n || "").trim();
 
-  // ✅ priorité aux couleurs définies dans Google Sheets via catalog.json
   const dyn = (CATALOG.options && CATALOG.options.colors_hex) ? CATALOG.options.colors_hex : {};
   if (dyn && dyn[key]) return dyn[key];
 
-  // fallback (tes couleurs génériques si jamais)
   const m = {
     Bleu: "#2563EB",
     Blanc: "#FFFFFF",
@@ -146,34 +142,94 @@ function colorToHex(n) {
 }
 
 /* =========================
-   ✅ NEW (validé): Genre accueil + dernier filtre
+   ✅ NEW (validé): Accueil Step1/Step2 + reset
    ========================= */
-let CURRENT_GENDER = null; // "H" | "F" | "Enfant" (ou null)
+let CURRENT_GENDER = null; // "H" | "F" | "Enfant" | null
 const LAST_FILTER = { gender: null, cat: null };
 
 function normGenderFromUI(v) {
   const g = String(v || "").trim();
-  if (g === "E") return "Enfant";         // index.html data-gender="E"
+  if (g === "E") return "Enfant";
   if (g.toLowerCase() === "enfant") return "Enfant";
-  return g || null; // "H" / "F" / "Unisexe" ...
+  return g || null;
+}
+
+// ✅ NEW: parse gender_scope produit (Products.gender_scope)
+function parseProductGenderScope_(s) {
+  const raw = String(s || "").trim();
+  if (!raw) return []; // vide => “pas de restriction” (on affichera partout)
+  return raw
+    .split("|")
+    .map((x) => String(x || "").trim())
+    .filter(Boolean)
+    .map((x) => (x === "E" ? "Enfant" : x));
+}
+
+// ✅ NEW: produit visible pour le rayon sélectionné ? (packs inclus)
+function isProductVisibleForGender_(p, gender) {
+  if (!gender) return true; // tant qu’on n’a pas choisi H/F/E, on ne bloque pas ici
+  const scopes = parseProductGenderScope_(p && p.gender_scope);
+  if (!scopes.length) return true; // ✅ choix: vide => visible partout (safe)
+  return scopes.includes(String(gender));
+}
+
+function setHomeStep_(step) {
+  // step 1 => montre H/F/E, cache cats+retour
+  const rowGender = document.getElementById("rowGender");
+  const rowCatsWrap = document.getElementById("rowCatsWrap");
+  if (rowGender) rowGender.style.display = step === 1 ? "" : "none";
+  if (rowCatsWrap) rowCatsWrap.style.display = step === 2 ? "" : "none";
+
+  // contexte
+  const ctx = document.getElementById("homeContext");
+  if (ctx) ctx.textContent = step === 2 && CURRENT_GENDER ? `Rayon : ${CURRENT_GENDER}` : "";
+
+  refreshHeaderHomeVisibility();
+}
+
+function resetToHomeStep1_() {
+  CURRENT_GENDER = null;
+  CURRENT_CAT = null;
+  LAST_FILTER.gender = null;
+  LAST_FILTER.cat = null;
+
+  setHomeStep_(1);
+  show("#sectionCategories");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ✅ NEW: bouton accueil header visible partout sauf sur l’accueil
+function refreshHeaderHomeVisibility() {
+  const btnHome = document.getElementById("btnHome");
+  if (!btnHome) return;
+
+  // si on est sur l’accueil => caché
+  const isHome = document.getElementById("sectionCategories")?.classList.contains("active");
+  btnHome.style.display = isHome ? "none" : "";
 }
 
 function goBackToLastList() {
   if (LAST_FILTER && LAST_FILTER.cat) {
     CURRENT_CAT = LAST_FILTER.cat;
     if ($("#prodTitle")) $("#prodTitle").textContent = CURRENT_CAT;
+
+    // ✅ NEW: rappel visible cat + rayon
+    if ($("#prodContext")) $("#prodContext").textContent = CURRENT_GENDER ? `${CURRENT_CAT} — ${CURRENT_GENDER}` : `${CURRENT_CAT}`;
+
     renderProducts();
     show("#sectionProducts");
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
-  show("#sectionCategories");
-  window.scrollTo({ top: 0, behavior: "smooth" });
+  resetToHomeStep1_();
 }
 /* ========================= */
 
 /* === Helpers catalogue / variantes === */
-const uniq = (arr) => [...new Set((arr || []).filter((x) => x !== null && x !== undefined && String(x).trim() !== "").map((x) => String(x)))];
+const uniq = (arr) =>
+  [...new Set((arr || [])
+    .filter((x) => x !== null && x !== undefined && String(x).trim() !== "")
+    .map((x) => String(x)))];
 
 function getVariantsForProduct_(productId) {
   return (CATALOG.variants || []).filter((v) => String(v.product_id) === String(productId));
@@ -214,7 +270,6 @@ function getCandidateSizes_(vars, gender, color) {
 }
 
 function pickVariant_(vars, gender, color) {
-  // 1) match gender+color
   let v = (vars || []).find((x) =>
     (!gender || String(x.gender_scope) === String(gender)) &&
     (!color || String(x.color) === String(color)) &&
@@ -222,11 +277,11 @@ function pickVariant_(vars, gender, color) {
   );
   if (v) return v;
 
-  // 2) match color
-  v = (vars || []).find((x) => (!color || String(x.color) === String(color)) && String(x.image_url || "").trim());
+  v = (vars || []).find((x) =>
+    (!color || String(x.color) === String(color)) && String(x.image_url || "").trim()
+  );
   if (v) return v;
 
-  // 3) any with image
   v = (vars || []).find((x) => String(x.image_url || "").trim());
   return v || null;
 }
@@ -242,13 +297,11 @@ function shouldShowGender_(genders) {
   const gs = uniq(genders);
   if (gs.length <= 1) return false;
   if (gs.length === 1 && gs[0] === "Unisexe") return false;
-  // si Unisexe + autres, on affiche
   return true;
 }
 
 function defaultGender_(genders) {
   const gs = uniq(genders);
-  // priorité : H puis F puis Unisexe puis Enfant
   const prio = ["H", "F", "Unisexe", "Enfant"];
   for (const p of prio) if (gs.includes(p)) return p;
   return gs[0] || null;
@@ -256,7 +309,6 @@ function defaultGender_(genders) {
 
 function defaultColor_(colors) {
   const cs = uniq(colors);
-  // si le club a une liste par défaut, on préfère une couleur existante proche
   const preferred = (CATALOG.options && CATALOG.options.colors_default) ? CATALOG.options.colors_default : [];
   for (const p of preferred) if (cs.includes(String(p))) return String(p);
   return cs[0] || null;
@@ -268,11 +320,7 @@ function getJsonp(url) {
     const cb = "cb_" + Date.now() + "_" + Math.floor(Math.random() * 1e6);
 
     window[cb] = (data) => {
-      try {
-        delete window[cb];
-      } catch (e) {
-        window[cb] = undefined;
-      }
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
       script.remove();
       resolve(data);
     };
@@ -281,11 +329,7 @@ function getJsonp(url) {
     script.src = url + (url.includes("?") ? "&" : "?") + "callback=" + cb;
 
     script.onerror = () => {
-      try {
-        delete window[cb];
-      } catch (e) {
-        window[cb] = undefined;
-      }
+      try { delete window[cb]; } catch (e) { window[cb] = undefined; }
       script.remove();
       reject(new Error("JSONP load failed"));
     };
@@ -295,7 +339,6 @@ function getJsonp(url) {
 }
 
 async function loadCatalog() {
-  // 1) Si l'app tourne DANS Apps Script, on garde la voie directe (stable)
   if (isAppsScript) {
     google.script.run
       .withSuccessHandler((data) => {
@@ -308,8 +351,6 @@ async function loadCatalog() {
 
   const list = $("#homeList");
 
-  // 2) Mode GitHub Pages : on privilégie le catalogue statique (data/catalog.json)
-  //    (généré automatiquement depuis Google Sheets via GitHub Actions)
   if (window.CATALOG_URL) {
     fetch(window.CATALOG_URL, { cache: "no-store" })
       .then((r) => {
@@ -322,18 +363,15 @@ async function loadCatalog() {
         renderHome();
       })
       .catch(() => {
-        // 3) Fallback : ancien mode Apps Script (proxy / JSONP)
         loadCatalog_AppsScriptFallback(list);
       });
 
     return;
   }
 
-  // Si pas de CATALOG_URL, on tombe directement sur l'ancien mode
   loadCatalog_AppsScriptFallback(list);
 }
 
-// Ancien mode : Apps Script direct (proxy CORS en fetch) ou JSONP sinon
 function loadCatalog_AppsScriptFallback(list) {
   if (!APPS_SCRIPT_DEPLOY) {
     list.innerHTML =
@@ -342,11 +380,8 @@ function loadCatalog_AppsScriptFallback(list) {
   }
 
   try {
-    // Si tu définis window.APPS_SCRIPT_PROXY (proxy CORS), on peut utiliser fetch en JSON (GET/POST).
     if (APPS_SCRIPT_PROXY) {
-      const res = fetch(APPS_SCRIPT_PROXY + "/?api=getCatalog", {
-        cache: "no-store",
-      });
+      const res = fetch(APPS_SCRIPT_PROXY + "/?api=getCatalog", { cache: "no-store" });
       res
         .then((r) => {
           if (!r.ok) throw new Error(r.statusText);
@@ -361,16 +396,11 @@ function loadCatalog_AppsScriptFallback(list) {
     }
   } catch (e) {}
 
-  // Sinon JSONP
   loadCatalog_JSONP();
 }
 
-// JSONP catalogue (si tu l'utilises encore)
 function loadCatalog_JSONP() {
   const list = $("#homeList");
-  const url = APPS_SCRIPT_DEPLOY + "?callback=?"; // placeholder, remplacé dans getJsonp
-  // Ici, ton ancien JSONP (si nécessaire) : on tente /exec?action=getCatalog ou similaire
-  // Comme tu as déjà CATALOG_URL, ce chemin ne devrait presque jamais servir.
   const jsonpUrl = APPS_SCRIPT_DEPLOY + "?action=getCatalog";
   getJsonp(jsonpUrl)
     .then((data) => {
@@ -409,11 +439,7 @@ function renderHome() {
       <img src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <div class="card-body">
         <div class="card-title-wrap">
-          <h3>${p.title}${
-            String(p.type).toLowerCase() === "pack"
-              ? " <span class='muted'>(Pack)</span>"
-              : ""
-          }</h3>
+          <h3>${p.title}${String(p.type).toLowerCase() === "pack" ? " <span class='muted'>(Pack)</span>" : ""}</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
         <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
@@ -433,11 +459,22 @@ function renderHome() {
 function renderProducts() {
   const list = $("#productList");
   list.innerHTML = "";
-  const items = CATALOG.products.filter(
-    (p) =>
-      String(p.category) === String(CURRENT_CAT) &&
-      (p.active === true || String(p.active).toLowerCase() === "true")
-  );
+
+  const items = CATALOG.products.filter((p) => {
+    const okCat = String(p.category) === String(CURRENT_CAT);
+    const okActive = (p.active === true || String(p.active).toLowerCase() === "true");
+
+    // ✅ NEW: filtre via Products.gender_scope (packs inclus)
+    const okGender = isProductVisibleForGender_(p, CURRENT_GENDER);
+
+    return okCat && okActive && okGender;
+  });
+
+  if (!items.length) {
+    list.innerHTML =
+      '<div class="card"><div class="card-body"><div class="card-title-wrap">Aucun produit dans ce rayon.</div></div></div>';
+    return;
+  }
 
   items.forEach((p) => {
     const card = document.createElement("div");
@@ -447,11 +484,7 @@ function renderProducts() {
       <img src="${imgOrFallback(p.image_url)}" alt="${p.title}">
       <div class="card-body">
         <div class="card-title-wrap">
-          <h3>${p.title}${
-            String(p.type).toLowerCase() === "pack"
-              ? " <span class='muted'>(Pack)</span>"
-              : ""
-          }</h3>
+          <h3>${p.title}${String(p.type).toLowerCase() === "pack" ? " <span class='muted'>(Pack)</span>" : ""}</h3>
           <div class="price">à partir de ${euros(p.price)}</div>
         </div>
         <button class="btn btn-ghost btn-small" data-id="${p.product_id}">Choisir</button>
@@ -472,7 +505,6 @@ function openDetail(pid) {
   const p = CATALOG.products.find((x) => String(x.product_id) === String(pid));
   if (!p) return;
 
-  // Packs
   if (String(p.type).toLowerCase() === "pack") {
     return openPackDetail(p);
   }
@@ -481,10 +513,8 @@ function openDetail(pid) {
   const colors = uniq(vars.map((v) => v.color));
   const genders = uniq(vars.map((v) => v.gender_scope));
 
-  // ✅ NEW (validé): genre vient de l'accueil (pas de choix sur la fiche)
   const genderFromHome = CURRENT_GENDER ? String(CURRENT_GENDER) : null;
 
-  // UI defaults
   const sel = {
     color: defaultColor_(colors),
     gender: genderFromHome || defaultGender_(genders),
@@ -492,14 +522,10 @@ function openDetail(pid) {
     logo: "Aucun",
   };
 
-  // Compute sizes (may be empty for accessories like casquette)
   const sizesFromVars = getCandidateSizes_(vars, sel.gender, sel.color);
   const shouldShowSize = sizesFromVars.length > 0;
-
-  // If we show size, set default to first
   if (shouldShowSize) sel.size = sizesFromVars[0];
 
-  // --- Render ---
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
       <button id="goHome" class="back">Accueil</button>
@@ -514,8 +540,7 @@ function openDetail(pid) {
       <label>Couleur</label>
       <div class="swatches" id="pickColor">
         ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
-          .map(
-            (c) => `
+          .map((c) => `
             <div class="swatch" data-val="${c}">
               <div class="dot" style="background:${colorToHex(c)}"></div>
               <div class="name">${c}</div>
@@ -548,7 +573,6 @@ function openDetail(pid) {
     </div>
   `;
 
-  // Activate defaults (logo/color)
   const lbtn = Array.from($$("#pickLogo .pill")).find((b) => b.dataset.val === sel.logo) || $("#pickLogo .pill");
   if (lbtn) {
     $$("#pickLogo .pill").forEach((x) => x.classList.remove("active"));
@@ -563,7 +587,6 @@ function openDetail(pid) {
     sel.color = cbtn.dataset.val;
   }
 
-  // Render sizes if needed
   function renderSizes() {
     const sizes = getCandidateSizes_(vars, sel.gender, sel.color);
     const wrap = $("#wrapSize");
@@ -578,7 +601,6 @@ function openDetail(pid) {
     if (wrap) wrap.style.display = "";
     box.innerHTML = sizes.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
 
-    // Keep selection
     if (!sel.size || !sizes.includes(sel.size)) sel.size = sizes[0];
 
     const sbtn = Array.from(box.querySelectorAll(".pill")).find((b) => b.dataset.val === sel.size);
@@ -586,8 +608,6 @@ function openDetail(pid) {
   }
 
   renderSizes();
-
-  // Apply image based on selected color/gender if variant has image_url
   applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
 
   $("#pickSize")?.addEventListener("click", (e) => {
@@ -619,7 +639,6 @@ function openDetail(pid) {
   $("#btnAdd").addEventListener("click", () => {
     const qty = Math.max(1, Number($("#qty").value || 1));
 
-    // Taille peut être vide pour accessoires
     if ($("#wrapSize") && $("#wrapSize").style.display !== "none" && !sel.size) {
       alert("Choisir une taille.");
       return;
@@ -644,13 +663,15 @@ function openDetail(pid) {
 
     saveCart();
     refreshCartBadge();
+
+    // ✅ NEW: retour à l’accueil mais en Step2 (puisque rayon déjà choisi)
     show("#sectionCategories");
+    setHomeStep_(CURRENT_GENDER ? 2 : 1);
     window.scrollTo({ top: 0 });
   });
 
-  // ✅ NEW (validé): retour = dernier filtre utilisé
   $("#backList").addEventListener("click", () => goBackToLastList());
-  $("#goHome").addEventListener("click", () => show("#sectionCategories"));
+  $("#goHome").addEventListener("click", () => resetToHomeStep1_());
 
   show("#sectionDetail");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -711,7 +732,6 @@ function openPackDetail(p) {
     };
   });
 
-  // --- render vertical like your existing product detail (scroll) ---
   const itemsHtml = slots.map((s) => {
     const vars = getVariantsForProduct_(s.chosen_product_id);
     const colors = uniq(vars.map((v) => v.color));
@@ -754,7 +774,7 @@ function openPackDetail(p) {
           ${upgradeHtml}
 
           <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
-            <label>Genre</gabel>
+            <label>Genre</label>
             <div class="pills pickGender" data-slot="${s.idx}">
               ${["H", "F", "Unisexe", "Enfant"]
                 .filter((g) => !genders.length || genders.includes(g))
@@ -817,16 +837,13 @@ function openPackDetail(p) {
     </div>
   `;
 
-  // set images per selection
   slots.forEach((s) => {
     const vars = getVariantsForProduct_(s.chosen_product_id);
     const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(s.chosen_product_id));
     applyVariantImage_(document.getElementById(`slotImg_${s.idx}`), vars, s.gender, s.color, (prod && prod.image_url) || p.image_url);
   });
 
-  // --- Delegation click ---
   $("#detail").addEventListener("click", (e) => {
-    // upgrades
     const upBtn = e.target.closest(".packUp .pill");
     if (upBtn) {
       const slotIndex = Number(upBtn.closest(".packUp").dataset.slot);
@@ -845,7 +862,6 @@ function openPackDetail(p) {
         slot.extra_price = Number(upBtn.dataset.extra || 0);
       }
 
-      // refresh size list + image based on new chosen product
       const vars = getVariantsForProduct_(slot.chosen_product_id);
       const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
       slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
@@ -867,7 +883,6 @@ function openPackDetail(p) {
       return;
     }
 
-    // gender
     const g = e.target.closest(".pickGender .pill");
     if (g) {
       const slotIndex = Number(g.closest(".pickGender").dataset.slot);
@@ -899,7 +914,6 @@ function openPackDetail(p) {
       return;
     }
 
-    // size
     const sBtn = e.target.closest(".pickSize .pill");
     if (sBtn) {
       const slotIndex = Number(sBtn.closest(".pickSize").dataset.slot);
@@ -911,7 +925,6 @@ function openPackDetail(p) {
       return;
     }
 
-    // color
     const c = e.target.closest(".pickColor .swatch");
     if (c) {
       const slotIndex = Number(c.closest(".pickColor").dataset.slot);
@@ -943,7 +956,6 @@ function openPackDetail(p) {
       return;
     }
 
-    // logo
     const l = e.target.closest(".pickLogo .pill");
     if (l) {
       const slotIndex = Number(l.closest(".pickLogo").dataset.slot);
@@ -957,7 +969,6 @@ function openPackDetail(p) {
     }
   });
 
-  // floc input
   $("#detail").addEventListener("input", (e) => {
     const inp = e.target.closest(".pickFloc");
     if (!inp) return;
@@ -967,7 +978,6 @@ function openPackDetail(p) {
     slot.flocage_text = String(inp.value || "");
   });
 
-  // add pack to cart as ONE bubble
   $("#btnAddPack").addEventListener("click", () => {
     const packQty = Math.max(1, Number($("#packQty").value || 1));
 
@@ -982,12 +992,12 @@ function openPackDetail(p) {
         gender: s.gender || "Unisexe",
         size: s.size || "",
         qty: (s.qty || 1) * packQty,
-        price: 0, // inclus
+        price: 0,
         logo: s.logo || "Aucun",
         flocage_text: String(s.flocage_text || "").trim(),
         image_url: img,
         slot_index: i + 1,
-        extra_price: Number(s.extra_price || 0), // upgrade
+        extra_price: Number(s.extra_price || 0),
         base_product_id: s.base_product_id,
       };
     });
@@ -1006,13 +1016,14 @@ function openPackDetail(p) {
 
     saveCart();
     refreshCartBadge();
+
     show("#sectionCategories");
+    setHomeStep_(CURRENT_GENDER ? 2 : 1);
     window.scrollTo({ top: 0 });
   });
 
-  // ✅ NEW (validé): retour = dernier filtre utilisé
   $("#backList").addEventListener("click", () => goBackToLastList());
-  $("#goHome").addEventListener("click", () => show("#sectionCategories"));
+  $("#goHome").addEventListener("click", () => resetToHomeStep1_());
 
   show("#sectionDetail");
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1029,7 +1040,6 @@ function renderCart() {
   }
 
   CART.forEach((l, i) => {
-    // ✅ PACK (1 seule bulle)
     if (l.is_pack) {
       const row = document.createElement("div");
       row.className = "cart-line";
@@ -1058,7 +1068,6 @@ function renderCart() {
       return;
     }
 
-    // ✅ LIGNE NORMAL
     const row = document.createElement("div");
     row.className = "cart-line";
     row.innerHTML = `
@@ -1084,9 +1093,7 @@ function renderCart() {
     refreshCartBadge();
   };
 
-  // ✅ NEW (insert + bind textarea)
   ensureCartInfoBox();
-
   $("#cartTotal").textContent = euros(cartTotal());
 }
 
@@ -1095,32 +1102,54 @@ window.addEventListener("DOMContentLoaded", () => {
   loadCart();
   loadCatalog();
 
-  // ✅ NEW (validé): choix genre à l'accueil -> affiche catégories
+  // ✅ init accueil step1
+  setHomeStep_(1);
+
+  // ✅ NEW: header Accueil => reset total step1
+  $("#btnHome")?.addEventListener("click", () => resetToHomeStep1_());
+
+  // ✅ NEW: bouton Retour accueil (dans step2)
+  $("#btnReturnHome")?.addEventListener("click", () => resetToHomeStep1_());
+
+  // ✅ NEW: choix genre à l'accueil -> passe Step2
   $$(".chip.gender").forEach((g) => {
     g.addEventListener("click", () => {
       CURRENT_GENDER = normGenderFromUI(g.dataset.gender);
-      const row = document.getElementById("rowCats");
-      if (row) row.style.display = "";
+      LAST_FILTER.gender = CURRENT_GENDER;
+
+      // ✅ étape 2
+      setHomeStep_(2);
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
   $$(".chip.cat").forEach((c) => {
     c.addEventListener("click", () => {
+      // sécurité : impossible sans genre
+      if (!CURRENT_GENDER) {
+        setHomeStep_(1);
+        return;
+      }
+
       CURRENT_CAT = c.dataset.cat;
 
-      // ✅ NEW (validé): mémorise dernier filtre utilisé (genre + cat)
       LAST_FILTER.cat = CURRENT_CAT;
       LAST_FILTER.gender = CURRENT_GENDER;
 
       $("#prodTitle").textContent = CURRENT_CAT;
+
+      // ✅ NEW: rappel visible cat + rayon
+      if ($("#prodContext")) $("#prodContext").textContent = `${CURRENT_CAT} — ${CURRENT_GENDER}`;
+
       renderProducts();
       show("#sectionProducts");
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
 
-  $("#backHome").addEventListener("click", () => show("#sectionCategories"));
-  $("#backHome2").addEventListener("click", () => show("#sectionCategories"));
+  // ✅ NEW: back “Accueil” depuis Produits/Panier = reset step1 (oblige re-choix H/F/E)
+  $("#backHome").addEventListener("click", () => resetToHomeStep1_());
+  $("#backHome2").addEventListener("click", () => resetToHomeStep1_());
 
   $("#btnCart").addEventListener("click", () => {
     renderCart();
@@ -1149,13 +1178,9 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     $("#btnValidate").disabled = true;
-    $("#result").textContent = isAppsScript
-      ? "Génération du PDF…"
-      : "Envoi de la commande…";
+    $("#result").textContent = isAppsScript ? "Génération du PDF…" : "Envoi de la commande…";
 
-    // ---- APPS SCRIPT ----
     if (isAppsScript) {
-      // ✅ NEW: note
       const payload = {
         customer: { name, email, phone },
         items: CART,
@@ -1186,13 +1211,12 @@ window.addEventListener("DOMContentLoaded", () => {
           CART = [];
           saveCart();
           refreshCartBadge();
-          clearCartNote(); // ✅ NEW
+          clearCartNote();
           show("#sectionDone");
           window.scrollTo({ top: 0, behavior: "smooth" });
         })
         .withFailureHandler((err) => {
-          $("#result").textContent =
-            "Erreur : " + (err && err.message ? err.message : err);
+          $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
           $("#btnValidate").disabled = false;
         })
         .createOrder(payload);
@@ -1200,7 +1224,6 @@ window.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // ---- GITHUB PAGES -> CLOUDFARE WORKER ----
     const base =
       (window.ORDER_API_URL || "").replace(/\/$/, "") ||
       (APPS_SCRIPT_PROXY || APPS_SCRIPT_DEPLOY);
@@ -1214,7 +1237,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const orderUrl = base.includes("workers.dev") ? base + "/api/order" : base;
 
-    // ✅ NEW: note
     const order = {
       customer_name: name,
       email: email || "",
@@ -1224,11 +1246,9 @@ window.addEventListener("DOMContentLoaded", () => {
       note: (CART_NOTE || "").trim(),
     };
 
-    // ✅ Flatten panier (packs -> lignes) pour Worker/Sheet
     const flatCart = [];
     CART.forEach((l) => {
       if (l.is_pack) {
-        // 1 ligne "pack" au prix du pack
         flatCart.push({
           product_id: l.pack_id || l.product_id || "",
           title: l.title || "Pack",
@@ -1243,7 +1263,6 @@ window.addEventListener("DOMContentLoaded", () => {
           is_pack: true,
         });
 
-        // + les items inclus à 0€
         (l.children || []).forEach((ch) => {
           flatCart.push({
             product_id: ch.product_id || "",
@@ -1264,11 +1283,9 @@ window.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      // produit normal
       flatCart.push(l);
     });
 
-    // ✅ Worker attend items[] -> on mappe flatCart
     const items = flatCart.map((it, idx) => ({
       line: idx + 1,
       product_id: it.product_id || "",
@@ -1289,10 +1306,7 @@ window.addEventListener("DOMContentLoaded", () => {
       body: JSON.stringify({ order, items }),
     })
       .then((r) => {
-        if (!r.ok)
-          return r.text().then((t) => {
-            throw new Error(t || r.statusText);
-          });
+        if (!r.ok) return r.text().then((t) => { throw new Error(t || r.statusText); });
         return r.json();
       })
       .then((res) => {
@@ -1320,20 +1334,18 @@ window.addEventListener("DOMContentLoaded", () => {
         CART = [];
         saveCart();
         refreshCartBadge();
-        clearCartNote(); // ✅ NEW
+        clearCartNote();
         renderCart();
         show("#sectionDone");
         window.scrollTo({ top: 0 });
       })
       .catch((err) => {
-        $("#result").textContent =
-          "Erreur : " + (err && err.message ? err.message : err);
+        $("#result").textContent = "Erreur : " + (err && err.message ? err.message : err);
         $("#btnValidate").disabled = false;
       });
   });
 
   $("#doneBack").addEventListener("click", () => {
-    show("#sectionCategories");
-    window.scrollTo({ top: 0 });
+    resetToHomeStep1_();
   });
 });
