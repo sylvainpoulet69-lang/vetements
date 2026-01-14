@@ -46,6 +46,15 @@
       "active": true
     },
     {
+      "product_id": "TEST1",
+      "title": "",
+      "category": "",
+      "price": 0,
+      "image_url": "",
+      "type": "single",
+      "active": false
+    },
+    {
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "category": "Accessoires",
@@ -272,9 +281,9 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "true",
       "extra_price": 0
     },
     {
@@ -282,9 +291,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "true",
       "extra_price": 0
     },
     {
@@ -292,9 +301,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "true",
       "extra_price": 0
     },
     {
@@ -302,9 +311,9 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "true",
       "extra_price": 0
     },
     {
@@ -312,9 +321,9 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "FALSE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "",
       "extra_price": 0
     },
     {
@@ -322,9 +331,9 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": "true",
+      "apply_pack_gender": "true",
+      "apply_pack_size": "true",
       "extra_price": 0
     }
   ],
