@@ -145,6 +145,33 @@ function colorToHex(n) {
   return m[key] || "#CBD5E1";
 }
 
+/* =========================
+   ✅ NEW (validé): Genre accueil + dernier filtre
+   ========================= */
+let CURRENT_GENDER = null; // "H" | "F" | "Enfant" (ou null)
+const LAST_FILTER = { gender: null, cat: null };
+
+function normGenderFromUI(v) {
+  const g = String(v || "").trim();
+  if (g === "E") return "Enfant";         // index.html data-gender="E"
+  if (g.toLowerCase() === "enfant") return "Enfant";
+  return g || null; // "H" / "F" / "Unisexe" ...
+}
+
+function goBackToLastList() {
+  if (LAST_FILTER && LAST_FILTER.cat) {
+    CURRENT_CAT = LAST_FILTER.cat;
+    if ($("#prodTitle")) $("#prodTitle").textContent = CURRENT_CAT;
+    renderProducts();
+    show("#sectionProducts");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
+  show("#sectionCategories");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+/* ========================= */
+
 /* === Helpers catalogue / variantes === */
 const uniq = (arr) => [...new Set((arr || []).filter((x) => x !== null && x !== undefined && String(x).trim() !== "").map((x) => String(x)))];
 
@@ -454,10 +481,13 @@ function openDetail(pid) {
   const colors = uniq(vars.map((v) => v.color));
   const genders = uniq(vars.map((v) => v.gender_scope));
 
+  // ✅ NEW (validé): genre vient de l'accueil (pas de choix sur la fiche)
+  const genderFromHome = CURRENT_GENDER ? String(CURRENT_GENDER) : null;
+
   // UI defaults
   const sel = {
     color: defaultColor_(colors),
-    gender: defaultGender_(genders),
+    gender: genderFromHome || defaultGender_(genders),
     size: null,
     logo: "Aucun",
   };
@@ -468,8 +498,6 @@ function openDetail(pid) {
 
   // If we show size, set default to first
   if (shouldShowSize) sel.size = sizesFromVars[0];
-
-  const showGender = shouldShowGender_(genders);
 
   // --- Render ---
   $("#detail").innerHTML = `
@@ -483,21 +511,6 @@ function openDetail(pid) {
       <h3>${p.title}</h3>
       <div class="price" style="margin-bottom:12px">${euros(p.price)}</div>
 
-      <div id="wrapGender" style="${showGender ? "" : "display:none"}">
-        <label>Genre</label>
-        <div class="pills" id="pickGender">
-          ${["H", "F", "Unisexe", "Enfant"]
-            .filter((g) => !genders.length || genders.includes(g))
-            .map((g) => `<button class="pill" data-val="${g}">${g}</button>`)
-            .join("")}
-        </div>
-      </div>
-
-      <div id="wrapSize" style="${shouldShowSize ? "" : "display:none"}">
-        <label>Taille</label>
-        <div class="pills sizes-grid" id="pickSize"></div>
-      </div>
-
       <label>Couleur</label>
       <div class="swatches" id="pickColor">
         ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
@@ -509,6 +522,11 @@ function openDetail(pid) {
             </div>`
           )
           .join("")}
+      </div>
+
+      <div id="wrapSize" style="${shouldShowSize ? "" : "display:none"}">
+        <label>Taille</label>
+        <div class="pills sizes-grid" id="pickSize"></div>
       </div>
 
       <label>Logo (inclus)</label>
@@ -530,16 +548,7 @@ function openDetail(pid) {
     </div>
   `;
 
-  // Activate defaults (gender/logo/color)
-  if (showGender) {
-    const gbtn = Array.from($$("#pickGender .pill")).find((b) => b.dataset.val === sel.gender) || $("#pickGender .pill");
-    if (gbtn) {
-      $$("#pickGender .pill").forEach((x) => x.classList.remove("active"));
-      gbtn.classList.add("active");
-      sel.gender = gbtn.dataset.val;
-    }
-  }
-
+  // Activate defaults (logo/color)
   const lbtn = Array.from($$("#pickLogo .pill")).find((b) => b.dataset.val === sel.logo) || $("#pickLogo .pill");
   if (lbtn) {
     $$("#pickLogo .pill").forEach((x) => x.classList.remove("active"));
@@ -581,19 +590,6 @@ function openDetail(pid) {
   // Apply image based on selected color/gender if variant has image_url
   applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
 
-  // Events
-  if (showGender) {
-    $("#pickGender").addEventListener("click", (e) => {
-      const b = e.target.closest(".pill");
-      if (!b) return;
-      $$("#pickGender .pill").forEach((x) => x.classList.remove("active"));
-      b.classList.add("active");
-      sel.gender = b.dataset.val;
-      renderSizes();
-      applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
-    });
-  }
-
   $("#pickSize")?.addEventListener("click", (e) => {
     const b = e.target.closest(".pill");
     if (!b) return;
@@ -622,10 +618,7 @@ function openDetail(pid) {
 
   $("#btnAdd").addEventListener("click", () => {
     const qty = Math.max(1, Number($("#qty").value || 1));
-    if (showGender && !sel.gender) {
-      alert("Choisir un genre.");
-      return;
-    }
+
     // Taille peut être vide pour accessoires
     if ($("#wrapSize") && $("#wrapSize").style.display !== "none" && !sel.size) {
       alert("Choisir une taille.");
@@ -655,7 +648,8 @@ function openDetail(pid) {
     window.scrollTo({ top: 0 });
   });
 
-  $("#backList").addEventListener("click", () => show("#sectionProducts"));
+  // ✅ NEW (validé): retour = dernier filtre utilisé
+  $("#backList").addEventListener("click", () => goBackToLastList());
   $("#goHome").addEventListener("click", () => show("#sectionCategories"));
 
   show("#sectionDetail");
@@ -760,7 +754,7 @@ function openPackDetail(p) {
           ${upgradeHtml}
 
           <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
-            <label>Genre</label>
+            <label>Genre</gabel>
             <div class="pills pickGender" data-slot="${s.idx}">
               ${["H", "F", "Unisexe", "Enfant"]
                 .filter((g) => !genders.length || genders.includes(g))
@@ -1016,7 +1010,8 @@ function openPackDetail(p) {
     window.scrollTo({ top: 0 });
   });
 
-  $("#backList").addEventListener("click", () => show("#sectionProducts"));
+  // ✅ NEW (validé): retour = dernier filtre utilisé
+  $("#backList").addEventListener("click", () => goBackToLastList());
   $("#goHome").addEventListener("click", () => show("#sectionCategories"));
 
   show("#sectionDetail");
@@ -1100,9 +1095,23 @@ window.addEventListener("DOMContentLoaded", () => {
   loadCart();
   loadCatalog();
 
+  // ✅ NEW (validé): choix genre à l'accueil -> affiche catégories
+  $$(".chip.gender").forEach((g) => {
+    g.addEventListener("click", () => {
+      CURRENT_GENDER = normGenderFromUI(g.dataset.gender);
+      const row = document.getElementById("rowCats");
+      if (row) row.style.display = "";
+    });
+  });
+
   $$(".chip.cat").forEach((c) => {
     c.addEventListener("click", () => {
       CURRENT_CAT = c.dataset.cat;
+
+      // ✅ NEW (validé): mémorise dernier filtre utilisé (genre + cat)
+      LAST_FILTER.cat = CURRENT_CAT;
+      LAST_FILTER.gender = CURRENT_GENDER;
+
       $("#prodTitle").textContent = CURRENT_CAT;
       renderProducts();
       show("#sectionProducts");
