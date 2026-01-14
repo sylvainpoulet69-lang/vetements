@@ -41,7 +41,7 @@
       "title": "Polo",
       "category": "Vêtements",
       "price": 35,
-      "image_url": "",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg",
       "type": "single",
       "active": true
     },
@@ -61,15 +61,6 @@
       "price": 150,
       "image_url": "",
       "type": "pack",
-      "active": true
-    },
-    {
-      "product_id": "POLO1",
-      "title": "Polo1",
-      "category": "Vêtements",
-      "price": 2,
-      "image_url": "",
-      "type": "single",
       "active": true
     }
   ],
