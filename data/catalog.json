@@ -5,7 +5,6 @@
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
-      "gender_scope": "H|F|Enfant",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-a.jpg",
       "type": "single",
       "active": true
@@ -15,7 +14,6 @@
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
-      "gender_scope": "H",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-a.jpg",
       "type": "single",
       "active": true
@@ -25,7 +23,6 @@
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
-      "gender_scope": "H",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short.jpg",
       "type": "single",
       "active": true
@@ -35,7 +32,6 @@
       "title": "Jogging Club",
       "category": "Vêtements",
       "price": 35,
-      "gender_scope": "H",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-a.jpg",
       "type": "single",
       "active": true
@@ -45,7 +41,6 @@
       "title": "Polo",
       "category": "Vêtements",
       "price": 35,
-      "gender_scope": "H",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo.jpg",
       "type": "single",
       "active": true
@@ -55,7 +50,6 @@
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 21,
-      "gender_scope": "H",
       "image_url": "",
       "type": "single",
       "active": true
@@ -65,9 +59,8 @@
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
-      "gender_scope": "H|F|Enfant",
       "image_url": "",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
@@ -75,9 +68,8 @@
       "title": "Gants",
       "category": "Accessoires",
       "price": 21,
-      "gender_scope": "H|F|Enfant",
       "image_url": "",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
@@ -85,39 +77,17 @@
       "title": "Poignet",
       "category": "Accessoires",
       "price": 12,
-      "gender_scope": "H|F|Enfant",
       "image_url": "",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
-      "product_id": "",
-      "title": "",
+      "product_id": "VESTE",
+      "title": "Veste",
       "category": "",
       "price": 0,
-      "gender_scope": "",
       "image_url": "",
-      "type": "",
-      "active": false
-    },
-    {
-      "product_id": "",
-      "title": "",
-      "category": "",
-      "price": 0,
-      "gender_scope": "",
-      "image_url": "",
-      "type": "",
-      "active": false
-    },
-    {
-      "product_id": "",
-      "title": "",
-      "category": "",
-      "price": 0,
-      "gender_scope": "",
-      "image_url": "",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
@@ -125,7 +95,6 @@
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
-      "gender_scope": "H",
       "image_url": "",
       "type": "pack",
       "active": true
@@ -339,9 +308,9 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -349,9 +318,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -359,9 +328,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -369,9 +338,9 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -379,9 +348,9 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "FALSE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": false,
       "extra_price": 0
     },
     {
@@ -389,9 +358,9 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     }
   ],
