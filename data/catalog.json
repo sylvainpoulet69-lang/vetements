@@ -111,7 +111,7 @@
   ],
   "variants": [
     {
-      "variant_id": "V_SWEAT_H_BLEU_ROII",
+      "variant_id": "V_SWEAT_ENFANT_BLEU_ROI",
       "product_id": "SWEAT",
       "color": "Bleu roi",
       "gender_scope": "ENFANT",
