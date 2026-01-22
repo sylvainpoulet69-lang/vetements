@@ -6,6 +6,11 @@
    - Couleurs filtrées par genre (évite Rose pâle chez H, etc.)
    - Images variantes cohérentes avec genre + couleur
    - Packs alignés sur le rayon (CURRENT_GENDER) + recalcul swatches/tailles quand on change options
+
+   ✅ NEW (à ta demande):
+   - ZÉRO fallback entre variants (image/couleur/taille strictement par variant du rayon)
+   - Étanchéité des rayons (H/F/Enfant) : pas d'affichage croisé
+   - Si aucune taille (Google Sheet) => "Article indisponible" + impossible d'ajouter
    ========================= */
 
 let CATALOG = { products: [], variants: [], packItems: [], options: {} };
@@ -176,7 +181,7 @@ function normGenderScope_(g) {
 // ✅ NEW: parse gender_scope produit (Products.gender_scope)
 function parseProductGenderScope_(s) {
   const raw = String(s || "").trim();
-  if (!raw) return []; // vide => “pas de restriction” (on affichera partout)
+  if (!raw) return []; // ✅ NEW: vide => AUCUNE visibilité une fois un rayon choisi (étanchéité)
   return raw
     .split("|")
     .map((x) => String(x || "").trim())
@@ -185,11 +190,21 @@ function parseProductGenderScope_(s) {
 }
 
 // ✅ NEW: produit visible pour le rayon sélectionné ? (packs inclus)
+// - Enfant: uniquement Enfant
+// - H/F: H/F + Unisexe
 function isProductVisibleForGender_(p, gender) {
   if (!gender) return true; // tant qu’on n’a pas choisi H/F/E, on ne bloque pas ici
+
+  const g = String(gender);
   const scopes = parseProductGenderScope_(p && p.gender_scope);
-  if (!scopes.length) return true; // ✅ choix: vide => visible partout (safe)
-  return scopes.includes(String(gender));
+
+  // ✅ étanchéité: si vide => invisible dès qu’un rayon est choisi
+  if (!scopes.length) return false;
+
+  if (g === "Enfant") return scopes.includes("Enfant");
+  if (g === "H") return scopes.includes("H") || scopes.includes("Unisexe");
+  if (g === "F") return scopes.includes("F") || scopes.includes("Unisexe");
+  return scopes.includes(g);
 }
 
 function setHomeStep_(step) {
@@ -261,27 +276,33 @@ function splitSizes_(sizeListStr) {
     .filter(Boolean);
 }
 
-// ✅ NEW: couleurs disponibles filtrées par genre (Enfant strict)
-function getAvailableColors_(vars, gender) {
+/* =========================
+   ✅ NEW: STRICT variants (zéro fallback)
+   - Enfant: uniquement variants Enfant
+   - H/F: variants H/F + Unisexe
+   ========================= */
+function variantMatchesGender_(variant, gender) {
+  const gSel = normGenderScope_(gender);
+  const vg = normGenderScope_(variant && variant.gender_scope);
+
+  if (!gSel) return true;
+
+  if (gSel === "Enfant") return vg === "Enfant";
+  if (gSel === "H") return vg === "H" || vg === "Unisexe";
+  if (gSel === "F") return vg === "F" || vg === "Unisexe";
+  return vg === gSel;
+}
+
+function getStrictVariantsForGender_(vars, gender) {
   const V = vars || [];
   const gSel = normGenderScope_(gender);
+  if (!gSel) return V;
+  return V.filter((v) => variantMatchesGender_(v, gSel));
+}
 
-  // 🧒 Enfant: STRICT => uniquement les couleurs qui existent en Enfant
-  if (gSel === "Enfant") {
-    const cs = uniq(
-      V.filter((v) => normGenderScope_(v.gender_scope) === "Enfant")
-        .map((v) => v.color)
-    );
-    return cs;
-  }
-
-  // H / F: préférer les couleurs du genre si dispo, sinon fallback toutes
-  const csForGender = uniq(
-    V.filter((v) => !gSel || normGenderScope_(v.gender_scope) === gSel)
-      .map((v) => v.color)
-  );
-  if (csForGender.length) return csForGender;
-
+// ✅ NEW: couleurs disponibles STRICTES (selon variants du rayon)
+function getAvailableColors_(vars, gender) {
+  const V = getStrictVariantsForGender_(vars || [], gender);
   return uniq(V.map((v) => v.color));
 }
 
@@ -292,80 +313,46 @@ function ensureValidColor_(colors, currentColor) {
   return defaultColor_(cs);
 }
 
+// ✅ NEW: tailles STRICTES (selon variants du rayon + couleur) => pas de fallback
 function getCandidateSizes_(vars, gender, color) {
-  const V = vars || [];
-  const gSel = normGenderScope_(gender);
+  const V = getStrictVariantsForGender_(vars || [], gender);
 
-  // 🧒 Enfant = STRICT : jamais de fallback adulte
-  if (gSel === "Enfant") {
-    const cands = V.filter((v) =>
-      normGenderScope_(v.gender_scope) === "Enfant" &&
-      (!color || String(v.color) === String(color))
-    );
-    let sizes = [];
-    for (const v of cands) sizes.push(...splitSizes_(v.size_list));
-    return uniq(sizes);
-  }
-
-  // 1) strict: gender + color
-  let cands = V.filter((v) =>
-    (!gSel || normGenderScope_(v.gender_scope) === gSel) &&
-    (!color || String(v.color) === String(color))
-  );
+  // strict: si color demandé, on filtre color
+  const cands = V.filter((v) => (!color || String(v.color) === String(color)));
 
   let sizes = [];
   for (const v of cands) sizes.push(...splitSizes_(v.size_list));
   sizes = uniq(sizes);
-  if (sizes.length) return sizes;
 
-  // 2) fallback: gender only (ignore color)
-  cands = V.filter((v) => (!gSel || normGenderScope_(v.gender_scope) === gSel));
-  sizes = [];
-  for (const v of cands) sizes.push(...splitSizes_(v.size_list));
-  sizes = uniq(sizes);
-  if (sizes.length) return sizes;
-
-  // 3) fallback: any size from product
-  sizes = [];
-  for (const v of V) sizes.push(...splitSizes_(v.size_list));
-  return uniq(sizes);
+  // ✅ aucun fallback
+  return sizes;
 }
 
+// ✅ NEW: pickVariant STRICT (rayon + couleur) => pas de fallback other color/other gender
 function pickVariant_(vars, gender, color) {
-  const V = vars || [];
-  const gSel = normGenderScope_(gender);
+  const V0 = vars || [];
+  const V = getStrictVariantsForGender_(V0, gender);
 
-  // 1) strict: gender + color + image
-  let v = V.find((x) =>
-    (!gSel || normGenderScope_(x.gender_scope) === gSel) &&
+  // strict: gender + color + image
+  const v = V.find((x) =>
     (!color || String(x.color) === String(color)) &&
     String(x.image_url || "").trim()
   );
-  if (v) return v;
 
-  // 🧒 Enfant: si on n'a rien en Enfant, on évite de prendre un variant adulte “par erreur”
-  if (gSel === "Enfant") {
-    v = V.find((x) =>
-      normGenderScope_(x.gender_scope) === "Enfant" && String(x.image_url || "").trim()
-    );
-    if (v) return v;
-  }
-
-  // 2) fallback: color only + image
-  v = V.find((x) =>
-    (!color || String(x.color) === String(color)) && String(x.image_url || "").trim()
-  );
-  if (v) return v;
-
-  // 3) fallback: any image
-  v = V.find((x) => String(x.image_url || "").trim());
+  // ✅ pas de fallback
   return v || null;
 }
 
 function applyVariantImage_(imgEl, vars, gender, color, fallbackUrl) {
   if (!imgEl) return;
+
   const v = pickVariant_(vars, gender, color);
-  const u = v && String(v.image_url || "").trim() ? String(v.image_url).trim() : fallbackUrl;
+
+  // ✅ image du variant si dispo, sinon image du produit (fallbackUrl)
+  const u = v && String(v.image_url || "").trim()
+    ? String(v.image_url).trim()
+    : (fallbackUrl || "");
+
   imgEl.src = imgOrFallback(u);
 }
 
@@ -540,7 +527,7 @@ function renderProducts() {
     const okCat = String(p.category) === String(CURRENT_CAT);
     const okActive = (p.active === true || String(p.active).toLowerCase() === "true");
 
-    // ✅ NEW: filtre via Products.gender_scope (packs inclus)
+    // ✅ filtre strict via Products.gender_scope
     const okGender = isProductVisibleForGender_(p, CURRENT_GENDER);
 
     return okCat && okActive && okGender;
@@ -599,13 +586,17 @@ function openDetail(pid) {
     logo: "Aucun",
   };
 
-  // ✅ couleurs filtrées par genre (Enfant strict)
+  // ✅ couleurs STRICTES par rayon (zéro fallback)
   const colors = getAvailableColors_(vars, sel.gender);
   sel.color = ensureValidColor_(colors, null);
 
-  const sizesFromVars = getCandidateSizes_(vars, sel.gender, sel.color);
-  const shouldShowSize = sizesFromVars.length > 0;
-  if (shouldShowSize) sel.size = sizesFromVars[0];
+  // ✅ tailles STRICTES (zéro fallback)
+  const sizesFromVars = sel.color ? getCandidateSizes_(vars, sel.gender, sel.color) : [];
+  const shouldShowSize = true; // ✅ on garde l'affichage, mais on gère indispo via message
+  if (sizesFromVars.length > 0) sel.size = sizesFromVars[0];
+
+  // ✅ indisponible si pas de tailles (dans le sheet) OU pas de couleur
+  const isUnavailableInit = !sel.color || sizesFromVars.length === 0;
 
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
@@ -620,7 +611,7 @@ function openDetail(pid) {
 
       <label>Couleur</label>
       <div class="swatches" id="pickColor">
-        ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+        ${(colors.length ? colors : [])
           .map((c) => `
             <div class="swatch" data-val="${c}">
               <div class="dot" style="background:${colorToHex(c)}"></div>
@@ -633,6 +624,15 @@ function openDetail(pid) {
       <div id="wrapSize" style="${shouldShowSize ? "" : "display:none"}">
         <label>Taille</label>
         <div class="pills sizes-grid" id="pickSize"></div>
+      </div>
+
+      <div id="unavailableMsg" class="card" style="${isUnavailableInit ? "" : "display:none"}; margin-top:12px">
+        <div class="card-body">
+          <div class="card-title-wrap">
+            <h3 style="margin:0">Article indisponible</h3>
+            <div class="muted">Aucune taille n’est disponible pour ce rayon / cette couleur.</div>
+          </div>
+        </div>
       </div>
 
       <label>Logo (inclus)</label>
@@ -668,16 +668,29 @@ function openDetail(pid) {
     sel.color = cbtn.dataset.val;
   }
 
+  function setUnavailableUI_(isUnavail) {
+    const msg = $("#unavailableMsg");
+    const btn = $("#btnAdd");
+    if (msg) msg.style.display = isUnavail ? "" : "none";
+    if (btn) btn.disabled = !!isUnavail;
+  }
+
   function renderSizes() {
-    const sizes = getCandidateSizes_(vars, sel.gender, sel.color);
     const wrap = $("#wrapSize");
     const box = $("#pickSize");
 
+    // ✅ tailles STRICTES : si pas de couleur => rien
+    const sizes = sel.color ? getCandidateSizes_(vars, sel.gender, sel.color) : [];
+
     if (!sizes.length) {
-      if (wrap) wrap.style.display = "none";
+      if (wrap) wrap.style.display = ""; // on laisse visible la zone mais vide
+      if (box) box.innerHTML = "";
       sel.size = "";
+      setUnavailableUI_(true);
       return;
     }
+
+    setUnavailableUI_(false);
 
     if (wrap) wrap.style.display = "";
     box.innerHTML = sizes.map((s) => `<button class="pill" data-val="${s}">${s}</button>`).join("");
@@ -690,6 +703,9 @@ function openDetail(pid) {
 
   renderSizes();
   applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
+
+  // ✅ init indispo
+  setUnavailableUI_(!sel.color || (sel.color && getCandidateSizes_(vars, sel.gender, sel.color).length === 0));
 
   $("#pickSize")?.addEventListener("click", (e) => {
     const b = e.target.closest(".pill");
@@ -720,12 +736,15 @@ function openDetail(pid) {
   $("#btnAdd").addEventListener("click", () => {
     const qty = Math.max(1, Number($("#qty").value || 1));
 
-    if ($("#wrapSize") && $("#wrapSize").style.display !== "none" && !sel.size) {
-      alert("Choisir une taille.");
+    // ✅ indispo => bloqué
+    const sizesNow = sel.color ? getCandidateSizes_(vars, sel.gender, sel.color) : [];
+    if (!sel.color || !sizesNow.length) {
+      alert("Article indisponible.");
       return;
     }
-    if (!sel.color) {
-      alert("Choisir une couleur.");
+
+    if ($("#wrapSize") && $("#wrapSize").style.display !== "none" && !sel.size) {
+      alert("Choisir une taille.");
       return;
     }
 
@@ -777,16 +796,18 @@ function openPackDetail(p) {
 
     // ✅ par défaut: on colle au rayon choisi si possible
     let gender = null;
-    if (CURRENT_GENDER && (!genders.length || genders.includes(String(CURRENT_GENDER)))) {
+    if (CURRENT_GENDER && (!genders.length || genders.includes(String(CURRENT_GENDER)) || (String(CURRENT_GENDER) !== "Enfant" && genders.includes("Unisexe"))) ) {
       gender = String(CURRENT_GENDER);
     } else {
       gender = defaultGender_(genders);
     }
 
+    // ✅ couleurs STRICTES
     const colors = getAvailableColors_(vars, gender);
     const color = ensureValidColor_(colors, null);
 
-    const sizes = getCandidateSizes_(vars, gender, color);
+    // ✅ tailles STRICTES (si pas de tailles => indispo)
+    const sizes = color ? getCandidateSizes_(vars, gender, color) : [];
     const size = sizes[0] || "";
 
     const upgrades = packUpgrades
@@ -816,35 +837,57 @@ function openPackDetail(p) {
       logo: "Aucun",
       flocage_text: "",
 
+      extra_price: 0,
+      is_unavailable: (!color || sizes.length === 0),
+
       img_fallback: imgOrFallback((prod && prod.image_url) || p.image_url),
     };
   });
 
+  function updatePackAvailability_() {
+    const anyUnavail = slots.some((s) => !!s.is_unavailable);
+    const msg = document.getElementById("packUnavailableMsg");
+    const btn = document.getElementById("btnAddPack");
+    if (msg) msg.style.display = anyUnavail ? "" : "none";
+    if (btn) btn.disabled = anyUnavail;
+  }
+
   function renderSlotOptions_(slot) {
     const slotIndex = slot.idx;
-    const vars = getVariantsForProduct_(slot.chosen_product_id);
+    const varsAll = getVariantsForProduct_(slot.chosen_product_id);
 
-    // genders
-    const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
+    // ✅ enforce genre: si le gender actuel n'existe pas, on le recale
+    const gendersAll = uniq(varsAll.map((v) => normGenderScope_(v.gender_scope)));
 
-    // si le gender actuel n'existe pas (ex upgrade), on le recale
-    if (slot.gender && genders.length && !genders.includes(String(slot.gender))) {
-      if (CURRENT_GENDER && genders.includes(String(CURRENT_GENDER))) slot.gender = String(CURRENT_GENDER);
-      else slot.gender = defaultGender_(genders);
+    if (slot.gender && gendersAll.length) {
+      const g = String(slot.gender);
+      const ok =
+        (g === "Enfant" && gendersAll.includes("Enfant")) ||
+        (g === "H" && (gendersAll.includes("H") || gendersAll.includes("Unisexe"))) ||
+        (g === "F" && (gendersAll.includes("F") || gendersAll.includes("Unisexe"))) ||
+        gendersAll.includes(g);
+
+      if (!ok) {
+        if (CURRENT_GENDER) slot.gender = String(CURRENT_GENDER);
+        else slot.gender = defaultGender_(gendersAll);
+      }
     }
 
-    // couleurs (Enfant strict)
-    const colors = getAvailableColors_(vars, slot.gender);
+    // ✅ couleurs STRICTES
+    const colors = getAvailableColors_(varsAll, slot.gender);
     slot.color = ensureValidColor_(colors, slot.color) || "";
 
-    // tailles (Enfant strict)
-    const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
+    // ✅ tailles STRICTES
+    const sizes = slot.color ? getCandidateSizes_(varsAll, slot.gender, slot.color) : [];
     slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
+
+    // ✅ indispo si pas de tailles / pas de couleurs
+    slot.is_unavailable = (!slot.color || sizes.length === 0);
 
     // Update swatches DOM
     const swBox = document.querySelector(`.pickColor[data-slot="${slotIndex}"]`);
     if (swBox) {
-      swBox.innerHTML = (colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+      swBox.innerHTML = (colors.length ? colors : [])
         .map((c) => `
           <div class="swatch ${String(c) === String(slot.color) ? "active" : ""}" data-val="${c}">
             <div class="dot" style="background:${colorToHex(c)}"></div>
@@ -862,7 +905,7 @@ function openPackDetail(p) {
         sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
       }
     } else {
-      if (sizeWrap) sizeWrap.style.display = "none";
+      if (sizeWrap) sizeWrap.style.display = "";
       slot.size = "";
       if (sizeBox) sizeBox.innerHTML = "";
     }
@@ -877,17 +920,28 @@ function openPackDetail(p) {
 
     // Update image
     const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
-    applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), vars, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
+    applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), varsAll, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
+
+    // Update unavail message
+    const uMsg = document.getElementById(`slotUnavail_${slotIndex}`);
+    if (uMsg) uMsg.style.display = slot.is_unavailable ? "" : "none";
+
+    updatePackAvailability_();
   }
 
   const itemsHtml = slots.map((s) => {
-    const vars = getVariantsForProduct_(s.chosen_product_id);
-    const colors = getAvailableColors_(vars, s.gender);
-    const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
-    const showGender = shouldShowGender_(genders);
+    const varsAll = getVariantsForProduct_(s.chosen_product_id);
 
-    const sizes = getCandidateSizes_(vars, s.gender, s.color);
-    const showSize = sizes.length > 0;
+    // ✅ genders dispo (pour UI), basé sur variants bruts
+    const gendersAll = uniq(varsAll.map((v) => normGenderScope_(v.gender_scope)));
+
+    // ✅ showGender: seulement si plusieurs scopes (hors Unisexe seul)
+    const showGender = shouldShowGender_(gendersAll);
+
+    // ✅ couleurs/tailles STRICTES
+    const colors = getAvailableColors_(varsAll, s.gender);
+    const sizes = s.color ? getCandidateSizes_(varsAll, s.gender, s.color) : [];
+    const showSize = true;
 
     const upgradeHtml = (s.upgrades && s.upgrades.length)
       ? `
@@ -904,7 +958,7 @@ function openPackDetail(p) {
       : "";
 
     const genderChoices = ["H", "F", "Unisexe", "Enfant"]
-      .filter((g) => !genders.length || genders.includes(g));
+      .filter((g) => !gendersAll.length || gendersAll.includes(g));
 
     return `
   <div class="card pack-slot" style="margin-top:14px">
@@ -936,13 +990,22 @@ function openPackDetail(p) {
           <div class="wrapSize" data-slot="${s.idx}" style="${showSize ? "" : "display:none"}">
             <label>Taille</label>
             <div class="pills sizes-grid pickSize" data-slot="${s.idx}">
-              ${sizes.map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
+              ${(sizes || []).map((z) => `<button class="pill ${String(z) === String(s.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("")}
+            </div>
+          </div>
+
+          <div id="slotUnavail_${s.idx}" class="card" style="${s.is_unavailable ? "" : "display:none"}; margin-top:10px">
+            <div class="card-body">
+              <div class="card-title-wrap">
+                <h3 style="margin:0">Article indisponible</h3>
+                <div class="muted">Aucune taille n’est disponible pour ce rayon / cette couleur.</div>
+              </div>
             </div>
           </div>
 
           <label>Couleur</label>
           <div class="swatches pickColor" data-slot="${s.idx}">
-            ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+            ${(colors.length ? colors : [])
               .map((c) => `
                 <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
                   <div class="dot" style="background:${colorToHex(c)}"></div>
@@ -981,16 +1044,28 @@ function openPackDetail(p) {
 
       ${itemsHtml}
 
+      <div id="packUnavailableMsg" class="card" style="display:none; margin-top:12px">
+        <div class="card-body">
+          <div class="card-title-wrap">
+            <h3 style="margin:0">Pack indisponible</h3>
+            <div class="muted">Un ou plusieurs articles du pack n’ont aucune taille disponible.</div>
+          </div>
+        </div>
+      </div>
+
       <div class="actions" style="margin-top:16px">
         <button id="btnAddPack" class="btn btn-primary">🛒 Ajouter le pack</button>
       </div>
     </div>
   `;
 
-  // hydrate images initiales
+  // hydrate images + options initiales
   slots.forEach((s) => {
     renderSlotOptions_(s);
   });
+
+  // init dispo pack
+  updatePackAvailability_();
 
   $("#detail").addEventListener("click", (e) => {
     const upBtn = e.target.closest(".packUp .pill");
@@ -1050,7 +1125,7 @@ function openPackDetail(p) {
       c.classList.add("active");
       slot.color = c.dataset.val;
 
-      // tailles & image doivent suivre la couleur
+      // tailles & image doivent suivre la couleur (STRICT)
       renderSlotOptions_(slot);
       return;
     }
@@ -1078,6 +1153,12 @@ function openPackDetail(p) {
   });
 
   $("#btnAddPack").addEventListener("click", () => {
+    // ✅ sécurité indispo
+    if (slots.some((s) => !!s.is_unavailable)) {
+      alert("Pack indisponible.");
+      return;
+    }
+
     const packQty = Math.max(1, Number($("#packQty").value || 1));
 
     const children = slots.map((s, i) => {
@@ -1195,6 +1276,7 @@ function renderCart() {
   ensureCartInfoBox();
   $("#cartTotal").textContent = euros(cartTotal());
 }
+
 /* -------- Bootstrap -------- */
 window.addEventListener("DOMContentLoaded", () => {
   loadCart();
