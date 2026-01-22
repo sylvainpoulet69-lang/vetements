@@ -487,13 +487,17 @@ function renderHome() {
   const list = $("#homeList");
   list.innerHTML = "";
   const items = CATALOG.products
-    .filter((p) => p.active === true || String(p.active).toLowerCase() === "true")
-    .slice(0, 4);
+  .filter((p) => p.active === true || String(p.active).toLowerCase() === "true")
+  // ✅ NEW: si un rayon est choisi, la vitrine est filtrée par rayon
+  .filter((p) => !CURRENT_GENDER || isProductVisibleForGender_(p, CURRENT_GENDER))
+  .slice(0, 4);
 
   if (!items.length) {
-    list.innerHTML =
-      '<div class="card"><div class="card-body"><div class="card-title-wrap">Aucun produit actif dans le catalogue.</div></div></div>';
-  }
+  list.innerHTML =
+    `<div class="card"><div class="card-body"><div class="card-title-wrap">${
+      CURRENT_GENDER ? `Aucun article pour ${CURRENT_GENDER}.` : "Aucun produit actif dans le catalogue."
+    }</div></div></div>`;
+}
 
   items.forEach((p) => {
     const card = document.createElement("div");
@@ -1293,16 +1297,23 @@ window.addEventListener("DOMContentLoaded", () => {
   loadCart();
   loadCatalog();
 
-  // init accueil step1
+  // ✅ init accueil step1
   setHomeStep_(1);
 
-  // ✅ header Accueil => reset total step1 (validé)
-  $("#btnHome")?.addEventListener("click", () => resetToHomeStep1_());
+  // ✅ Bonus conseillé: quand on reset l'accueil, on remet la vitrine "générique"
+  // (si tu as déjà ajouté renderHome() dans resetToHomeStep1_(), tu peux enlever ces 2 lignes ci-dessous)
+  // Ici on ne touche pas à resetToHomeStep1_() : on force juste un renderHome() après reset.
+  $("#btnHome")?.addEventListener("click", () => {
+    resetToHomeStep1_();
+    renderHome(); // ✅ bonus: vitrine sans filtre
+  });
 
-  // bouton Retour accueil (dans step2)
-  $("#btnReturnHome")?.addEventListener("click", () => resetToHomeStep1_());
+  $("#btnReturnHome")?.addEventListener("click", () => {
+    resetToHomeStep1_();
+    renderHome(); // ✅ bonus: vitrine sans filtre
+  });
 
-  // choix genre à l'accueil -> passe Step2
+  // ✅ choix genre à l'accueil -> passe Step2 + vitrine filtrée rayon (Option B)
   $$(".chip.gender").forEach((g) => {
     g.addEventListener("click", () => {
       CURRENT_GENDER = normGenderFromUI(g.dataset.gender);
@@ -1310,6 +1321,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
       // étape 2
       setHomeStep_(2);
+
+      // ✅ NEW (Option B): re-render vitrine "homeList" filtrée par rayon
+      // (nécessite la modif dans renderHome() : filter((p) => !CURRENT_GENDER || isProductVisibleForGender_(p, CURRENT_GENDER)))
+      renderHome();
+
       window.scrollTo({ top: 0, behavior: "smooth" });
     });
   });
