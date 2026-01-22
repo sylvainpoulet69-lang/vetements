@@ -1,3 +1,13 @@
+/* =========================
+   Boutique — app.js (corrigé)
+   ✅ Fixes inclus (sans toucher au reste):
+   - Normalisation E <-> Enfant partout (comparaisons robustes)
+   - Enfant = tailles STRICTES (pas de mélange avec S/M/L/XL)
+   - Couleurs filtrées par genre (évite Rose pâle chez H, etc.)
+   - Images variantes cohérentes avec genre + couleur
+   - Packs alignés sur le rayon (CURRENT_GENDER) + recalcul swatches/tailles quand on change options
+   ========================= */
+
 let CATALOG = { products: [], variants: [], packItems: [], options: {} };
 let CURRENT_CAT = null;
 let CART = [];
@@ -122,93 +132,24 @@ function imgOrFallback(u) {
     : "https://picsum.photos/seed/acacias/1600/1200";
 }
 
-/* =========================
-   ✅ Couleurs: normalisation + mapping
-   (corrige le décalage Sheet -> Boutique)
-   ========================= */
-function normColorKey_(s) {
-  return String(s || "")
-    .trim()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "") // enlève accents
-    .replace(/\s+/g, " ");
-}
-
 function colorToHex(n) {
-  const raw = String(n || "").trim();
-  const keyNorm = normColorKey_(raw);
+  const key = String(n || "").trim();
 
   const dyn = (CATALOG.options && CATALOG.options.colors_hex) ? CATALOG.options.colors_hex : {};
-  if (dyn && Object.keys(dyn).length) {
-    // match exact
-    if (dyn[raw]) return dyn[raw];
-
-    // match normalisé (au cas où)
-    const found = Object.entries(dyn).find(([k]) => normColorKey_(k) === keyNorm);
-    if (found) return found[1];
-  }
+  if (dyn && dyn[key]) return dyn[key];
 
   const m = {
-    "bleu": "#2563EB",
-    "bleu roi": "#2563EB",
-    "royal blue": "#2563EB",
-
-    "bleu fonce": "#0B1B3A",
-    "bleu marine": "#0B1B3A",
-    "navy": "#0B1B3A",
-
-    "blanc": "#FFFFFF",
-    "noir": "#111111",
-
-    "rose": "#F472B6",
-    "rose pale": "#FBCFE8",
-
-    "rouge": "#e11d48",
-    "vert": "#22c55e",
-    "gris": "#64748b",
-    "gris clair": "#CBD5E1",
+    Bleu: "#2563EB",
+    Blanc: "#FFFFFF",
+    Noir: "#111111",
+    Rose: "#F472B6",
+    Rouge: "#e11d48",
+    Vert: "#22c55e",
+    Gris: "#64748b",
   };
 
-  return m[keyNorm] || "#CBD5E1";
+  return m[key] || "#CBD5E1";
 }
-
-/* =========================
-   ✅ NEW: Couleurs disponibles réellement
-   - Priorité: variantes du genre sélectionné
-   - Fallback: toutes les variantes (si aucune pour ce genre)
-   ========================= */
-function getAvailableColors_(vars, gender) {
-  const V = vars || [];
-
-  const colorsForGender = uniq(
-    V.filter((v) => !gender || String(v.gender_scope) === String(gender))
-      .map((v) => v.color)
-  );
-
-  if (colorsForGender.length) return colorsForGender;
-
-  // fallback: toutes les couleurs (si aucune variante pour le genre)
-  return uniq(V.map((v) => v.color));
-}
-
-function renderColorSwatchesHTML_(colors, selected) {
-  const list = (colors && colors.length) ? colors : [];
-  return list.map((c) => `
-    <div class="swatch ${String(c) === String(selected) ? "active" : ""}" data-val="${c}">
-      <div class="dot" style="background:${colorToHex(c)}"></div>
-      <div class="name">${c}</div>
-    </div>
-  `).join("");
-}
-
-function ensureValidColor_(colors, currentColor) {
-  const cs = uniq(colors);
-  if (!cs.length) return null;
-  if (currentColor && cs.includes(String(currentColor))) return String(currentColor);
-  return defaultColor_(cs);
-}
-/* ========================= */
 
 /* =========================
    ✅ NEW (validé): Accueil Step1/Step2 + reset
@@ -223,6 +164,15 @@ function normGenderFromUI(v) {
   return g || null;
 }
 
+// ✅ NEW: normalisation globale (Variants & Products)
+function normGenderScope_(g) {
+  const s = String(g || "").trim();
+  if (!s) return "";
+  if (s === "E") return "Enfant";
+  if (s.toLowerCase() === "enfant") return "Enfant";
+  return s; // "H", "F", "Unisexe"
+}
+
 // ✅ NEW: parse gender_scope produit (Products.gender_scope)
 function parseProductGenderScope_(s) {
   const raw = String(s || "").trim();
@@ -231,7 +181,7 @@ function parseProductGenderScope_(s) {
     .split("|")
     .map((x) => String(x || "").trim())
     .filter(Boolean)
-    .map((x) => (x === "E" ? "Enfant" : x));
+    .map((x) => normGenderScope_(x === "E" ? "Enfant" : x));
 }
 
 // ✅ NEW: produit visible pour le rayon sélectionné ? (packs inclus)
@@ -311,12 +261,55 @@ function splitSizes_(sizeListStr) {
     .filter(Boolean);
 }
 
+// ✅ NEW: couleurs disponibles filtrées par genre (Enfant strict)
+function getAvailableColors_(vars, gender) {
+  const V = vars || [];
+  const gSel = normGenderScope_(gender);
+
+  // 🧒 Enfant: STRICT => uniquement les couleurs qui existent en Enfant
+  if (gSel === "Enfant") {
+    const cs = uniq(
+      V.filter((v) => normGenderScope_(v.gender_scope) === "Enfant")
+        .map((v) => v.color)
+    );
+    return cs;
+  }
+
+  // H / F: préférer les couleurs du genre si dispo, sinon fallback toutes
+  const csForGender = uniq(
+    V.filter((v) => !gSel || normGenderScope_(v.gender_scope) === gSel)
+      .map((v) => v.color)
+  );
+  if (csForGender.length) return csForGender;
+
+  return uniq(V.map((v) => v.color));
+}
+
+function ensureValidColor_(colors, currentColor) {
+  const cs = uniq(colors);
+  if (!cs.length) return null;
+  if (currentColor && cs.includes(String(currentColor))) return String(currentColor);
+  return defaultColor_(cs);
+}
+
 function getCandidateSizes_(vars, gender, color) {
   const V = vars || [];
+  const gSel = normGenderScope_(gender);
+
+  // 🧒 Enfant = STRICT : jamais de fallback adulte
+  if (gSel === "Enfant") {
+    const cands = V.filter((v) =>
+      normGenderScope_(v.gender_scope) === "Enfant" &&
+      (!color || String(v.color) === String(color))
+    );
+    let sizes = [];
+    for (const v of cands) sizes.push(...splitSizes_(v.size_list));
+    return uniq(sizes);
+  }
 
   // 1) strict: gender + color
   let cands = V.filter((v) =>
-    (!gender || String(v.gender_scope) === String(gender)) &&
+    (!gSel || normGenderScope_(v.gender_scope) === gSel) &&
     (!color || String(v.color) === String(color))
   );
 
@@ -326,7 +319,7 @@ function getCandidateSizes_(vars, gender, color) {
   if (sizes.length) return sizes;
 
   // 2) fallback: gender only (ignore color)
-  cands = V.filter((v) => (!gender || String(v.gender_scope) === String(gender)));
+  cands = V.filter((v) => (!gSel || normGenderScope_(v.gender_scope) === gSel));
   sizes = [];
   for (const v of cands) sizes.push(...splitSizes_(v.size_list));
   sizes = uniq(sizes);
@@ -339,19 +332,33 @@ function getCandidateSizes_(vars, gender, color) {
 }
 
 function pickVariant_(vars, gender, color) {
-  let v = (vars || []).find((x) =>
-    (!gender || String(x.gender_scope) === String(gender)) &&
+  const V = vars || [];
+  const gSel = normGenderScope_(gender);
+
+  // 1) strict: gender + color + image
+  let v = V.find((x) =>
+    (!gSel || normGenderScope_(x.gender_scope) === gSel) &&
     (!color || String(x.color) === String(color)) &&
     String(x.image_url || "").trim()
   );
   if (v) return v;
 
-  v = (vars || []).find((x) =>
+  // 🧒 Enfant: si on n'a rien en Enfant, on évite de prendre un variant adulte “par erreur”
+  if (gSel === "Enfant") {
+    v = V.find((x) =>
+      normGenderScope_(x.gender_scope) === "Enfant" && String(x.image_url || "").trim()
+    );
+    if (v) return v;
+  }
+
+  // 2) fallback: color only + image
+  v = V.find((x) =>
     (!color || String(x.color) === String(color)) && String(x.image_url || "").trim()
   );
   if (v) return v;
 
-  v = (vars || []).find((x) => String(x.image_url || "").trim());
+  // 3) fallback: any image
+  v = V.find((x) => String(x.image_url || "").trim());
   return v || null;
 }
 
@@ -363,14 +370,14 @@ function applyVariantImage_(imgEl, vars, gender, color, fallbackUrl) {
 }
 
 function shouldShowGender_(genders) {
-  const gs = uniq(genders);
+  const gs = uniq((genders || []).map(normGenderScope_));
   if (gs.length <= 1) return false;
   if (gs.length === 1 && gs[0] === "Unisexe") return false;
   return true;
 }
 
 function defaultGender_(genders) {
-  const gs = uniq(genders);
+  const gs = uniq((genders || []).map(normGenderScope_));
   const prio = ["H", "F", "Unisexe", "Enfant"];
   for (const p of prio) if (gs.includes(p)) return p;
   return gs[0] || null;
@@ -579,27 +586,26 @@ function openDetail(pid) {
   }
 
   const vars = getVariantsForProduct_(pid);
-  const genders = uniq(vars.map((v) => v.gender_scope));
+
+  // ✅ genders normalisés (E -> Enfant)
+  const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
 
   const genderFromHome = CURRENT_GENDER ? String(CURRENT_GENDER) : null;
 
   const sel = {
-    color: null,
     gender: genderFromHome || defaultGender_(genders),
+    color: null,
     size: null,
     logo: "Aucun",
   };
 
-  // ✅ Couleurs dispo cohérentes avec le genre choisi (sinon fallback)
+  // ✅ couleurs filtrées par genre (Enfant strict)
   const colors = getAvailableColors_(vars, sel.gender);
-  sel.color = ensureValidColor_(colors, sel.color);
+  sel.color = ensureValidColor_(colors, null);
 
   const sizesFromVars = getCandidateSizes_(vars, sel.gender, sel.color);
   const shouldShowSize = sizesFromVars.length > 0;
   if (shouldShowSize) sel.size = sizesFromVars[0];
-
-  // ✅ si aucune variante => pas de couleurs (on masque le picker)
-  const shouldShowColor = colors.length > 0;
 
   $("#detail").innerHTML = `
     <div style="display:flex;gap:12px;margin-bottom:16px">
@@ -612,11 +618,16 @@ function openDetail(pid) {
       <h3>${p.title}</h3>
       <div class="price" style="margin-bottom:12px">${euros(p.price)}</div>
 
-      <div id="wrapColor" style="${shouldShowColor ? "" : "display:none"}">
-        <label>Couleur</label>
-        <div class="swatches" id="pickColor">
-          ${renderColorSwatchesHTML_(colors, sel.color)}
-        </div>
+      <label>Couleur</label>
+      <div class="swatches" id="pickColor">
+        ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+          .map((c) => `
+            <div class="swatch" data-val="${c}">
+              <div class="dot" style="background:${colorToHex(c)}"></div>
+              <div class="name">${c}</div>
+            </div>`
+          )
+          .join("")}
       </div>
 
       <div id="wrapSize" style="${shouldShowSize ? "" : "display:none"}">
@@ -650,14 +661,11 @@ function openDetail(pid) {
     sel.logo = lbtn.dataset.val;
   }
 
-  // active couleur
-  if (shouldShowColor) {
-    const cbtn = Array.from($$("#pickColor .swatch")).find((b) => b.dataset.val === sel.color) || $("#pickColor .swatch");
-    if (cbtn) {
-      $$("#pickColor .swatch").forEach((x) => x.classList.remove("active"));
-      cbtn.classList.add("active");
-      sel.color = cbtn.dataset.val;
-    }
+  const cbtn = Array.from($$("#pickColor .swatch")).find((b) => b.dataset.val === sel.color) || $("#pickColor .swatch");
+  if (cbtn) {
+    $$("#pickColor .swatch").forEach((x) => x.classList.remove("active"));
+    cbtn.classList.add("active");
+    sel.color = cbtn.dataset.val;
   }
 
   function renderSizes() {
@@ -691,17 +699,15 @@ function openDetail(pid) {
     sel.size = b.dataset.val;
   });
 
-  if (shouldShowColor) {
-    $("#pickColor").addEventListener("click", (e) => {
-      const s = e.target.closest(".swatch");
-      if (!s) return;
-      $$("#pickColor .swatch").forEach((x) => x.classList.remove("active"));
-      s.classList.add("active");
-      sel.color = s.dataset.val;
-      renderSizes();
-      applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
-    });
-  }
+  $("#pickColor").addEventListener("click", (e) => {
+    const s = e.target.closest(".swatch");
+    if (!s) return;
+    $$("#pickColor .swatch").forEach((x) => x.classList.remove("active"));
+    s.classList.add("active");
+    sel.color = s.dataset.val;
+    renderSizes();
+    applyVariantImage_($("#detailImg"), vars, sel.gender, sel.color, p.image_url);
+  });
 
   $("#pickLogo").addEventListener("click", (e) => {
     const b = e.target.closest(".pill");
@@ -718,9 +724,7 @@ function openDetail(pid) {
       alert("Choisir une taille.");
       return;
     }
-
-    // ✅ couleur obligatoire seulement si on affiche le picker (donc si variantes)
-    if ($("#wrapColor") && $("#wrapColor").style.display !== "none" && !sel.color) {
+    if (!sel.color) {
       alert("Choisir une couleur.");
       return;
     }
@@ -728,7 +732,7 @@ function openDetail(pid) {
     CART.push({
       product_id: p.product_id,
       title: p.title,
-      color: sel.color || "",
+      color: sel.color,
       gender: sel.gender || "Unisexe",
       size: sel.size || "",
       qty,
@@ -769,8 +773,15 @@ function openPackDetail(p) {
     const prod = CATALOG.products.find((pr) => String(pr.product_id) === baseProductId);
     const vars = getVariantsForProduct_(baseProductId);
 
-    const genders = uniq(vars.map((v) => v.gender_scope));
-    const gender = defaultGender_(genders);
+    const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
+
+    // ✅ par défaut: on colle au rayon choisi si possible
+    let gender = null;
+    if (CURRENT_GENDER && (!genders.length || genders.includes(String(CURRENT_GENDER)))) {
+      gender = String(CURRENT_GENDER);
+    } else {
+      gender = defaultGender_(genders);
+    }
 
     const colors = getAvailableColors_(vars, gender);
     const color = ensureValidColor_(colors, null);
@@ -809,13 +820,71 @@ function openPackDetail(p) {
     };
   });
 
+  function renderSlotOptions_(slot) {
+    const slotIndex = slot.idx;
+    const vars = getVariantsForProduct_(slot.chosen_product_id);
+
+    // genders
+    const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
+
+    // si le gender actuel n'existe pas (ex upgrade), on le recale
+    if (slot.gender && genders.length && !genders.includes(String(slot.gender))) {
+      if (CURRENT_GENDER && genders.includes(String(CURRENT_GENDER))) slot.gender = String(CURRENT_GENDER);
+      else slot.gender = defaultGender_(genders);
+    }
+
+    // couleurs (Enfant strict)
+    const colors = getAvailableColors_(vars, slot.gender);
+    slot.color = ensureValidColor_(colors, slot.color) || "";
+
+    // tailles (Enfant strict)
+    const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
+    slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
+
+    // Update swatches DOM
+    const swBox = document.querySelector(`.pickColor[data-slot="${slotIndex}"]`);
+    if (swBox) {
+      swBox.innerHTML = (colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+        .map((c) => `
+          <div class="swatch ${String(c) === String(slot.color) ? "active" : ""}" data-val="${c}">
+            <div class="dot" style="background:${colorToHex(c)}"></div>
+            <div class="name">${c}</div>
+          </div>
+        `).join("");
+    }
+
+    // Update sizes DOM
+    const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
+    const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
+    if (sizes.length) {
+      if (sizeWrap) sizeWrap.style.display = "";
+      if (sizeBox) {
+        sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
+      }
+    } else {
+      if (sizeWrap) sizeWrap.style.display = "none";
+      slot.size = "";
+      if (sizeBox) sizeBox.innerHTML = "";
+    }
+
+    // Update gender pills active (if present)
+    const gBox = document.querySelector(`.pickGender[data-slot="${slotIndex}"]`);
+    if (gBox) {
+      gBox.querySelectorAll(".pill").forEach((b) => {
+        b.classList.toggle("active", String(b.dataset.val) === String(slot.gender));
+      });
+    }
+
+    // Update image
+    const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
+    applyVariantImage_(document.getElementById(`slotImg_${slotIndex}`), vars, slot.gender, slot.color, (prod && prod.image_url) || p.image_url);
+  }
+
   const itemsHtml = slots.map((s) => {
     const vars = getVariantsForProduct_(s.chosen_product_id);
-    const genders = uniq(vars.map((v) => v.gender_scope));
-    const showGender = shouldShowGender_(genders);
-
     const colors = getAvailableColors_(vars, s.gender);
-    const showColor = colors.length > 0;
+    const genders = uniq(vars.map((v) => normGenderScope_(v.gender_scope)));
+    const showGender = shouldShowGender_(genders);
 
     const sizes = getCandidateSizes_(vars, s.gender, s.color);
     const showSize = sizes.length > 0;
@@ -833,6 +902,9 @@ function openPackDetail(p) {
         </div>
       `
       : "";
+
+    const genderChoices = ["H", "F", "Unisexe", "Enfant"]
+      .filter((g) => !genders.length || genders.includes(g));
 
     return `
   <div class="card pack-slot" style="margin-top:14px">
@@ -855,8 +927,7 @@ function openPackDetail(p) {
           <div class="wrapGender" data-slot="${s.idx}" style="${showGender ? "" : "display:none"}">
             <label>Genre</label>
             <div class="pills pickGender" data-slot="${s.idx}">
-              ${["H", "F", "Unisexe", "Enfant"]
-                .filter((g) => !genders.length || genders.includes(g))
+              ${genderChoices
                 .map((g) => `<button class="pill ${String(g) === String(s.gender) ? "active" : ""}" data-val="${g}">${g}</button>`)
                 .join("")}
             </div>
@@ -869,11 +940,15 @@ function openPackDetail(p) {
             </div>
           </div>
 
-          <div class="wrapColor" data-slot="${s.idx}" style="${showColor ? "" : "display:none"}">
-            <label>Couleur</label>
-            <div class="swatches pickColor" data-slot="${s.idx}">
-              ${renderColorSwatchesHTML_(colors, s.color)}
-            </div>
+          <label>Couleur</label>
+          <div class="swatches pickColor" data-slot="${s.idx}">
+            ${(colors.length ? colors : (CATALOG.options.colors_default || ["Bleu", "Blanc", "Noir", "Rose"]))
+              .map((c) => `
+                <div class="swatch ${String(c) === String(s.color) ? "active" : ""}" data-val="${c}">
+                  <div class="dot" style="background:${colorToHex(c)}"></div>
+                  <div class="name">${c}</div>
+                </div>
+              `).join("")}
           </div>
 
           <label>Logo (inclus)</label>
@@ -912,53 +987,10 @@ function openPackDetail(p) {
     </div>
   `;
 
-  function rerenderSlotUI_(slotIndex) {
-    const slot = slots.find((x) => x.idx === slotIndex);
-    if (!slot) return;
-
-    const vars = getVariantsForProduct_(slot.chosen_product_id);
-
-    // ✅ couleurs selon genre
-    const colors = getAvailableColors_(vars, slot.gender);
-    slot.color = ensureValidColor_(colors, slot.color) || "";
-
-    const colorWrap = document.querySelector(`.wrapColor[data-slot="${slotIndex}"]`);
-    const colorBox = document.querySelector(`.pickColor[data-slot="${slotIndex}"]`);
-    if (colors.length) {
-      if (colorWrap) colorWrap.style.display = "";
-      if (colorBox) colorBox.innerHTML = renderColorSwatchesHTML_(colors, slot.color);
-    } else {
-      if (colorWrap) colorWrap.style.display = "none";
-      slot.color = "";
-    }
-
-    // ✅ tailles selon genre + couleur
-    const sizes = getCandidateSizes_(vars, slot.gender, slot.color);
-    slot.size = sizes.includes(slot.size) ? slot.size : (sizes[0] || "");
-
-    const sizeBox = document.querySelector(`.pickSize[data-slot="${slotIndex}"]`);
-    const sizeWrap = document.querySelector(`.wrapSize[data-slot="${slotIndex}"]`);
-    if (sizes.length) {
-      if (sizeWrap) sizeWrap.style.display = "";
-      if (sizeBox) {
-        sizeBox.innerHTML = sizes.map((z) => `<button class="pill ${String(z) === String(slot.size) ? "active" : ""}" data-val="${z}">${z}</button>`).join("");
-      }
-    } else {
-      if (sizeWrap) sizeWrap.style.display = "none";
-      slot.size = "";
-    }
-
-    const prod = CATALOG.products.find((pr) => String(pr.product_id) === String(slot.chosen_product_id));
-    applyVariantImage_(
-      document.getElementById(`slotImg_${slotIndex}`),
-      vars,
-      slot.gender,
-      slot.color,
-      (prod && prod.image_url) || p.image_url
-    );
-  }
-
-  slots.forEach((s) => rerenderSlotUI_(s.idx));
+  // hydrate images initiales
+  slots.forEach((s) => {
+    renderSlotOptions_(s);
+  });
 
   $("#detail").addEventListener("click", (e) => {
     const upBtn = e.target.closest(".packUp .pill");
@@ -979,7 +1011,7 @@ function openPackDetail(p) {
         slot.extra_price = Number(upBtn.dataset.extra || 0);
       }
 
-      rerenderSlotUI_(slotIndex);
+      renderSlotOptions_(slot);
       return;
     }
 
@@ -993,7 +1025,7 @@ function openPackDetail(p) {
       g.classList.add("active");
       slot.gender = g.dataset.val;
 
-      rerenderSlotUI_(slotIndex);
+      renderSlotOptions_(slot);
       return;
     }
 
@@ -1018,8 +1050,8 @@ function openPackDetail(p) {
       c.classList.add("active");
       slot.color = c.dataset.val;
 
-      // ✅ MAJ tailles + image (car couleur change)
-      rerenderSlotUI_(slotIndex);
+      // tailles & image doivent suivre la couleur
+      renderSlotOptions_(slot);
       return;
     }
 
@@ -1163,7 +1195,6 @@ function renderCart() {
   ensureCartInfoBox();
   $("#cartTotal").textContent = euros(cartTotal());
 }
-
 /* -------- Bootstrap -------- */
 window.addEventListener("DOMContentLoaded", () => {
   loadCart();
