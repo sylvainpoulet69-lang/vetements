@@ -59,7 +59,7 @@
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
-      "image_url": "sac",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sac.jpg",
       "type": "single",
       "active": true
     },
