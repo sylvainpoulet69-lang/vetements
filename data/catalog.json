@@ -224,6 +224,14 @@
       "image_url": ""
     },
     {
+      "variant_id": "V_JOGGING_H_BLEU_FONCE",
+      "product_id": "JOGGING",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
       "variant_id": "V_JOGGING_H_NOIR",
       "product_id": "JOGGING",
       "color": "Noir",
