@@ -437,7 +437,7 @@
       "color": "Blanc",
       "gender_scope": "",
       "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/softshell-blanc.png"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo-blanc.png"
     },
     {
       "variant_id": "POLO_noir",
@@ -445,7 +445,7 @@
       "color": "Noir",
       "gender_scope": "",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo-blanc.png"
     },
     {
       "variant_id": "GOURDE_blanc",
