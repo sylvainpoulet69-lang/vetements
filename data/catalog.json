@@ -87,7 +87,7 @@
       "price": 20,
       "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/serviette-blanc.png",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
@@ -499,9 +499,9 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -509,9 +509,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -519,9 +519,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -529,9 +529,9 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -539,9 +539,9 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "FALSE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": false,
       "extra_price": 0
     },
     {
@@ -549,9 +549,9 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     }
   ],
@@ -560,8 +560,14 @@
       "Blanc": "#FFFFFF",
       "Bleu foncé": "#0F172A",
       "Bleu roi": "#1D4ED8",
+      "GANTS": "Noir",
+      "GOURDE": "Bleu",
       "Noir": "#111111",
-      "Rose pâle": "#FBCFE8"
+      "POIGNET": "Noir",
+      "POLO": "Noir",
+      "Rose pâle": "#FBCFE8",
+      "SAC": "Noir",
+      "VESTE": "Noir"
     }
   }
 }
