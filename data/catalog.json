@@ -1,7 +1,7 @@
 {
   "products": [
     {
-      "product_id": "SWEAT",
+      "product_id": "Sweat Club",
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
@@ -10,7 +10,7 @@
       "active": true
     },
     {
-      "product_id": "TSHIRT",
+      "product_id": "T-shirt Club",
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
@@ -19,7 +19,7 @@
       "active": true
     },
     {
-      "product_id": "SHORT",
+      "product_id": "Short Club",
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
@@ -28,7 +28,7 @@
       "active": true
     },
     {
-      "product_id": "JOGGING",
+      "product_id": "Jogging Club",
       "title": "Jogging Club",
       "category": "Vêtements",
       "price": 35,
@@ -37,7 +37,7 @@
       "active": true
     },
     {
-      "product_id": "POLO",
+      "product_id": "Polo",
       "title": "Polo",
       "category": "Vêtements",
       "price": 35,
@@ -46,7 +46,7 @@
       "active": true
     },
     {
-      "product_id": "CASQUETTE",
+      "product_id": "Casquette Club",
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 21,
@@ -55,7 +55,7 @@
       "active": true
     },
     {
-      "product_id": "SAC",
+      "product_id": "Sac Club",
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
@@ -64,7 +64,7 @@
       "active": true
     },
     {
-      "product_id": "GANTS",
+      "product_id": "Gants",
       "title": "Gants",
       "category": "Accessoires",
       "price": 21,
@@ -73,7 +73,7 @@
       "active": true
     },
     {
-      "product_id": "SERVIETTE",
+      "product_id": "Serviette",
       "title": "Serviette",
       "category": "Accessoires",
       "price": 20,
@@ -82,7 +82,7 @@
       "active": false
     },
     {
-      "product_id": "POIGNET",
+      "product_id": "Poignet",
       "title": "Poignet",
       "category": "Accessoires",
       "price": 12,
@@ -91,7 +91,7 @@
       "active": true
     },
     {
-      "product_id": "VESTE",
+      "product_id": "Softschell",
       "title": "Softschell",
       "category": "Vêtements",
       "price": 64,
@@ -100,7 +100,7 @@
       "active": true
     },
     {
-      "product_id": "GOURDE",
+      "product_id": "Gourde",
       "title": "Gourde",
       "category": "Accessoires",
       "price": 21,
@@ -109,7 +109,7 @@
       "active": true
     },
     {
-      "product_id": "PK150",
+      "product_id": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
