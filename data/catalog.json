@@ -46,7 +46,7 @@
       "active": true
     },
     {
-      "product_id": "Casquette Club",
+      "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 21,
@@ -55,7 +55,7 @@
       "active": true
     },
     {
-      "product_id": "Sac Club",
+      "product_id": "SAC",
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
@@ -64,7 +64,7 @@
       "active": true
     },
     {
-      "product_id": "Gants",
+      "product_id": "GANTS",
       "title": "Gants",
       "category": "Accessoires",
       "price": 21,
@@ -73,7 +73,7 @@
       "active": true
     },
     {
-      "product_id": "Serviette",
+      "product_id": "SERVIETTE",
       "title": "Serviette",
       "category": "Accessoires",
       "price": 20,
@@ -82,7 +82,7 @@
       "active": false
     },
     {
-      "product_id": "Poignet",
+      "product_id": "POIGNET",
       "title": "Poignet",
       "category": "Accessoires",
       "price": 12,
@@ -91,7 +91,7 @@
       "active": true
     },
     {
-      "product_id": "Softschell",
+      "product_id": "VESTE",
       "title": "Softschell",
       "category": "Vêtements",
       "price": 64,
@@ -100,7 +100,7 @@
       "active": true
     },
     {
-      "product_id": "Gourde",
+      "product_id": "GOURDE",
       "title": "Gourde",
       "category": "Accessoires",
       "price": 21,
@@ -109,7 +109,7 @@
       "active": true
     },
     {
-      "product_id": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
+      "product_id": "PK150",
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
@@ -357,7 +357,7 @@
       "color": "Bleu foncé",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-bleufonce.png"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-bleufonce..png"
     },
     {
       "variant_id": "V_CASQUETTE_UNISEXE_BLEU_ROI",
