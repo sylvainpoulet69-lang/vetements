@@ -1,7 +1,7 @@
 {
   "products": [
     {
-      "product_id": "Sweat Club",
+      "product_id": "SWEAT",
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
@@ -10,7 +10,7 @@
       "active": true
     },
     {
-      "product_id": "T-shirt Club",
+      "product_id": "T",
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
