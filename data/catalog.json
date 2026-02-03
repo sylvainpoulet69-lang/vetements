@@ -5,6 +5,7 @@
       "title": "Sweat Club",
       "category": "Vêtements",
       "price": 35,
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleuroi.png",
       "type": "single",
       "active": true
@@ -14,6 +15,7 @@
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 25,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png",
       "type": "single",
       "active": true
@@ -23,6 +25,7 @@
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png",
       "type": "single",
       "active": true
@@ -32,6 +35,7 @@
       "title": "Jogging Club",
       "category": "Vêtements",
       "price": 35,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png",
       "type": "single",
       "active": true
@@ -41,6 +45,7 @@
       "title": "Polo",
       "category": "Vêtements",
       "price": 35,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo-blanc.png",
       "type": "single",
       "active": true
@@ -50,6 +55,7 @@
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 21,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-bleuroi.png",
       "type": "single",
       "active": true
@@ -59,6 +65,7 @@
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sac-noir.png",
       "type": "single",
       "active": true
@@ -68,6 +75,7 @@
       "title": "Gants",
       "category": "Accessoires",
       "price": 21,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gant-noir.png",
       "type": "single",
       "active": true
@@ -77,8 +85,9 @@
       "title": "Serviette",
       "category": "Accessoires",
       "price": 20,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/serviette-blanc.png",
-      "type": "single",
+      "type": "",
       "active": false
     },
     {
@@ -86,6 +95,7 @@
       "title": "Poignet",
       "category": "Accessoires",
       "price": 12,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/poignet-blanc.png",
       "type": "single",
       "active": true
@@ -95,6 +105,7 @@
       "title": "Softschell",
       "category": "Vêtements",
       "price": 64,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/softshell-noir.png",
       "type": "single",
       "active": true
@@ -104,6 +115,7 @@
       "title": "Gourde",
       "category": "Accessoires",
       "price": 21,
+      "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gourde-noir.png",
       "type": "single",
       "active": true
@@ -113,6 +125,7 @@
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
+      "gender_scope": "H|F",
       "image_url": "",
       "type": "pack",
       "active": true
@@ -486,9 +499,9 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": true,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
       "extra_price": 0
     },
     {
@@ -496,9 +509,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": true,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
       "extra_price": 0
     },
     {
@@ -506,9 +519,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": true,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
       "extra_price": 0
     },
     {
@@ -516,9 +529,9 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": true,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
       "extra_price": 0
     },
     {
@@ -526,9 +539,9 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": false,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "FALSE",
       "extra_price": 0
     },
     {
@@ -536,9 +549,9 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "qty": 1,
-      "apply_pack_color": true,
-      "apply_pack_gender": true,
-      "apply_pack_size": true,
+      "apply_pack_color": "TRUE",
+      "apply_pack_gender": "TRUE",
+      "apply_pack_size": "TRUE",
       "extra_price": 0
     }
   ],
@@ -547,14 +560,8 @@
       "Blanc": "#FFFFFF",
       "Bleu foncé": "#0F172A",
       "Bleu roi": "#1D4ED8",
-      "GANTS": "Noir",
-      "GOURDE": "Bleu",
       "Noir": "#111111",
-      "POIGNET": "Noir",
-      "POLO": "Noir",
-      "Rose pâle": "#FBCFE8",
-      "SAC": "Noir",
-      "VESTE": "Noir"
+      "Rose pâle": "#FBCFE8"
     }
   }
 }
