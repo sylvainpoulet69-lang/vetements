@@ -373,7 +373,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/poignet-blanc.png"
     },
     {
       "variant_id": "POIGNET_bleu_roi",
@@ -381,7 +381,7 @@
       "color": "Bleu roi",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/poignet-blanc.png"
     },
     {
       "variant_id": "POIGNET_bleu_fonce",
