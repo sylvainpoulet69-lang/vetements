@@ -357,7 +357,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "GANTS_noir",
@@ -365,7 +365,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "POIGNET_noir",
@@ -373,7 +373,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "POIGNET_bleu_roi",
@@ -381,7 +381,7 @@
       "color": "Bleu roi",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "POIGNET_bleu_fonce",
@@ -389,7 +389,7 @@
       "color": "Bleu foncé",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "POIGNET_blanc",
@@ -397,7 +397,7 @@
       "color": "Blanc",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
       "variant_id": "VESTE_bleu_roi",
