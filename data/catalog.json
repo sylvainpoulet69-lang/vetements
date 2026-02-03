@@ -349,7 +349,7 @@
       "color": "Noir",
       "gender_scope": "Unisexe",
       "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sac-noir.png"
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-noir..png"
     },
     {
       "variant_id": "SAC_noir",
@@ -451,14 +451,6 @@
       "variant_id": "GOURDE_blanc",
       "product_id": "GOURDE",
       "color": "Blanc",
-      "gender_scope": "",
-      "size_list": "",
-      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gourde-noir.png"
-    },
-    {
-      "variant_id": "GOURDE_bleu",
-      "product_id": "GOURDE",
-      "color": "Bleu",
       "gender_scope": "",
       "size_list": "",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gourde-noir.png"
