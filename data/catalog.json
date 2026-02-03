@@ -221,7 +221,7 @@
       "color": "Bleu foncé",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
     },
     {
       "variant_id": "V_JOGGING_H_NOIR",
@@ -229,7 +229,7 @@
       "color": "Noir",
       "gender_scope": "H",
       "size_list": "S,M,L,XL,XXL",
-      "image_url": ""
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
     },
     {
       "variant_id": "V_SWEAT_F_BLEU_ROI",
