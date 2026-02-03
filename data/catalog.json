@@ -178,9 +178,9 @@
     {
       "variant_id": "V_TSHIRT_H_BLEU_FONCE",
       "product_id": "TSHIRT",
-      "color": "",
-      "gender_scope": "",
-      "size_list": "",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
       "image_url": ""
     },
     {
