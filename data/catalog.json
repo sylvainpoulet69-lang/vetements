@@ -34,7 +34,7 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "category": "Vêtements",
-      "price": 35,
+      "price": 40,
       "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png",
       "type": "single",
