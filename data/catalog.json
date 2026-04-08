@@ -521,7 +521,7 @@
       "product_id": "SWEAT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-noir.png"
     },
     {
@@ -529,7 +529,7 @@
       "product_id": "SWEAT",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleufonce.png"
     },
     {
@@ -537,7 +537,7 @@
       "product_id": "TSHIRT",
       "color": "Bleu roi",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png"
     },
     {
@@ -545,7 +545,7 @@
       "product_id": "TSHIRT",
       "color": "Blanc",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-blanc.png"
     },
     {
@@ -553,7 +553,7 @@
       "product_id": "TSHIRT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
     },
     {
@@ -561,7 +561,7 @@
       "product_id": "TSHIRT",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleufonce.png"
     },
     {
@@ -569,7 +569,7 @@
       "product_id": "SHORT",
       "color": "Blanc",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-blanc.png"
     },
     {
@@ -577,7 +577,7 @@
       "product_id": "SHORT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
     },
     {
@@ -585,7 +585,7 @@
       "product_id": "SHORT",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
     },
     {
@@ -593,7 +593,7 @@
       "product_id": "JOGGING",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png"
     },
     {
@@ -601,7 +601,7 @@
       "product_id": "JOGGING",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-noir.png"
     },
     {
@@ -609,7 +609,7 @@
       "product_id": "SWEAT",
       "color": "Bleu roi",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleuroi.png"
     },
     {
@@ -617,7 +617,7 @@
       "product_id": "SWEAT",
       "color": "Blanc",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-blanc.png"
     },
     {
@@ -625,7 +625,7 @@
       "product_id": "SWEAT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-noir.png"
     },
     {
@@ -633,7 +633,7 @@
       "product_id": "SWEAT",
       "color": "Rose pâle",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": ""
     },
     {
@@ -641,7 +641,7 @@
       "product_id": "SWEAT",
       "color": "Rose pâle",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": ""
     },
     {
@@ -649,7 +649,7 @@
       "product_id": "TSHIRT",
       "color": "Bleu roi",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png"
     },
     {
@@ -657,7 +657,7 @@
       "product_id": "TSHIRT",
       "color": "Blanc",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-blanc.png"
     },
     {
@@ -665,7 +665,7 @@
       "product_id": "TSHIRT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
     },
     {
@@ -673,7 +673,7 @@
       "product_id": "TSHIRT",
       "color": "Rose pâle",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": ""
     },
     {
@@ -681,7 +681,7 @@
       "product_id": "SHORT",
       "color": "Blanc",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-blanc.png"
     },
     {
@@ -689,7 +689,7 @@
       "product_id": "SHORT",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
     },
     {
@@ -697,7 +697,7 @@
       "product_id": "SHORT",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
     },
     {
@@ -705,7 +705,7 @@
       "product_id": "SHORT",
       "color": "Rose pâle",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": ""
     },
     {
@@ -713,7 +713,7 @@
       "product_id": "JOGGING",
       "color": "Bleu foncé",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png"
     },
     {
@@ -721,7 +721,7 @@
       "product_id": "JOGGING",
       "color": "Noir",
       "gender_scope": "ENFANT",
-      "size_list": "S,M,L,XL,XXL",
+      "size_list": "4,6,8,10,12,14",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-noir.png"
     }
   ],
