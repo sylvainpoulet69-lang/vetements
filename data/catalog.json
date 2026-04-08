@@ -15,7 +15,7 @@
       "title": "T-shirt Club",
       "category": "Vêtements",
       "price": 30,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png",
       "type": "single",
       "active": true
@@ -25,7 +25,7 @@
       "title": "Short Club",
       "category": "Vêtements",
       "price": 30,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png",
       "type": "single",
       "active": true
@@ -35,7 +35,7 @@
       "title": "Jogging Club",
       "category": "Vêtements",
       "price": 40,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png",
       "type": "single",
       "active": true
@@ -45,7 +45,7 @@
       "title": "Polo",
       "category": "Vêtements",
       "price": 35,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/polo-blanc.png",
       "type": "single",
       "active": true
@@ -55,7 +55,7 @@
       "title": "Casquette Club",
       "category": "Accessoires",
       "price": 20,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/casquette-bleuroi.png",
       "type": "single",
       "active": true
@@ -65,7 +65,7 @@
       "title": "Sac Club",
       "category": "Accessoires",
       "price": 42,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sac-noir.jpg",
       "type": "single",
       "active": true
@@ -75,7 +75,7 @@
       "title": "Gants",
       "category": "Accessoires",
       "price": 15,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gant-noir.png",
       "type": "single",
       "active": true
@@ -85,7 +85,7 @@
       "title": "Serviette",
       "category": "Accessoires",
       "price": 20,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/serviette-blanc.png",
       "type": "single",
       "active": false
@@ -95,7 +95,7 @@
       "title": "Poignet",
       "category": "Accessoires",
       "price": 15,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/poignet-blanc.png",
       "type": "single",
       "active": true
@@ -105,7 +105,7 @@
       "title": "Softschell",
       "category": "Vêtements",
       "price": 64,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/softshell-noir.png",
       "type": "single",
       "active": true
@@ -115,7 +115,7 @@
       "title": "Gourde",
       "category": "Accessoires",
       "price": 15,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gourde-noir.png",
       "type": "single",
       "active": true
@@ -125,7 +125,7 @@
       "title": "Pack Club Complet (Sweat + 2 T-shirts + Jogging + Casquette + Short)",
       "category": "Vêtements",
       "price": 150,
-      "gender_scope": "H|F",
+      "gender_scope": "H|F|E",
       "image_url": "",
       "type": "pack",
       "active": true
