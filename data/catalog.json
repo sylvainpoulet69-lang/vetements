@@ -87,7 +87,7 @@
       "price": 20,
       "gender_scope": "H|F",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/serviette-blanc.png",
-      "type": "",
+      "type": "single",
       "active": false
     },
     {
@@ -499,6 +499,230 @@
       "gender_scope": "",
       "size_list": "",
       "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/gourde-noir.png"
+    },
+    {
+      "variant_id": "V_SWEAT_H_BLEU_ROI",
+      "product_id": "SWEAT",
+      "color": "Bleu roi",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleuroi.png"
+    },
+    {
+      "variant_id": "V_SWEAT_H_BLANC",
+      "product_id": "SWEAT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-blanc.png"
+    },
+    {
+      "variant_id": "V_SWEAT_H_NOIR",
+      "product_id": "SWEAT",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-noir.png"
+    },
+    {
+      "variant_id": "V_SWEAT_H_BLEU_FONCE",
+      "product_id": "SWEAT",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleufonce.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_BLEU_ROI",
+      "product_id": "TSHIRT",
+      "color": "Bleu roi",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_BLANC",
+      "product_id": "TSHIRT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-blanc.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_NOIR",
+      "product_id": "TSHIRT",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_H_BLEU_FONCE",
+      "product_id": "TSHIRT",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleufonce.png"
+    },
+    {
+      "variant_id": "V_SHORT_H_BLANC",
+      "product_id": "SHORT",
+      "color": "Blanc",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-blanc.png"
+    },
+    {
+      "variant_id": "V_SHORT_H_NOIR",
+      "product_id": "SHORT",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-noir.png"
+    },
+    {
+      "variant_id": "V_SHORT_H_BLEU_FONCE",
+      "product_id": "SHORT",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
+    },
+    {
+      "variant_id": "V_JOGGING_H_BLEU_FONCE",
+      "product_id": "JOGGING",
+      "color": "Bleu foncé",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png"
+    },
+    {
+      "variant_id": "V_JOGGING_H_NOIR",
+      "product_id": "JOGGING",
+      "color": "Noir",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-noir.png"
+    },
+    {
+      "variant_id": "V_SWEAT_F_BLEU_ROI",
+      "product_id": "SWEAT",
+      "color": "Bleu roi",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-bleuroi.png"
+    },
+    {
+      "variant_id": "V_SWEAT_F_BLANC",
+      "product_id": "SWEAT",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-blanc.png"
+    },
+    {
+      "variant_id": "V_SWEAT_F_NOIR",
+      "product_id": "SWEAT",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/sweat-noir.png"
+    },
+    {
+      "variant_id": "V_SWEAT_F_ROSE_PÂLE",
+      "product_id": "SWEAT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SWEAT_F_ROSE_PÂLE",
+      "product_id": "SWEAT",
+      "color": "Rose pâle",
+      "gender_scope": "H",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_TSHIRT_F_BLEU_ROI",
+      "product_id": "TSHIRT",
+      "color": "Bleu roi",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-bleuroi.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_F_BLANC",
+      "product_id": "TSHIRT",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-blanc.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_F_NOIR",
+      "product_id": "TSHIRT",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
+    },
+    {
+      "variant_id": "V_TSHIRT_F_ROSE_PÂLE",
+      "product_id": "TSHIRT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_SHORT_F_BLANC",
+      "product_id": "SHORT",
+      "color": "Blanc",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-blanc.png"
+    },
+    {
+      "variant_id": "V_SHORT_F_BLEU_FONCE",
+      "product_id": "SHORT",
+      "color": "Bleu foncé",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/short-bleufonce.png"
+    },
+    {
+      "variant_id": "V_SHORT_F_NOIR",
+      "product_id": "SHORT",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/tee-shirt-noir.png"
+    },
+    {
+      "variant_id": "V_SHORT_F_ROSE_PÂLE",
+      "product_id": "SHORT",
+      "color": "Rose pâle",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": ""
+    },
+    {
+      "variant_id": "V_JOGGING_F_BLEU_FONCE",
+      "product_id": "JOGGING",
+      "color": "Bleu foncé",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-bleufonce.png"
+    },
+    {
+      "variant_id": "V_JOGGING_F_NOIR",
+      "product_id": "JOGGING",
+      "color": "Noir",
+      "gender_scope": "F",
+      "size_list": "S,M,L,XL,XXL",
+      "image_url": "https://raw.githubusercontent.com/sylvainpoulet69-lang/phototrainingaddict/main/jogging-noir.png"
     }
   ],
   "packItems": [
@@ -507,9 +731,9 @@
       "product_id": "SWEAT",
       "title": "Sweat Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -517,9 +741,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -527,9 +751,9 @@
       "product_id": "TSHIRT",
       "title": "T-shirt Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -537,9 +761,9 @@
       "product_id": "JOGGING",
       "title": "Jogging Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     },
     {
@@ -547,9 +771,9 @@
       "product_id": "CASQUETTE",
       "title": "Casquette Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "FALSE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": false,
       "extra_price": 0
     },
     {
@@ -557,9 +781,9 @@
       "product_id": "SHORT",
       "title": "Short Club",
       "qty": 1,
-      "apply_pack_color": "TRUE",
-      "apply_pack_gender": "TRUE",
-      "apply_pack_size": "TRUE",
+      "apply_pack_color": true,
+      "apply_pack_gender": true,
+      "apply_pack_size": true,
       "extra_price": 0
     }
   ],
@@ -568,8 +792,14 @@
       "Blanc": "#FFFFFF",
       "Bleu foncé": "#0F172A",
       "Bleu roi": "#1D4ED8",
+      "GANTS": "Noir",
+      "GOURDE": "Bleu",
       "Noir": "#111111",
-      "Rose pâle": "#FBCFE8"
+      "POIGNET": "Noir",
+      "POLO": "Noir",
+      "Rose pâle": "#FBCFE8",
+      "SAC": "Noir",
+      "VESTE": "Noir"
     }
   }
 }
